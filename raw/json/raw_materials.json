@@ -1,0 +1,29 @@
+{
+    "botanical": {
+        "fiber": {},
+        "leaf": {},
+        "petal": {},
+        "pollen": {}
+    },
+    "stone": {
+        "gneiss": {},
+        "granite": {},
+        "sandstone": {}
+    },
+    "uncooked_meat": {
+        "deer": {},
+        "rabbit": {},
+        "wolf": {}
+    },
+    "water": {
+        "lake": {},
+        "ocean": {},
+        "river": {},
+        "swamp": {}
+    },
+    "wood": {
+        "maple": {},
+        "oak": {},
+        "pine": {}
+    }
+}

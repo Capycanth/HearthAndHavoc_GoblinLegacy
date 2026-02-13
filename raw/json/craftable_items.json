@@ -1,0 +1,21 @@
+{
+    "tools": {
+        "fishing_pole": {
+            "recipe": [
+                [{"wood": 1}],
+                [{"fiber": 1}]
+            ]
+        },
+        "hammer": {
+
+        }
+    },
+    "weapons": {
+        "dagger": {
+
+        },
+        "spear": {
+
+        }
+    }
+}
