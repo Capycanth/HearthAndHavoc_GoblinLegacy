@@ -1,9 +1,13 @@
-﻿using HeartAndHavoc_GoblinLegacy.Utility;
+﻿using HeartAndHavoc_GoblinLegacy.AI.AsyncProcessor;
+using HeartAndHavoc_GoblinLegacy.Utility;
 using HearthAndHavocGoblinLegacy.GameModel.Map;
 using HearthAndHavocGoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace HearthAndHavoc_GoblinLegacy
 {
@@ -26,6 +30,9 @@ namespace HearthAndHavoc_GoblinLegacy
         // Game Objects
         public static World world;
 
+        // ActionProcessor
+        public static ProcessorThread Processor { get; private set; } = null!;
+
         public GoblinGame()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -40,6 +47,9 @@ namespace HearthAndHavoc_GoblinLegacy
             _graphics.PreferredBackBufferHeight = 1440;
 
             _graphics.ApplyChanges();
+
+            // Create the static worker thread once
+            Processor = new ProcessorThread("AI Processor");
 
             base.Initialize();
         }
@@ -58,17 +68,27 @@ namespace HearthAndHavoc_GoblinLegacy
 
             if (currKeyBoardState.IsKeyDown(Keys.Escape))
                 Exit();
-            if (currKeyBoardState.IsKeyDown(Keys.RightControl) && prevKeyBoardState.IsKeyUp(Keys.RightControl) && gameSpeed < 5)
-                gameSpeed += 0.25f;
+            if (currKeyBoardState.IsKeyDown(Keys.RightControl) && prevKeyBoardState.IsKeyUp(Keys.RightControl) && gameSpeed < 10)
+            {
+                gameSpeed += 0.5f;
+                Debug.WriteLine($"Game Speed set to X{gameSpeed}");
+            } 
             if (currKeyBoardState.IsKeyDown(Keys.LeftControl) && prevKeyBoardState.IsKeyUp(Keys.LeftControl) && gameSpeed != 0)
-                gameSpeed -= 0.25f;
+            {
+                gameSpeed -= 0.5f;
+                Debug.WriteLine($"Game Speed set to X{gameSpeed}");
+            }
             if (currKeyBoardState.IsKeyDown(Keys.Space) && prevKeyBoardState.IsKeyUp(Keys.Space))
                 _graphics.ToggleFullScreen();
 
             timeSinceLastTickMs += gameTime.ElapsedGameTime.Milliseconds;
             if ((timeSinceLastTickMs * gameSpeed) < gameTickMs) return;
-            else timeSinceLastTickMs = 0;
-
+            else 
+            {
+                Debug.WriteLine($"Reached world update in {timeSinceLastTickMs} ms");
+                timeSinceLastTickMs = 0;
+            }
+            
             world.Update();
 
             base.Update(gameTime);
@@ -76,7 +96,7 @@ namespace HearthAndHavoc_GoblinLegacy
 
         protected override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Matrix.CreateScale(4f));
             world.Draw(_spriteBatch);
             _spriteBatch.End();
 

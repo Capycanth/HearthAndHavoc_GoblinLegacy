@@ -1,9 +1,12 @@
-﻿using HearthAndHavocGoblinLegacy.GameModel.Entity;
+﻿using HeartAndHavoc_GoblinLegacy.AI.AsyncProcessor;
+using HearthAndHavoc_GoblinLegacy;
+using HearthAndHavocGoblinLegacy.GameModel.Entity;
 using HearthAndHavocGoblinLegacy.GameModel.Map;
 using HearthAndHavocGoblinLegacy.Utility.Map;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace HearthAndHavocGoblinLegacy.AI.Action
@@ -14,8 +17,6 @@ namespace HearthAndHavocGoblinLegacy.AI.Action
         private Stack<Point> PathTraversal { get; set; } = null;
         private Point _destination;
 
-        private static readonly Point point = new(16, 16);
-
         public GoTo(Point destination)
         {
             _destination = destination;
@@ -23,16 +24,27 @@ namespace HearthAndHavocGoblinLegacy.AI.Action
 
         public override bool Perform(World world, Kremlit kremlit)
         {
+            if (IsActionAwaitingJobHandle()) return false;
+
             if (null == PathTraversal)
             {
-                PathTraversal = MapUtil.GetAStarPathQueue(world.GetCurrentLocale().LocaleMap, kremlit.Position, _destination);
+                (WorldSnapshot ws, KremlitSnapshot ks) snapshots = GenerateSnapshots(world, kremlit);
+                JobHandle = GoblinGame.Processor.Enqueue(snapshots.ws, snapshots.ks, CalculateActionChain);
+                return false;
             }
-            kremlit.Position = PathTraversal.Pop() * point;
-            if (PathTraversal.Count == 0)
-            {
-                Console.WriteLine($"Reached destination {_destination}");
-            }
+
+            kremlit.Position = PathTraversal.Pop();
             return PathTraversal.Count == 0;
+        }
+
+        protected override (WorldSnapshot ws, KremlitSnapshot ks) GenerateSnapshots(World world, Kremlit kremlit)
+        {
+            return (new WorldSnapshot(world.GetCurrentLocale().LocaleMap), new KremlitSnapshot(kremlit.Position));
+        }
+
+        protected override void CalculateActionChain(WorldSnapshot ws, KremlitSnapshot ks)
+        {
+            PathTraversal = MapUtil.GetAStarPathQueue(ws.LocaleMap, ks.Position, this._destination);
         }
     }
 }
