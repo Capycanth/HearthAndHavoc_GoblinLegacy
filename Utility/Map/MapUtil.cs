@@ -1,12 +1,12 @@
-﻿using HearthAndHavocGoblinLegacy.GameModel.Map;
-using HearthAndHavocGoblinLegacy.Utility.AStar;
+﻿using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.Utility.AStar;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
 
-namespace HearthAndHavocGoblinLegacy.Utility.Map
+namespace HearthAndHavoc_GoblinLegacy.Utility.Map
 {
     public static class MapUtil
     {

@@ -1,15 +1,15 @@
-﻿using HeartAndHavoc_GoblinLegacy.AI.AsyncProcessor;
+﻿using HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor;
 using HearthAndHavoc_GoblinLegacy;
-using HearthAndHavocGoblinLegacy.GameModel.Entity;
-using HearthAndHavocGoblinLegacy.GameModel.Map;
-using HearthAndHavocGoblinLegacy.Utility.Map;
+using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
+using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.Utility.Map;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace HearthAndHavocGoblinLegacy.AI.Action
+namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
     public class GoTo : BaseAction
     {

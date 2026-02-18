@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
-namespace HeartAndHavoc_GoblinLegacy.Utility
+namespace HearthAndHavoc_GoblinLegacy.Utility
 {
     public static class ContentLoader
     {

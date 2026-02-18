@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HearthAndHavocGoblinLegacy.Utility.AStar
+namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
 {
     public class Path : IComparable<Path>
     {

@@ -1,12 +1,12 @@
-﻿using HeartAndHavoc_GoblinLegacy.AI.AsyncProcessor;
+﻿using HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor;
 using HearthAndHavoc_GoblinLegacy;
-using HearthAndHavocGoblinLegacy.GameModel.Entity;
-using HearthAndHavocGoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
+using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using System;
 
-using static HeartAndHavoc_GoblinLegacy.AI.AsyncProcessor.ProcessorThread;
+using static HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor.ProcessorThread;
 
-namespace HearthAndHavocGoblinLegacy.AI.Action
+namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
     public abstract class BaseAction
     {

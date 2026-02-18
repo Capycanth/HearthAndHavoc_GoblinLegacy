@@ -1,4 +1,4 @@
-﻿namespace HeartAndHavoc_GoblinLegacy.AI.AsyncProcessor
+﻿namespace HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor
 {
     using System;
     using System.Collections.Concurrent;

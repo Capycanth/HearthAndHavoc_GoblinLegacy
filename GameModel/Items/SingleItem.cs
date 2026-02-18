@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace HeartAndHavoc_GoblinLegacy.GameModel.Items
+namespace HearthAndHavoc_GoblinLegacy.GameModel.Items
 {
     public class SingleItem : BaseItem
     {
