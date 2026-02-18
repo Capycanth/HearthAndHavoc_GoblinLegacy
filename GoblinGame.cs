@@ -43,8 +43,8 @@ namespace HearthAndHavoc_GoblinLegacy
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _graphics.PreferredBackBufferWidth = 2560;
-            _graphics.PreferredBackBufferHeight = 1440;
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
 
             _graphics.ApplyChanges();
 
@@ -58,7 +58,7 @@ namespace HearthAndHavoc_GoblinLegacy
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             ContentLoader.Initialize(Content);
-            world = Initializer.CreateTestWorld(100);
+            world = Initializer.CreateTestWorld(5);
         }
 
         protected override void Update(GameTime gameTime)
