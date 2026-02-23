@@ -1,7 +1,7 @@
-﻿using HeartAndHavoc_GoblinLegacy.AI.AsyncProcessor;
-using HeartAndHavoc_GoblinLegacy.Utility;
-using HearthAndHavocGoblinLegacy.GameModel.Map;
-using HearthAndHavocGoblinLegacy.Utility;
+﻿using HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor;
+using HearthAndHavoc_GoblinLegacy.Utility;
+using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

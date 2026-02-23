@@ -1,12 +1,12 @@
-﻿using HeartAndHavoc_GoblinLegacy.Utility;
-using HearthAndHavocGoblinLegacy.GameModel.Entity;
-using HearthAndHavocGoblinLegacy.GameModel.Map;
+﻿using HearthAndHavoc_GoblinLegacy.Utility;
+using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
+using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
-namespace HearthAndHavocGoblinLegacy.Utility
+namespace HearthAndHavoc_GoblinLegacy.Utility
 {
     public static class Initializer
     {

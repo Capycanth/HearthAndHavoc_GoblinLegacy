@@ -1,8 +1,8 @@
-﻿using HearthAndHavocGoblinLegacy.GameModel;
+﻿using HearthAndHavoc_GoblinLegacy.GameModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace HeartAndHavoc_GoblinLegacy.GameModel.Items
+namespace HearthAndHavoc_GoblinLegacy.GameModel.Items
 {
     public abstract class BaseItem : GameObject
     {

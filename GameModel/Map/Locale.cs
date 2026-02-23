@@ -1,8 +1,8 @@
-﻿using HearthAndHavocGoblinLegacy.GameModel.Entity;
+﻿using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
-namespace HearthAndHavocGoblinLegacy.GameModel.Map
+namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 {
     public class Locale
     {

@@ -1,9 +1,9 @@
-﻿using HearthAndHavocGoblinLegacy.GameModel.Map;
+﻿using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace HearthAndHavocGoblinLegacy.Utility.AStar
+namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
 {
     public class MapPathSolver : AbstractAStar<Point, Path>
     {

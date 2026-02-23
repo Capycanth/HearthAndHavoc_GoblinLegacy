@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace HearthAndHavocGoblinLegacy.GameModel
+namespace HearthAndHavoc_GoblinLegacy.GameModel
 {
     public abstract class GameObject
     {

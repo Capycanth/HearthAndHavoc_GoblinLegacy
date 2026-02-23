@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace HearthAndHavocGoblinLegacy.GameModel.Map
+namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 {
     public class MeterTile : GameObject
     {

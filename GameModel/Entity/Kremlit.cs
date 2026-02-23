@@ -1,13 +1,14 @@
-﻿using HeartAndHavoc_GoblinLegacy.GameModel.Items;
+﻿using HearthAndHavoc_GoblinLegacy.GameModel.Items;
 using HearthAndHavoc_GoblinLegacy;
-using HearthAndHavocGoblinLegacy.AI.Action;
+using HearthAndHavoc_GoblinLegacy.Enumeration;
+using HearthAndHavoc_GoblinLegacy.AI.Action;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace HearthAndHavocGoblinLegacy.GameModel.Entity
+namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
     public class Kremlit : GameObject
     {
@@ -16,6 +17,7 @@ namespace HearthAndHavocGoblinLegacy.GameModel.Entity
         public BaseAction CurrentAction { get; set; }
         private Random random = new();
         public List<BaseItem> Inventory { get; set; }
+        public Dictionary<NeedType, float> Needs { get; set; }
 
         public Kremlit(string id, Texture2D texture) : base(texture)
         {
