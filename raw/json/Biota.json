@@ -1,0 +1,17 @@
+{
+    "fauna": {
+        "birds": {},
+        "mammals": {
+            "deer": {},
+            "rabbit": {},
+            "wolf": {}
+        },
+        "reptiles": {}
+    },
+    "flora": {
+        "bushes": {},
+        "flowers": {},
+        "mushrooms": {},
+        "trees": {}
+    }
+}

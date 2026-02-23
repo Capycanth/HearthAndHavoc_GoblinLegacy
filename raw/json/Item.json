@@ -1,0 +1,76 @@
+{
+    "crafted": {
+        "clothing": {
+            "hat": {},
+            "pants": {},
+            "shirt": {},
+            "shoes": {}
+        },
+        "food": {
+            "prepared_fruit": {},
+            "prepared_meat": {},
+            "prepared_mushroom": {},
+            "prepared_vegetable": {}
+        },
+        "furniture": {
+            "bed": {},
+            "chair": {},
+            "table": {}
+        },
+        "tools": {
+            "axe": {},
+            "pickaxe": {},
+            "shears": {}
+        },
+        "water": {
+            "purified": {}
+        },
+        "weapons": {
+            "dagger": {},
+            "sling": {},
+            "spear": {}
+        }
+    },
+    "raw": {
+        "fruit": {
+            "apple": {},
+            "berry": {},
+            "melon": {}
+        },
+        "hide": {
+            "deer": {},
+            "rabbit": {},
+            "wolf": {}
+        },
+        "meat": {
+            "deer": {},
+            "rabbit": {},
+            "wolf": {}
+        },
+        "mushroom": {
+            "fly_agaric": {},
+            "oyster": {},
+            "shiitake": {}
+        },
+        "stone": {
+            "gneiss": {},
+            "granite": {},
+            "sandstone": {}
+        },
+        "vegetable": {
+            "carrot": {},
+            "potato": {},
+            "tomato": {}
+        },
+        "water": {
+            "lake": {},
+            "marsh": {},
+            "river": {}
+        },
+        "wood": {
+            "maple": {},
+            "oak": {},
+            "pine": {}
+        }
+    }
+}
