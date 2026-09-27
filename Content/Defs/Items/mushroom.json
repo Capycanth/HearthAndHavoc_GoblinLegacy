@@ -1,0 +1,5 @@
+[
+    {"key": "mushroom_fly_agaric", "label": "Fly Agaric", "tags": ["raw", "mushroom"]},
+    {"key": "mushroom_oyster", "label": "Oyster", "tags": ["raw", "mushroom"]},
+    {"key": "mushroom_shiitake", "label": "Shiitake", "tags": ["raw", "mushroom"]}
+]

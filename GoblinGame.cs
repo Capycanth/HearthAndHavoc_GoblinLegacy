@@ -1,4 +1,5 @@
 ﻿using HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor;
+using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.Utility;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using HearthAndHavoc_GoblinLegacy.Utility;
@@ -58,6 +59,7 @@ namespace HearthAndHavoc_GoblinLegacy
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             ContentLoader.Initialize(Content);
+            DefRegistry.Load();
             world = Initializer.CreateTestWorld(5);
         }
 

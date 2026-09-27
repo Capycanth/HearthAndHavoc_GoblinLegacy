@@ -1,0 +1,6 @@
+[
+    {"key": "clothing_hat", "label": "Hat", "tags": ["crafted", "clothing"]},
+    {"key": "clothing_pants", "label": "Pants", "tags": ["crafted", "clothing"]},
+    {"key": "clothing_shirt", "label": "Shirt", "tags": ["crafted", "clothing"]},
+    {"key": "clothing_shoes", "label": "Shoes", "tags": ["crafted", "clothing"]}
+]
