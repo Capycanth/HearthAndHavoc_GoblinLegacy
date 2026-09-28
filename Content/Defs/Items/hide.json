@@ -1,4 +1,5 @@
 [
+    {"key": "item_hide_boar", "label": "Boar", "tags": ["raw", "hide"], "weightKg": 5.0, "spoilDays": 3},
     {"key": "item_hide_deer", "label": "Deer", "tags": ["raw", "hide"], "weightKg": 4.0, "spoilDays": 3},
     {"key": "item_hide_rabbit", "label": "Rabbit", "tags": ["raw", "hide"], "weightKg": 0.1, "spoilDays": 3},
     {"key": "item_hide_wolf", "label": "Wolf", "tags": ["raw", "hide"], "weightKg": 2.0, "spoilDays": 3}

@@ -23,9 +23,10 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             AddTestPlants(locale, usedTiles);
 
             Random random = new();
-            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_rabbit", 30);
-            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_wolf", 10);
-            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_deer", 20);
+            AddTestAnimals(world, locale, random, usedTiles, "fauna_rabbit", 30);
+            AddTestAnimals(world, locale, random, usedTiles, "fauna_wolf", 10);
+            AddTestAnimals(world, locale, random, usedTiles, "fauna_deer", 20);
+            AddTestAnimals(world, locale, random, usedTiles, "fauna_boar", 8);
             return world;
         }
 
@@ -69,7 +70,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
         public static void AddTestAnimals(World world, Locale locale, Random random, HashSet<Point> usedTiles, string defKey, int count)
         {
-            BiotaDef def = DefRegistry.Get<BiotaDef>(defKey);
+            FaunaDef def = DefRegistry.Get<FaunaDef>(defKey);
             Texture2D texture = ContentLoader.GetTexture("Kremlit_Male");
 
             for (int i = 0; i < count; i++)

@@ -169,13 +169,15 @@ Species-level defs with every attribute the simulation needs.
 11. **FloraDef:** `BlocksMovement`, `Tint`, `GrowthStages` (a list of `{name, durationDays}`), `MaxFoliageGrams`, `FoliageRegrowGramsPerDay`, `FruitItem`, `FruitMaxCount`, `FruitRegrowDays`, `SpreadChance`, `SpreadRadius` and `LifespanDays`. Foliage is edible when `MaxFoliageGrams` is above 0, and fruit when `FruitItem` is set. Mushroom patches have no foliage and yield mushroom items as fruit. Per-stage textures are decided in Milestone 5.
 12. **ItemDef:** `WeightKg` per unit and `SpoilDays` (0 means it never spoils). No def stores kcal directly; energy comes from compositions (Milestone 4b).
 13. Phase 1 species: berry bush, apple tree, mushroom patch and dandelion (edible foliage, does not block movement), plus rabbit, deer, wolf and boar. The test spawns add dandelions and boars.
+14. Real durations are scaled into game days by one rule: game days = real days × 112 / 365, so a real year becomes one game year and every species keeps its real proportions. Sleep hours are not scaled, since a game day still has 24 hours.
 
 **PRs, in order**
 
 1. Record the decisions for Milestones 4 and 4b (this PR).
 2. Registry: the resolve pass, `Validate()` and the enum converter.
 3. `ItemDef` attributes.
-4. `FloraDef` and `FaunaDef` with species JSON, replacing `BiotaDef` in `Plant`, `Animal` and `Initializer`.
+4. `FloraDef` with species JSON, replacing `BiotaDef` in `Plant` and the test plants. `BiotaDef` stays for animals until PR 5.
+5. `FaunaDef` with species JSON, the boar's meat and hide items and the generated predator lists, replacing `BiotaDef` in `Animal` and the test animals, and removing `BiotaDef`.
 
 ---
 
