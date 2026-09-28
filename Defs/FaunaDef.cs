@@ -31,6 +31,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public int GestationDays { get; init; }
         public int LitterSize { get; init; }
         public List<string> DietKeys { get; init; }
+        public List<Enzyme> Enzymes { get; init; }
         public List<CarcassYield> CarcassYield { get; init; }
         public int[] Tint { get; init; }
 
@@ -119,6 +120,16 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             if (GestationDays <= 0 || LitterSize < 1)
             {
                 throw new InvalidDataException($"Def '{Key}' needs GestationDays above 0 and LitterSize of at least 1.");
+            }
+
+            if (Enzymes == null || Enzymes.Count == 0)
+            {
+                throw new InvalidDataException($"Def '{Key}' needs at least one enzyme.");
+            }
+
+            if (new HashSet<Enzyme>(Enzymes).Count != Enzymes.Count)
+            {
+                throw new InvalidDataException($"Def '{Key}' lists the same enzyme more than once.");
             }
 
             if (Diet.Count == 0)
