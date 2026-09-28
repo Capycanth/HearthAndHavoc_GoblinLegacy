@@ -26,6 +26,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             LoadFolder<BiotaDef>(Path.Combine(defsRoot, "Biota"));
             LoadFolder<TerrainDef>(Path.Combine(defsRoot, "Terrain"));
             LoadFolder<WaterDef>(Path.Combine(defsRoot, "Water"));
+            LoadFolder<CoverDef>(Path.Combine(defsRoot, "Cover"));
         }
 
         public static T Get<T>(string key) where T : Def

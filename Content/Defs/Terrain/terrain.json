@@ -1,7 +1,6 @@
 [
-    {"key": "terrain_grass", "label": "Grass", "passable": true, "moveCost": 1, "fertility": 70, "textureKey": "Tile_Grass", "tint": [255, 255, 255]},
-    {"key": "terrain_dirt", "label": "Dirt", "passable": true, "moveCost": 1, "fertility": 50, "textureKey": "Tile_Grass", "tint": [180, 130, 90]},
-    {"key": "terrain_sand", "label": "Sand", "passable": true, "moveCost": 2, "fertility": 15, "textureKey": "Tile_Grass", "tint": [240, 220, 150]},
-    {"key": "terrain_mud", "label": "Mud", "passable": true, "moveCost": 3, "fertility": 40, "textureKey": "Tile_Grass", "tint": [110, 85, 60]},
-    {"key": "terrain_rock", "label": "Rock", "passable": false, "moveCost": 1, "fertility": 1, "textureKey": "Tile_Grass", "tint": [130, 130, 130]}
+    {"key": "terrain_dirt", "label": "Dirt", "passable": true, "moveCost": 1, "textureKey": "Tile_Grass", "tint": [180, 130, 90]},
+    {"key": "terrain_sand", "label": "Sand", "passable": true, "moveCost": 2, "textureKey": "Tile_Grass", "tint": [240, 220, 150]},
+    {"key": "terrain_mud", "label": "Mud", "passable": true, "moveCost": 3, "textureKey": "Tile_Grass", "tint": [110, 85, 60]},
+    {"key": "terrain_rock", "label": "Rock", "passable": false, "moveCost": 1, "textureKey": "Tile_Grass", "tint": [130, 130, 130]}
 ]

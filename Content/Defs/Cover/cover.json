@@ -1,0 +1,4 @@
+[
+    {"key": "cover_grass", "label": "Grass", "maxBiomass": 1000, "textureKey": "Tile_Grass", "tint": [255, 255, 255]},
+    {"key": "cover_clover", "label": "Clover", "maxBiomass": 1000, "textureKey": "Tile_Grass", "tint": [150, 220, 150]}
+]
