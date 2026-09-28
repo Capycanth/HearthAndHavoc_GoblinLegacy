@@ -1,4 +1,7 @@
-﻿using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
+﻿using HearthAndHavoc_GoblinLegacy.Defs;
+using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
+using HearthAndHavoc_GoblinLegacy.Utility;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
@@ -8,9 +11,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
     {
         public string Id { get; private set; }
         public List<Kremlit> Kremlits { get; private set; }
-        public MeterTile[,] LocaleMap { get; private set; }
+        public TileMap LocaleMap { get; private set; }
 
-        public Locale(string id, List<Kremlit> kremlits, MeterTile[,] localeMap) 
+        public Locale(string id, List<Kremlit> kremlits, TileMap localeMap) 
         {
             Id = id;
             Kremlits = kremlits;
@@ -43,9 +46,35 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach (MeterTile tile in LocaleMap)
+            foreach (MapChunk chunk in LocaleMap.Chunks.Values)
             {
-                tile.Draw(spriteBatch);
+                int originX = chunk.ChunkCoord.X * MapChunk.Size;
+                int originY = chunk.ChunkCoord.Y * MapChunk.Size;
+
+                for (int y = 0; y < MapChunk.Size; y++)
+                {
+                    for (int x = 0; x < MapChunk.Size; x++)
+                    {
+                        string textureKey;
+                        Color tint;
+
+                        WaterDef water = chunk.Water[y, x];
+                        if (water != null)
+                        {
+                            textureKey = water.TextureKey;
+                            tint = water.TintColor;
+                        }
+                        else
+                        {
+                            TerrainDef ground = chunk.Ground[y, x];
+                            textureKey = ground.TextureKey;
+                            tint = ground.TintColor;
+                        }
+
+                        Vector2 pixelPosition = new Vector2((originX + x) * 16, (originY + y) * 16);
+                        spriteBatch.Draw(ContentLoader.GetTexture(textureKey), pixelPosition, tint);
+                    }
+                }
             }
 
             foreach (Kremlit kremlit in Kremlits)

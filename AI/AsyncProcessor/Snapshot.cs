@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework;
 
 namespace HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor
 {
-    public sealed class WorldSnapshot(MeterTile[,] localeMap)
+    public sealed class WorldSnapshot(TileMap localeMap)
     {
-        public MeterTile[,] LocaleMap { get; private set; } = localeMap;
+        public TileMap LocaleMap { get; private set; } = localeMap;
     }
 
     public sealed class KremlitSnapshot(Point position)

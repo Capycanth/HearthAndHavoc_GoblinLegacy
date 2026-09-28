@@ -6,12 +6,12 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
 {
     public class Path : IComparable<Path>
     {
-        public readonly int parentIndex;
+        public readonly Point? parent;
         public readonly int distanceTravelled; /*g(x)*/
         public readonly int totalCost; /*f(x)*/
-        public Path(int parentIndex, int distanceTravelled, int totalCost)
+        public Path(Point? parent, int distanceTravelled, int totalCost)
         {
-            this.parentIndex = parentIndex;
+            this.parent = parent;
             this.distanceTravelled = distanceTravelled;
             this.totalCost = totalCost;
         }
