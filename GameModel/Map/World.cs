@@ -34,8 +34,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
         public int NextCreatureId()
         {
-            lastCreatureId++;
-            return lastCreatureId;
+            return ++lastCreatureId;
         }
 
         public Locale GetCurrentLocale()
