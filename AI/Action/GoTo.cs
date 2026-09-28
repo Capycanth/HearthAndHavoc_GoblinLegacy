@@ -10,9 +10,14 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
     public class GoTo : BaseAction
     {
+        private const int MaxBlockedSteps = 3;
+        private const int MaxRepaths = 3;
+
         [AllowNull]
         private Stack<Point> PathTraversal { get; set; } = null;
         private Point _destination;
+        private int _blockedSteps = 0;
+        private int _repaths = 0;
 
         public GoTo(Point destination)
         {
@@ -36,8 +41,26 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 return true;
             }
 
-            creature.Position = PathTraversal.Pop();
-            return PathTraversal.Count == 0;
+            if (creature.Locale.MoveCreature(creature, PathTraversal.Peek()))
+            {
+                PathTraversal.Pop();
+                _blockedSteps = 0;
+                return PathTraversal.Count == 0;
+            }
+
+            _blockedSteps++;
+            if (_blockedSteps < MaxBlockedSteps) return false;
+
+            _blockedSteps = 0;
+            if (_repaths == MaxRepaths)
+            {
+                Debug.WriteLine($"GoTo gave up on {_destination} after {MaxRepaths} repaths");
+                return true;
+            }
+
+            _repaths++;
+            PathTraversal = null;
+            return false;
         }
 
         protected override (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature)

@@ -7,6 +7,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
     public class TileMap
     {
         public const byte MaxWadeDepth = 5;
+        public const byte TileCapacity = 100;
 
         public ConcurrentDictionary<Point, MapChunk> Chunks { get; private set; } = new();
 
@@ -51,6 +52,26 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             WaterDef water = chunk.Water[localY, localX];
             if (water != null) return water.MoveCost;
             return chunk.Ground[localY, localX].MoveCost;
+        }
+
+        public bool CanFit(Point tile, byte size)
+        {
+            if (!Chunks.TryGetValue(ToChunkCoord(tile), out MapChunk chunk)) return false;
+
+            int localX = tile.X & MapChunk.LocalMask;
+            int localY = tile.Y & MapChunk.LocalMask;
+
+            return chunk.Occupancy[localY, localX] + size <= TileCapacity;
+        }
+
+        public void AddOccupancy(Point tile, int amount)
+        {
+            MapChunk chunk = Chunks[ToChunkCoord(tile)];
+
+            int localX = tile.X & MapChunk.LocalMask;
+            int localY = tile.Y & MapChunk.LocalMask;
+
+            chunk.Occupancy[localY, localX] = (byte)(chunk.Occupancy[localY, localX] + amount);
         }
 
         public static Point ToChunkCoord(Point tile)

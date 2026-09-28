@@ -23,7 +23,9 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             for (int i = 0; i < count; i++)
             {
                 Texture2D texture = ContentLoader.GetTexture(i % 2 == 0 ? "Kremlit_Male" : "Kremlit_Female");
-                locale.Creatures.Add(new Kremlit(world.NextCreatureId(), locale, texture));
+                Kremlit kremlit = new(world.NextCreatureId(), locale, texture);
+                kremlit.Position = new Point(i + 1, 20);
+                locale.QueueAdd(kremlit);
             }
         }
 
