@@ -65,6 +65,28 @@ Replace the all-grass map with random walls with real terrain: ground types, wat
 9. How are the textures handled: one texture per terrain type, variations to break up repetition, or smooth transitions between neighboring types?
 10. Should the empty-path crash in `GoTo` and the unbounded A* search be fixed as part of this milestone, as their own small PR?
 
+**Decisions**
+
+1. Phase 1 terrain types: grass, dirt, sand, rock (impassable), shallow water (walkable, slow) and deep water (impassable).
+2. Terrain is a `TerrainDef` loaded from JSON in `Content/Defs/Terrain/`, like items and biota. It holds `Passable`, `MoveCost`, `Fertility`, `TextureKey` and a temporary `Tint` color.
+3. No procedural generation in this milestone; it becomes its own sub-milestone later. The starting area is grass with a few hard-coded shapes: a pond (deep water centre, shallow water ring, sand shore), a rock ridge and a dirt patch.
+4. Map seeding moves to the procedural sub-milestone. With hard-coded shapes there is nothing random to seed.
+5. Water is a terrain type. Both water types carry a `water` tag. Animals drink while standing in shallow water (tag `drinkable_here`) or from a tile next to deep water.
+6. Terrain affects movement. `MoveCost` multiplies the A* step cost (5 orthogonal, 7 diagonal). The cheapest terrain is 1×, so the A* distance estimate stays correct.
+7. `Fertility` is a `short` from 1 to 100 on `TerrainDef`. The rules for which plants grow where are decided in Milestone 5.
+8. The map is endless and built from 512×512 chunks, created the first time the camera nears them and never unloaded in Phase 1. Each chunk stores a `TerrainDef[512, 512]`, so tiles become plain data and `MeterTile` is removed. The chunked map belongs to `Locale`, so the starting area is one Locale that grows. New chunks are plain grass until procedural generation exists. A* treats tiles in chunks that don't exist yet as impassable.
+9. One texture per terrain type. Until those textures exist, each terrain draws the grass texture tinted with its `Tint` color.
+10. Three pathfinding bugs are fixed in their own PR: `GetTraversablePoints` checking the tiles around (0,0) instead of around the current point, the `GoTo` crash when no path is found, and the unbounded A* search, which gets a search limit. The mix of pixel and tile units in `MapUtil.GetAStarPathQueue` is left for later.
+11. A basic camera: drag with the left mouse button, zoom with the mouse wheel in whole steps from 1× to 4×, and no map edges. Only tiles inside the camera view are drawn. MonoGame's `SpriteBatch` does not skip off-screen sprites itself.
+
+**PRs, in order**
+
+1. Record these decisions (this PR).
+2. Pathfinding bug fixes.
+3. `TerrainDef`, the six terrain defs and the tinted placeholders.
+4. Chunked map replacing `MeterTile`, the hard-coded starting chunk, and terrain costs in A*.
+5. Camera: drag, zoom and drawing only the visible tiles.
+
 ---
 
 ## Milestone 3 — Creature and plant foundations
@@ -184,3 +206,4 @@ A population and stats readout, so we can tell whether the ecosystem holds stead
 Tasks that aren't tied to a milestone. They can be picked up any time after the milestone listed.
 
 - [ ] Include a SpriteFont for clock visualization (any time after Milestone 1).
+- [ ] Create a texture for each terrain type (grass, dirt, sand, rock, shallow water, deep water) to replace the tinted grass placeholders (any time after Milestone 2, PR 3).
