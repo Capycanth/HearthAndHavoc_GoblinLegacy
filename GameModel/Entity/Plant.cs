@@ -6,9 +6,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
     public class Plant : GameObject
     {
-        public BiotaDef Def { get; }
+        public FloraDef Def { get; }
 
-        public Plant(BiotaDef def, Point tile, Texture2D texture) : base(texture)
+        public Plant(FloraDef def, Point tile, Texture2D texture) : base(texture)
         {
             Def = def;
             Position = tile;
