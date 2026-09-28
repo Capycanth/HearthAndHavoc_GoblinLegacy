@@ -154,6 +154,50 @@ Species-level defs with every attribute the simulation needs.
 7. Which attributes vary per individual (for example size or speed within a range), and which are fixed per species?
 8. Is the omnivore (boar) in or out for Phase 1?
 
+**Decisions**
+
+1. Body values use real units (kcal, kg, liters). Life-cycle durations (lifespan, maturity, gestation, regrowth) use tuned game days, since a 112-day year is too short for real ones.
+2. `BiotaDef` is replaced by `FloraDef` (`Content/Defs/Flora/`) and `FaunaDef` (`Content/Defs/Fauna/`), with no shared base.
+3. Species defs replace the category defs. Fauna are tagged `herbivore`, `omnivore` or `carnivore`.
+4. Defs reference each other by key string in JSON. After all folders load, a resolve pass fills `[JsonIgnore]` def references and fails on unknown keys.
+5. Each def type has a `Validate()` that runs after the resolve pass and throws an `InvalidDataException` naming the def on bad values.
+6. All values are fixed per species; nothing varies per individual in Phase 1.
+7. Slow rates (growth, regrowth) are per game day. Fast rates (calorie burn, digestion) are per game hour. Rates are `float`; counts and durations are `int`. Enums are read from JSON as strings with `JsonStringEnumConverter`.
+8. **FaunaDef:** `Size` (volume, for occupancy), `BodyMassKg` (weight), `BasalKcalPerHour`, sleep, walk and run activity multipliers, `StomachCapacityKg`, `MaxFatKg`, `WaterLitersPerDay`, walk and run speed, `PerceptionRange`, `ActivityCycle` (diurnal, nocturnal or crepuscular, an enum), `SleepHoursPerDay`, `LifespanDays`, `MaturityDays`, `GestationDays`, `LitterSize`, `Diet` (a list of flora, fauna or cover keys), `CarcassYield` (item key and amount) and `Tint`.
+9. The diet decides what an animal will try to eat; enzymes (Milestone 4b) decide how much energy it gets from it. A carnivore ignores meat it has never learned to hunt, which is why invasive species with no natural predators thrive.
+10. Predators are not written in JSON. The resolve pass gives each fauna def a generated list of the fauna whose diet includes it, which drives fleeing. An explicit list can be added later for fear that isn't about being eaten.
+11. **FloraDef:** `BlocksMovement`, `Tint`, `GrowthStages` (a list of `{name, durationDays}`), `MaxFoliageGrams`, `FoliageRegrowGramsPerDay`, `FruitItem`, `FruitMaxCount`, `FruitRegrowDays`, `SpreadChance`, `SpreadRadius` and `LifespanDays`. Foliage is edible when `MaxFoliageGrams` is above 0, and fruit when `FruitItem` is set. Mushroom patches have no foliage and yield mushroom items as fruit. Per-stage textures are decided in Milestone 5.
+12. **ItemDef:** `WeightKg` per unit and `SpoilDays` (0 means it never spoils). No def stores kcal directly; energy comes from compositions (Milestone 4b).
+13. Phase 1 species: berry bush, apple tree, mushroom patch and dandelion (edible foliage, does not block movement), plus rabbit, deer, wolf and boar. The test spawns add dandelions and boars.
+
+**PRs, in order**
+
+1. Record the decisions for Milestones 4 and 4b (this PR).
+2. Registry: the resolve pass, `Validate()` and the enum converter.
+3. `ItemDef` attributes.
+4. `FloraDef` and `FaunaDef` with species JSON, replacing `BiotaDef` in `Plant`, `Animal` and `Initializer`.
+
+---
+
+## Milestone 4b — Digestion data
+
+Every edible substance is made of sub-substances, and each sub-substance needs exactly one enzyme to unlock its energy. A creature absorbs the sub-substances it has enzymes for and gets nothing from the rest, so the food chain comes from the data instead of hand-written rules.
+
+**Decisions**
+
+1. `Enzyme` and `Substance` are enums, each with all 7 values: amylase (simple carbs), cellulase (cellulose), chitinase (chitin), galactosidase (complex sugars), protease (protein), lipase (fat) and keratinase (keratin). A static table maps each substance to its enzyme and kcal per gram: 9 for fat and 4 for everything else.
+2. A `Composition` lists grams per 100 g: water as its own field and the substances in a map. The total may be at most 100 g; the remainder is inert (minerals, ash). Validation rejects totals over 100. Water is explicit because nutrition will take it into account.
+3. Compositions live on `CoverDef` (grazing), `FloraDef` (foliage) and `ItemDef` (fruit, mushrooms, meat, hide). Fauna are eaten through their carcass items.
+4. Cover biomass is measured in grams per tile.
+5. `FaunaDef` gains an `Enzymes` list. Rabbit and deer: amylase, cellulase, protease. Boar: amylase, protease, lipase, chitinase, galactosidase. Wolf: protease, lipase. Nothing has keratinase in Phase 1.
+6. This milestone adds data only. How much energy a creature extracts is calculated in Milestone 6.
+
+**PRs, in order**
+
+1. The enums and the substance table.
+2. `Composition` on `CoverDef`, `FloraDef` and `ItemDef`, with JSON values.
+3. Enzymes on `FaunaDef`.
+
 ---
 
 ## Milestone 5 — Flora simulation
