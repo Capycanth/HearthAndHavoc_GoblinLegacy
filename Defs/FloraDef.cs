@@ -26,6 +26,20 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         [JsonIgnore]
         public Color TintColor => new Color(Tint[0], Tint[1], Tint[2]);
 
+        [JsonIgnore]
+        public int FinalStageStartDays
+        {
+            get
+            {
+                int days = 0;
+                for (int i = 0; i < GrowthStages.Count - 1; i++)
+                {
+                    days += GrowthStages[i].DurationDays;
+                }
+                return days;
+            }
+        }
+
         public override void Resolve()
         {
             if (FruitItemKey != null)
@@ -105,6 +119,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             if (LifespanDays <= 0)
             {
                 throw new InvalidDataException($"Def '{Key}' has LifespanDays {LifespanDays}; it must be above 0.");
+            }
+
+            if (FinalStageStartDays >= LifespanDays)
+            {
+                throw new InvalidDataException($"Def '{Key}' reaches its final growth stage at day {FinalStageStartDays}; LifespanDays {LifespanDays} must be later than that.");
             }
         }
     }

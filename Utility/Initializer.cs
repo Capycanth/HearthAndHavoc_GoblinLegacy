@@ -1,4 +1,5 @@
 ﻿using HearthAndHavoc_GoblinLegacy.Defs;
+using HearthAndHavoc_GoblinLegacy.GameModel;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
@@ -15,14 +16,14 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
         public static World CreateTestWorld()
         {
             World world = new();
-            Locale locale = new("Locale1", CreateStartingMap());
+            Locale locale = new("Locale1", CreateStartingMap(), world.Clock);
             world.CurrentLocaleId = locale.Id;
             world.LocalesById.Add(locale.Id, locale);
 
-            HashSet<Point> usedTiles = new();
-            AddTestPlants(locale, usedTiles);
-
             Random random = new();
+            HashSet<Point> usedTiles = new();
+            AddTestPlants(locale, random, usedTiles);
+
             AddTestAnimals(world, locale, random, usedTiles, "fauna_rabbit", 30);
             AddTestAnimals(world, locale, random, usedTiles, "fauna_wolf", 10);
             AddTestAnimals(world, locale, random, usedTiles, "fauna_deer", 20);
@@ -30,7 +31,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             return world;
         }
 
-        public static void AddTestPlants(Locale locale, HashSet<Point> usedTiles)
+        public static void AddTestPlants(Locale locale, Random random, HashSet<Point> usedTiles)
         {
             FloraDef tree = DefRegistry.Get<FloraDef>("flora_apple_tree");
             FloraDef bush = DefRegistry.Get<FloraDef>("flora_berry_bush");
@@ -45,27 +46,36 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
             foreach (Point tile in treeTiles)
             {
-                locale.QueueAddPlant(new Plant(tree, tile, texture));
-                usedTiles.Add(tile);
+                AddTestPlant(locale, random, usedTiles, tree, tile, texture);
             }
 
             foreach (Point tile in bushTiles)
             {
-                locale.QueueAddPlant(new Plant(bush, tile, texture));
-                usedTiles.Add(tile);
+                AddTestPlant(locale, random, usedTiles, bush, tile, texture);
             }
 
             foreach (Point tile in mushroomTiles)
             {
-                locale.QueueAddPlant(new Plant(mushroom, tile, texture));
-                usedTiles.Add(tile);
+                AddTestPlant(locale, random, usedTiles, mushroom, tile, texture);
             }
 
             foreach (Point tile in dandelionTiles)
             {
-                locale.QueueAddPlant(new Plant(dandelion, tile, texture));
-                usedTiles.Add(tile);
+                AddTestPlant(locale, random, usedTiles, dandelion, tile, texture);
             }
+        }
+
+        private static void AddTestPlant(Locale locale, Random random, HashSet<Point> usedTiles, FloraDef def, Point tile, Texture2D texture)
+        {
+            int ageDays = random.Next(def.FinalStageStartDays, def.LifespanDays);
+            int birthTick = locale.Clock.TotalTicks - ageDays * SimClock.MinutesPerDay;
+
+            Plant plant = new(def, locale, tile, birthTick, texture);
+            plant.FoliageGrams = def.MaxFoliageGrams;
+            plant.FruitCount = def.FruitMaxCount;
+
+            locale.QueueAddPlant(plant);
+            usedTiles.Add(tile);
         }
 
         public static void AddTestAnimals(World world, Locale locale, Random random, HashSet<Point> usedTiles, string defKey, int count)
