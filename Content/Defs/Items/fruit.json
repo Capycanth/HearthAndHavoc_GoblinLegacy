@@ -1,5 +1,5 @@
 [
-    {"key": "fruit_apple", "label": "Apple", "tags": ["raw", "fruit"]},
-    {"key": "fruit_berry", "label": "Berry", "tags": ["raw", "fruit"]},
-    {"key": "fruit_melon", "label": "Melon", "tags": ["raw", "fruit"]}
+    {"key": "item_fruit_apple", "label": "Apple", "tags": ["raw", "fruit"]},
+    {"key": "item_fruit_berry", "label": "Berry", "tags": ["raw", "fruit"]},
+    {"key": "item_fruit_melon", "label": "Melon", "tags": ["raw", "fruit"]}
 ]

@@ -1,5 +1,5 @@
 [
-    {"key": "wood_maple", "label": "Maple", "tags": ["raw", "wood"]},
-    {"key": "wood_oak", "label": "Oak", "tags": ["raw", "wood"]},
-    {"key": "wood_pine", "label": "Pine", "tags": ["raw", "wood"]}
+    {"key": "item_wood_maple", "label": "Maple", "tags": ["raw", "wood"]},
+    {"key": "item_wood_oak", "label": "Oak", "tags": ["raw", "wood"]},
+    {"key": "item_wood_pine", "label": "Pine", "tags": ["raw", "wood"]}
 ]

@@ -1,5 +1,5 @@
 [
-    {"key": "furniture_bed", "label": "Bed", "tags": ["crafted", "furniture"]},
-    {"key": "furniture_chair", "label": "Chair", "tags": ["crafted", "furniture"]},
-    {"key": "furniture_table", "label": "Table", "tags": ["crafted", "furniture"]}
+    {"key": "item_furniture_bed", "label": "Bed", "tags": ["crafted", "furniture"]},
+    {"key": "item_furniture_chair", "label": "Chair", "tags": ["crafted", "furniture"]},
+    {"key": "item_furniture_table", "label": "Table", "tags": ["crafted", "furniture"]}
 ]

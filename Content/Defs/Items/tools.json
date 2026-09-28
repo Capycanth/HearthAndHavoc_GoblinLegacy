@@ -1,5 +1,5 @@
 [
-    {"key": "tools_axe", "label": "Axe", "tags": ["crafted", "tools"]},
-    {"key": "tools_pickaxe", "label": "Pickaxe", "tags": ["crafted", "tools"]},
-    {"key": "tools_shears", "label": "Shears", "tags": ["crafted", "tools"]}
+    {"key": "item_tools_axe", "label": "Axe", "tags": ["crafted", "tools"]},
+    {"key": "item_tools_pickaxe", "label": "Pickaxe", "tags": ["crafted", "tools"]},
+    {"key": "item_tools_shears", "label": "Shears", "tags": ["crafted", "tools"]}
 ]

@@ -1,6 +1,6 @@
 [
-    {"key": "water_purified", "label": "Purified", "tags": ["crafted", "water"]},
-    {"key": "water_lake", "label": "Lake", "tags": ["raw", "water"]},
-    {"key": "water_marsh", "label": "Marsh", "tags": ["raw", "water"]},
-    {"key": "water_river", "label": "River", "tags": ["raw", "water"]}
+    {"key": "item_water_purified", "label": "Purified", "tags": ["crafted", "water"]},
+    {"key": "item_water_lake", "label": "Lake", "tags": ["raw", "water"]},
+    {"key": "item_water_marsh", "label": "Marsh", "tags": ["raw", "water"]},
+    {"key": "item_water_river", "label": "River", "tags": ["raw", "water"]}
 ]
