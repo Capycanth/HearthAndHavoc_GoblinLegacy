@@ -20,7 +20,11 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
                 {
                     if (x == 0 && y == 0) continue;
 
-                    if (!map[y,x].Impassible) traversablePoints.Add(new Point(x, y));
+                    int neighbourX = currentPoint.X + x;
+                    int neighbourY = currentPoint.Y + y;
+                    if (neighbourX < 0 || neighbourX >= map.GetLength(1) || neighbourY < 0 || neighbourY >= map.GetLength(0)) continue;
+
+                    if (!map[neighbourY, neighbourX].Impassible) traversablePoints.Add(new Point(x, y));
                 }
             }
             return traversablePoints;
