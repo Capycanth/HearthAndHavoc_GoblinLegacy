@@ -67,23 +67,24 @@ Replace the all-grass map with random walls with real terrain: ground types, wat
 
 **Decisions**
 
-1. Phase 1 terrain types: grass, dirt, sand, rock (impassable), shallow water (walkable, slow) and deep water (impassable).
-2. Terrain is a `TerrainDef` loaded from JSON in `Content/Defs/Terrain/`, like items and biota. It holds `Passable`, `MoveCost`, `Fertility`, `TextureKey` and a temporary `Tint` color.
-3. No procedural generation in this milestone; it becomes its own sub-milestone later. The starting area is grass with a few hard-coded shapes: a pond (deep water centre, shallow water ring, sand shore), a rock ridge and a dirt patch.
+1. Phase 1 ground types: grass, dirt, sand, mud and rock (impassable). Water is not a ground type (see 5).
+2. Ground is a `TerrainDef` loaded from JSON in `Content/Defs/Terrain/`, like items and biota. It holds `Passable`, `MoveCost`, `Fertility`, `TextureKey` and a temporary `Tint` color (`[R, G, B]` in JSON).
+3. No procedural generation in this milestone; it becomes its own sub-milestone later. The starting area is grass with a few hard-coded shapes: a lake-water pond (deeper toward its centre, on a sand shore), a rock ridge and a dirt patch.
 4. Map seeding moves to the procedural sub-milestone. With hard-coded shapes there is nothing random to seed.
-5. Water is a terrain type. Both water types carry a `water` tag. Animals drink while standing in shallow water (tag `drinkable_here`) or from a tile next to deep water.
-6. Terrain affects movement. `MoveCost` multiplies the A* step cost (5 orthogonal, 7 diagonal). The cheapest terrain is 1×, so the A* distance estimate stays correct.
+5. Water is an optional layer on top of the ground, described by a `WaterDef` loaded from `Content/Defs/Water/`: salt, swamp, lake and river. A `WaterDef` holds `Drinkable`, `Quality` (a `short` from 1 to 100), `MoveCost` and a temporary `Tint`. Each water tile also has a depth in tenths of a meter (a `byte`, 0 to 25.5 m). Until the heightmap exists, all ground is level and the water surface is level with the ground. A tile is passable when its ground is passable and it is dry or no deeper than a wading limit of 0.5 m; the limit becomes per creature in Milestone 7.
+6. Terrain affects movement. `MoveCost` multiplies the A* step cost (5 orthogonal, 7 diagonal). On a water tile the water's `MoveCost` replaces the ground's. The cheapest cost is 1×, so the A* distance estimate stays correct.
 7. `Fertility` is a `short` from 1 to 100 on `TerrainDef`. The rules for which plants grow where are decided in Milestone 5.
-8. The map is endless and built from 512×512 chunks, created the first time the camera nears them and never unloaded in Phase 1. Each chunk stores a `TerrainDef[512, 512]`, so tiles become plain data and `MeterTile` is removed. The chunked map belongs to `Locale`, so the starting area is one Locale that grows. New chunks are plain grass until procedural generation exists. A* treats tiles in chunks that don't exist yet as impassable.
-9. One texture per terrain type. Until those textures exist, each terrain draws the grass texture tinted with its `Tint` color.
+8. The map is endless and built from 512×512 chunks, created the first time the camera nears them and never unloaded in Phase 1. Each chunk stores a `TerrainDef[512, 512]` for ground, a `WaterDef[512, 512]` for water (`null` means dry) and a `byte[512, 512]` for water depth, so tiles become plain data and `MeterTile` is removed. The chunked map belongs to `Locale`, so the starting area is one Locale that grows. New chunks are plain grass until procedural generation exists. A* treats tiles in chunks that don't exist yet as impassable.
+9. One texture per ground and water type. Until those textures exist, each draws the grass texture tinted with its `Tint` color.
 10. Three pathfinding bugs are fixed in their own PR: `GetTraversablePoints` checking the tiles around (0,0) instead of around the current point, the `GoTo` crash when no path is found, and the unbounded A* search, which gets a search limit. The mix of pixel and tile units in `MapUtil.GetAStarPathQueue` is left for later.
 11. A basic camera: drag with the left mouse button, zoom with the mouse wheel in whole steps from 1× to 4×, and no map edges. Only tiles inside the camera view are drawn. MonoGame's `SpriteBatch` does not skip off-screen sprites itself.
+12. Height (Z) is a heightmap, one height per tile, added with the procedural sub-milestone. Walking up or down costs more and a drop bigger than one step blocks movement. How height is shown on screen is decided later.
 
 **PRs, in order**
 
 1. Record these decisions (this PR).
 2. Pathfinding bug fixes.
-3. `TerrainDef`, the six terrain defs and the tinted placeholders.
+3. `TerrainDef` and `WaterDef` with their JSON defs and tint colors, plus the `GetCalculatedPath` crash fix (a search ending on the start tile).
 4. Chunked map replacing `MeterTile`, the hard-coded starting chunk, and terrain costs in A*.
 5. Camera: drag, zoom and drawing only the visible tiles.
 
@@ -206,4 +207,5 @@ A population and stats readout, so we can tell whether the ecosystem holds stead
 Tasks that aren't tied to a milestone. They can be picked up any time after the milestone listed.
 
 - [ ] Include a SpriteFont for clock visualization (any time after Milestone 1).
-- [ ] Create a texture for each terrain type (grass, dirt, sand, rock, shallow water, deep water) to replace the tinted grass placeholders (any time after Milestone 2, PR 3).
+- [ ] Create a texture for each ground type (grass, dirt, sand, mud, rock) and water type (salt, swamp, lake, river) to replace the tinted grass placeholders (any time after Milestone 2, PR 3).
+- [ ] Decide how tile height is shown on the map (after the heightmap lands in the procedural sub-milestone).

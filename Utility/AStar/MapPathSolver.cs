@@ -77,13 +77,12 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
             Point pos = solution.Value.position;
             Path path = solution.Value.cost;
             fastestPath.Push(pos);
-            do
+            while (path.parentIndex >= 0)
             {
                 pos = ToPosition(path.parentIndex);
                 path = closedList[pos];
                 fastestPath.Push(pos);
             }
-            while (path.parentIndex >= 0);
 
             return fastestPath;
         }
