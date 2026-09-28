@@ -38,6 +38,14 @@ Map ticks to game minutes, hours and days, so every rate in the defs has a unit.
 3. Where does the clock live: on `World`, on `GoblinGame`, or as its own class?
 4. Should the existing 0.5×–10× speed control stay as it is, or also offer pause and fixed speeds?
 
+**Decisions**
+
+1. 1 tick = 1 game minute. Time is compressed: biology (metabolism, growth) uses game time, while movement speeds are tuned to look natural on screen rather than being realistic per minute.
+2. The clock tracks seasons now, since flora and fauna life cycles will use them. 28 days per season, 4 seasons per year (112-day year). A new world starts at Spring, day 1, 06:00, year 1.
+3. The clock is its own class, `SimClock`, owned by `World`. It stores one value, total ticks, and derives minute, hour, day, season and year from it. `World.Update()` advances it once per tick, before any locale updates. Real-time pacing (speed and the tick accumulator) stays in `GoblinGame`.
+4. Speed uses fixed steps of 1×, 2× and 5×. Right Ctrl steps up and Left Ctrl steps down. P toggles pause. 5× is the top speed for now; faster speeds (several ticks per frame) are left for Milestone 9.
+5. Pacing bugs in the tick loop (lost leftover time, speed applied to the accumulated time, truncated frame milliseconds) were fixed in PR #5.
+
 ---
 
 ## Milestone 2 — Map
@@ -168,3 +176,11 @@ A population and stats readout, so we can tell whether the ecosystem holds stead
 3. Should clicking an animal or plant show its current state and action?
 4. Is a camera (pan and zoom) needed to watch a larger map, since the current view is fixed at 4× scale?
 5. What does "stable" mean for Phase 1, for example all species surviving N game days?
+
+---
+
+## Supplemental work
+
+Tasks that aren't tied to a milestone. They can be picked up any time after the milestone listed.
+
+- [ ] Include a SpriteFont for clock visualization (any time after Milestone 1).

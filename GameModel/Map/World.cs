@@ -7,14 +7,18 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
     {
         public string CurrentLocaleId { get; set; }
         public Dictionary<string, Locale> LocalesById { get; private set; }
+        public SimClock Clock { get; private set; }
 
-        public World() 
-        { 
+        public World()
+        {
             LocalesById = [];
+            Clock = new SimClock(6 * SimClock.MinutesPerHour);
         }
 
         public void Update()
         {
+            Clock.Advance();
+
             foreach (Locale locale in LocalesById.Values)
             {
                 locale.Update(CurrentLocaleId);

@@ -21,7 +21,9 @@ namespace HearthAndHavoc_GoblinLegacy
         private readonly int gameTickMs = 200;
 
         // Game Settings
-        private float gameSpeed = 1f;
+        private readonly float[] gameSpeeds = [1f, 2f, 5f];
+        private int gameSpeedIndex = 0;
+        private bool isPaused = false;
 
         // Dynamic Variables
         private double timeSinceLastTickMs = 0;
@@ -70,20 +72,26 @@ namespace HearthAndHavoc_GoblinLegacy
 
             if (currKeyBoardState.IsKeyDown(Keys.Escape))
                 Exit();
-            if (currKeyBoardState.IsKeyDown(Keys.RightControl) && prevKeyBoardState.IsKeyUp(Keys.RightControl) && gameSpeed < 10)
+            if (currKeyBoardState.IsKeyDown(Keys.RightControl) && prevKeyBoardState.IsKeyUp(Keys.RightControl) && gameSpeedIndex < gameSpeeds.Length - 1)
             {
-                gameSpeed += 0.5f;
-                Debug.WriteLine($"Game Speed set to X{gameSpeed}");
-            } 
-            if (currKeyBoardState.IsKeyDown(Keys.LeftControl) && prevKeyBoardState.IsKeyUp(Keys.LeftControl) && gameSpeed != 0)
+                gameSpeedIndex++;
+                Debug.WriteLine($"Game Speed set to X{gameSpeeds[gameSpeedIndex]}");
+            }
+            if (currKeyBoardState.IsKeyDown(Keys.LeftControl) && prevKeyBoardState.IsKeyUp(Keys.LeftControl) && gameSpeedIndex > 0)
             {
-                gameSpeed -= 0.5f;
-                Debug.WriteLine($"Game Speed set to X{gameSpeed}");
+                gameSpeedIndex--;
+                Debug.WriteLine($"Game Speed set to X{gameSpeeds[gameSpeedIndex]}");
+            }
+            if (currKeyBoardState.IsKeyDown(Keys.P) && prevKeyBoardState.IsKeyUp(Keys.P))
+            {
+                isPaused = !isPaused;
+                Debug.WriteLine(isPaused ? "Game Paused" : "Game Unpaused");
             }
             if (currKeyBoardState.IsKeyDown(Keys.Space) && prevKeyBoardState.IsKeyUp(Keys.Space))
                 _graphics.ToggleFullScreen();
 
-            timeSinceLastTickMs += gameTime.ElapsedGameTime.TotalMilliseconds * gameSpeed;
+            if (!isPaused)
+                timeSinceLastTickMs += gameTime.ElapsedGameTime.TotalMilliseconds * gameSpeeds[gameSpeedIndex];
             if (timeSinceLastTickMs < gameTickMs) return;
             else 
             {
