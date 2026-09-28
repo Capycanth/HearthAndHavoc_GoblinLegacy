@@ -1,6 +1,6 @@
 [
-    {"key": "food_prepared_fruit", "label": "Prepared Fruit", "tags": ["crafted", "food"]},
-    {"key": "food_prepared_meat", "label": "Prepared Meat", "tags": ["crafted", "food"]},
-    {"key": "food_prepared_mushroom", "label": "Prepared Mushroom", "tags": ["crafted", "food"]},
-    {"key": "food_prepared_vegetable", "label": "Prepared Vegetable", "tags": ["crafted", "food"]}
+    {"key": "item_food_prepared_fruit", "label": "Prepared Fruit", "tags": ["crafted", "food"]},
+    {"key": "item_food_prepared_meat", "label": "Prepared Meat", "tags": ["crafted", "food"]},
+    {"key": "item_food_prepared_mushroom", "label": "Prepared Mushroom", "tags": ["crafted", "food"]},
+    {"key": "item_food_prepared_vegetable", "label": "Prepared Vegetable", "tags": ["crafted", "food"]}
 ]

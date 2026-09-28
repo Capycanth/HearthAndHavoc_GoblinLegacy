@@ -1,6 +1,6 @@
 [
-    {"key": "flora_bushes", "label": "Bushes", "tags": ["flora"]},
-    {"key": "flora_flowers", "label": "Flowers", "tags": ["flora"]},
-    {"key": "flora_mushrooms", "label": "Mushrooms", "tags": ["flora"]},
-    {"key": "flora_trees", "label": "Trees", "tags": ["flora"]}
+    {"key": "biota_flora_bushes", "label": "Bushes", "tags": ["flora"]},
+    {"key": "biota_flora_flowers", "label": "Flowers", "tags": ["flora"]},
+    {"key": "biota_flora_mushrooms", "label": "Mushrooms", "tags": ["flora"]},
+    {"key": "biota_flora_trees", "label": "Trees", "tags": ["flora"]}
 ]

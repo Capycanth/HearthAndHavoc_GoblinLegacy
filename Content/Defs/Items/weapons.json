@@ -1,5 +1,5 @@
 [
-    {"key": "weapons_dagger", "label": "Dagger", "tags": ["crafted", "weapons"]},
-    {"key": "weapons_sling", "label": "Sling", "tags": ["crafted", "weapons"]},
-    {"key": "weapons_spear", "label": "Spear", "tags": ["crafted", "weapons"]}
+    {"key": "item_weapons_dagger", "label": "Dagger", "tags": ["crafted", "weapons"]},
+    {"key": "item_weapons_sling", "label": "Sling", "tags": ["crafted", "weapons"]},
+    {"key": "item_weapons_spear", "label": "Spear", "tags": ["crafted", "weapons"]}
 ]

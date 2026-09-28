@@ -1,5 +1,5 @@
 [
-    {"key": "vegetable_carrot", "label": "Carrot", "tags": ["raw", "vegetable"]},
-    {"key": "vegetable_potato", "label": "Potato", "tags": ["raw", "vegetable"]},
-    {"key": "vegetable_tomato", "label": "Tomato", "tags": ["raw", "vegetable"]}
+    {"key": "item_vegetable_carrot", "label": "Carrot", "tags": ["raw", "vegetable"]},
+    {"key": "item_vegetable_potato", "label": "Potato", "tags": ["raw", "vegetable"]},
+    {"key": "item_vegetable_tomato", "label": "Tomato", "tags": ["raw", "vegetable"]}
 ]
