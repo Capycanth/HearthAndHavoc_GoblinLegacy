@@ -12,7 +12,8 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
+            UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+            Converters = { new JsonStringEnumConverter(allowIntegerValues: false) }
         };
 
         private static readonly List<Def> DefsByIndex = new();
@@ -27,6 +28,23 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             LoadFolder<TerrainDef>(Path.Combine(defsRoot, "Terrain"));
             LoadFolder<WaterDef>(Path.Combine(defsRoot, "Water"));
             LoadFolder<CoverDef>(Path.Combine(defsRoot, "Cover"));
+
+            foreach (Def def in DefsByIndex)
+            {
+                try
+                {
+                    def.Resolve();
+                }
+                catch (Exception e) when (e is KeyNotFoundException || e is InvalidCastException)
+                {
+                    throw new InvalidDataException($"Def '{def.Key}' could not be resolved: {e.Message}", e);
+                }
+            }
+
+            foreach (Def def in DefsByIndex)
+            {
+                def.Validate();
+            }
         }
 
         public static T Get<T>(string key) where T : Def
