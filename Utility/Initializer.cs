@@ -23,9 +23,9 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             AddTestPlants(locale, usedTiles);
 
             Random random = new();
-            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_rabbit", 30, 5);
-            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_wolf", 10, 30);
-            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_deer", 20, 50);
+            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_rabbit", 30);
+            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_wolf", 10);
+            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_deer", 20);
             return world;
         }
 
@@ -51,7 +51,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             }
         }
 
-        public static void AddTestAnimals(World world, Locale locale, Random random, HashSet<Point> usedTiles, string defKey, int count, byte size)
+        public static void AddTestAnimals(World world, Locale locale, Random random, HashSet<Point> usedTiles, string defKey, int count)
         {
             BiotaDef def = DefRegistry.Get<BiotaDef>(defKey);
             Texture2D texture = ContentLoader.GetTexture("Kremlit_Male");
@@ -66,7 +66,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
 
                 usedTiles.Add(tile);
-                Animal animal = new(world.NextCreatureId(), def, size, locale, texture);
+                Animal animal = new(world.NextCreatureId(), def, def.Size, locale, texture);
                 animal.Position = tile;
                 locale.QueueAdd(animal);
             }

@@ -6,6 +6,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
     public class BiotaDef : Def
     {
         public bool BlocksMovement { get; init; }
+        public byte Size { get; init; }
         public int[] Tint { get; init; }
 
         [JsonIgnore]

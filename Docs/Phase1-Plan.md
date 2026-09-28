@@ -114,7 +114,7 @@ A shared base for anything that acts (animals now, Kremlits later) and a plant e
 8. Each tile draws only its top layer: water if present, otherwise cover if present, otherwise ground. This avoids drawing covered tiles twice.
 9. A tile holds at most one plant entity. Placing a plant destroys the cover under it, so plants always stand on bare dirt.
 10. `BiotaDef` gains `BlocksMovement`, true for trees and bushes for now, and a temporary `Tint` that colours plants and animals until they have textures. `IsPassable` checks the plant on the tile, so blocking stays a plain array read for A*.
-11. Creatures share tiles up to a size capacity of 100 per tile. Sizes: rabbit 5, wolf 30, deer 50. Occupancy is a `byte` because the capacity check keeps a tile's total at or below 100; capacity must stay at or below 255.
+11. Creatures share tiles up to a size capacity of 100 per tile. Sizes: rabbit 5, wolf 30, deer 50, stored as `Size` on `BiotaDef`. Occupancy is a `byte` because the capacity check keeps a tile's total at or below 100; capacity must stay at or below 255.
 12. A* ignores occupancy and plans around static blockers only. Capacity is checked when stepping: a creature facing a full tile waits, and after 3 blocked ticks in a row it drops its path and repaths. After 3 repaths, `GoTo` gives up and ends, so the creature chooses a new action.
 13. All movement goes through `Locale.MoveCreature(creature, tile)`, which checks capacity, updates occupancy and grid cells, then sets `Position`.
 14. Creatures are indexed in a 32×32-tile grid on `Locale`, a `Dictionary<Point, List<Creature>>` keyed by cell. Plants use the chunk plant array instead. `Locale.Draw` draws only creatures in the cells the camera sees.
