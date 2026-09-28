@@ -3,29 +3,72 @@ using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace HearthAndHavoc_GoblinLegacy.Utility
 {
     public static class Initializer
     {
-        public static World CreateTestWorld(int kremlitCount)
+        private const int AnimalSpawnAreaSize = 64;
+
+        public static World CreateTestWorld()
         {
             World world = new();
             Locale locale = new("Locale1", CreateStartingMap());
             world.CurrentLocaleId = locale.Id;
             world.LocalesById.Add(locale.Id, locale);
-            AddTestKremlits(world, locale, kremlitCount);
+
+            HashSet<Point> usedTiles = new();
+            AddTestPlants(locale, usedTiles);
+
+            Random random = new();
+            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_rabbit", 30, 5);
+            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_wolf", 10, 30);
+            AddTestAnimals(world, locale, random, usedTiles, "biota_mammals_deer", 20, 50);
             return world;
         }
 
-        public static void AddTestKremlits(World world, Locale locale, int count)
+        public static void AddTestPlants(Locale locale, HashSet<Point> usedTiles)
         {
+            BiotaDef tree = DefRegistry.Get<BiotaDef>("biota_flora_trees");
+            BiotaDef bush = DefRegistry.Get<BiotaDef>("biota_flora_bushes");
+            Texture2D texture = ContentLoader.GetTexture("Tile_Grass");
+
+            Point[] treeTiles = [new(30, 4), new(33, 7), new(29, 9)];
+            Point[] bushTiles = [new(40, 14), new(43, 16), new(12, 24), new(18, 28)];
+
+            foreach (Point tile in treeTiles)
+            {
+                locale.QueueAddPlant(new Plant(tree, tile, texture));
+                usedTiles.Add(tile);
+            }
+
+            foreach (Point tile in bushTiles)
+            {
+                locale.QueueAddPlant(new Plant(bush, tile, texture));
+                usedTiles.Add(tile);
+            }
+        }
+
+        public static void AddTestAnimals(World world, Locale locale, Random random, HashSet<Point> usedTiles, string defKey, int count, byte size)
+        {
+            BiotaDef def = DefRegistry.Get<BiotaDef>(defKey);
+            Texture2D texture = ContentLoader.GetTexture("Kremlit_Male");
+
             for (int i = 0; i < count; i++)
             {
-                Texture2D texture = ContentLoader.GetTexture(i % 2 == 0 ? "Kremlit_Male" : "Kremlit_Female");
-                Kremlit kremlit = new(world.NextCreatureId(), locale, texture);
-                kremlit.Position = new Point(i + 1, 20);
-                locale.QueueAdd(kremlit);
+                Point tile;
+                do
+                {
+                    tile = new Point(random.Next(AnimalSpawnAreaSize), random.Next(AnimalSpawnAreaSize));
+                }
+                while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
+
+                usedTiles.Add(tile);
+                Animal animal = new(world.NextCreatureId(), def, size, locale, texture);
+                animal.Position = tile;
+                locale.QueueAdd(animal);
             }
         }
 

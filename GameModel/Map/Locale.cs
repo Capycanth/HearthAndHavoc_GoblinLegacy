@@ -20,6 +20,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         private readonly Dictionary<Point, List<Creature>> creatureCells = new();
         private readonly List<Creature> pendingAdds = new();
         private readonly List<Creature> pendingRemoves = new();
+        private readonly List<Plant> pendingPlantAdds = new();
+        private readonly List<Plant> pendingPlantRemoves = new();
         private readonly List<Creature> visibleCreatures = new();
 
         public Locale(string id, TileMap localeMap) 
@@ -64,8 +66,50 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             pendingRemoves.Add(creature);
         }
 
+        public void QueueAddPlant(Plant plant)
+        {
+            pendingPlantAdds.Add(plant);
+        }
+
+        public void QueueRemovePlant(Plant plant)
+        {
+            pendingPlantRemoves.Add(plant);
+        }
+
         private void ProcessPending()
         {
+            foreach (Plant plant in pendingPlantRemoves)
+            {
+                MapChunk chunk = LocaleMap.Chunks[TileMap.ToChunkCoord(plant.Position)];
+                int localX = plant.Position.X & MapChunk.LocalMask;
+                int localY = plant.Position.Y & MapChunk.LocalMask;
+
+                if (chunk.Plants[localY, localX] == plant) chunk.Plants[localY, localX] = null;
+            }
+            pendingPlantRemoves.Clear();
+
+            foreach (Plant plant in pendingPlantAdds)
+            {
+                if (!LocaleMap.Chunks.TryGetValue(TileMap.ToChunkCoord(plant.Position), out MapChunk chunk))
+                {
+                    Debug.WriteLine($"Plant {plant.Def.Key} was not added: no chunk at {plant.Position}");
+                    continue;
+                }
+
+                int localX = plant.Position.X & MapChunk.LocalMask;
+                int localY = plant.Position.Y & MapChunk.LocalMask;
+
+                if (chunk.Plants[localY, localX] != null)
+                {
+                    Debug.WriteLine($"Plant {plant.Def.Key} was not added: tile {plant.Position} already has a plant");
+                    continue;
+                }
+
+                chunk.SetCover(localX, localY, null);
+                chunk.Plants[localY, localX] = plant;
+            }
+            pendingPlantAdds.Clear();
+
             foreach (Creature creature in pendingRemoves)
             {
                 if (!creatures.Remove(creature)) continue;
@@ -187,6 +231,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
                     Vector2 pixelPosition = new Vector2(tileX * 16, tileY * 16);
                     spriteBatch.Draw(ContentLoader.GetTexture(textureKey), pixelPosition, tint);
+
+                    chunk.Plants[localY, localX]?.Draw(spriteBatch);
                 }
             }
 

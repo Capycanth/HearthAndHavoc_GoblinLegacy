@@ -1,5 +1,5 @@
 [
-    {"key": "biota_mammals_deer", "label": "Deer", "tags": ["fauna", "mammals"]},
-    {"key": "biota_mammals_rabbit", "label": "Rabbit", "tags": ["fauna", "mammals"]},
-    {"key": "biota_mammals_wolf", "label": "Wolf", "tags": ["fauna", "mammals"]}
+    {"key": "biota_mammals_deer", "label": "Deer", "tags": ["fauna", "mammals"], "blocksMovement": false, "tint": [190, 140, 90]},
+    {"key": "biota_mammals_rabbit", "label": "Rabbit", "tags": ["fauna", "mammals"], "blocksMovement": false, "tint": [220, 220, 220]},
+    {"key": "biota_mammals_wolf", "label": "Wolf", "tags": ["fauna", "mammals"], "blocksMovement": false, "tint": [110, 110, 120]}
 ]

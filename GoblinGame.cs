@@ -2,13 +2,10 @@
 using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.Utility;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
-using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using System.Diagnostics;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace HearthAndHavoc_GoblinLegacy
 {
@@ -66,7 +63,7 @@ namespace HearthAndHavoc_GoblinLegacy
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             ContentLoader.Initialize(Content);
             DefRegistry.Load();
-            world = Initializer.CreateTestWorld(5);
+            world = Initializer.CreateTestWorld();
         }
 
         protected override void Update(GameTime gameTime)

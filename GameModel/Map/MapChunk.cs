@@ -1,4 +1,5 @@
 using HearthAndHavoc_GoblinLegacy.Defs;
+using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using Microsoft.Xna.Framework;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
@@ -18,6 +19,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         public ushort[,] CoverBiomass { get; private set; }
         public byte[,] Fertility { get; private set; }
         public byte[,] Occupancy { get; private set; }
+        public Plant[,] Plants { get; private set; }
 
         public MapChunk(Point chunkCoord)
         {
@@ -29,6 +31,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             CoverBiomass = new ushort[Size, Size];
             Fertility = new byte[Size, Size];
             Occupancy = new byte[Size, Size];
+            Plants = new Plant[Size, Size];
 
             TerrainDef dirt = DefRegistry.Get<TerrainDef>("terrain_dirt");
             CoverDef grass = DefRegistry.Get<CoverDef>("cover_grass");
