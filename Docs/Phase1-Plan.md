@@ -40,7 +40,26 @@ Map ticks to game minutes, hours and days, so every rate in the defs has a unit.
 
 ---
 
-## Milestone 2 — Creature and plant foundations
+## Milestone 2 — Map
+
+Replace the all-grass map with random walls with real terrain: ground types, water, and natural obstacles that shape where plants grow and how animals move.
+
+**Open questions**
+
+1. Which terrain types does Phase 1 need? For example grass, dirt, sand, rock, shallow water, deep water.
+2. How is terrain defined: a hard-coded enum, or a `TerrainDef` loaded from JSON like items and biota, holding passability, movement cost, texture and whether plants can grow there?
+3. How is the map made: procedural generation (for example noise for elevation and moisture), a hand-authored test map loaded from a file, or both?
+4. If procedural, should generation use a seed, so the same world can be recreated for testing and balancing?
+5. Where does water live: a terrain type, a tile flag, or an entity? Is it drinkable from adjacent tiles, and is shallow water walkable?
+6. Should terrain affect movement speed (for example slower in shallow water), with A* using those costs, or is it only passable vs. impassable?
+7. Should terrain feed later milestones, for example fertility or moisture values that decide where each plant can grow?
+8. What map size should Phase 1 use? The current 1000×1000 is one `MeterTile` object per tile. Is a smaller test locale (for example 200×200) better, and should tiles become lighter data rather than full `GameObject`s?
+9. How are the textures handled: one texture per terrain type, variations to break up repetition, or smooth transitions between neighboring types?
+10. Should the empty-path crash in `GoTo` and the unbounded A* search be fixed as part of this milestone, as their own small PR?
+
+---
+
+## Milestone 3 — Creature and plant foundations
 
 A shared base for anything that acts (animals now, Kremlits later) and a plant entity. `Locale` holds and updates both, plus a spatial lookup for finding the nearest food, water or threat.
 
@@ -50,14 +69,11 @@ A shared base for anything that acts (animals now, Kremlits later) and a plant e
 2. Grass and ground cover: store as a biomass value on each tile (cheap across a million tiles), with bushes and trees as individual entities? Or make everything an entity?
 3. Spatial lookup: a simple grid of buckets (for example 16×16-tile chunks), or scan lists for now and optimize later?
 4. Can a plant or creature share a tile with others? Do trees block movement?
-5. Where does water live: a tile type, a tile flag, or an entity?
-6. Should Phase 1 use a smaller test locale with water (for example 200×200)?
-7. Should the empty-path crash in `GoTo` and the unbounded A* search be fixed first, as their own small PR?
-8. What happens to `Locale.PartialUpdate` for locales the player isn't viewing: simulate fully, simulate cheaply, or pause?
+5. What happens to `Locale.PartialUpdate` for locales the player isn't viewing: simulate fully, simulate cheaply, or pause?
 
 ---
 
-## Milestone 3 — Def schema
+## Milestone 4 — Def schema
 
 Species-level defs with every attribute the simulation needs.
 
@@ -80,7 +96,7 @@ Species-level defs with every attribute the simulation needs.
 
 ---
 
-## Milestone 4 — Flora simulation
+## Milestone 5 — Flora simulation
 
 Plants grow, get grazed down, regrow, fruit, spread and die.
 
@@ -95,7 +111,7 @@ Plants grow, get grazed down, regrow, fruit, spread and die.
 
 ---
 
-## Milestone 5 — Nutrition and metabolism
+## Milestone 6 — Nutrition and metabolism
 
 Calories go in by eating and out by basal plus activity burn. Surplus is stored as fat; a deficit draws fat down, then health drops and the animal starves. Thirst and sleep work the same way.
 
@@ -110,7 +126,7 @@ Calories go in by eating and out by basal plus activity burn. Surplus is stored 
 
 ---
 
-## Milestone 6 — Animal AI
+## Milestone 7 — Animal AI
 
 A decision layer scores needs and threats and picks an action: Wander, Graze or Browse, Drink, Sleep, Flee, Stalk or Chase, Kill, Eat Carcass.
 
@@ -127,7 +143,7 @@ A decision layer scores needs and threats and picks an action: Wander, Graze or 
 
 ---
 
-## Milestone 7 — Life cycle
+## Milestone 8 — Life cycle
 
 Aging, mating, gestation, births, natural death, and carcasses that decay.
 
@@ -141,7 +157,7 @@ Aging, mating, gestation, births, natural death, and carcasses that decay.
 
 ---
 
-## Milestone 8 — Observation
+## Milestone 9 — Observation
 
 A population and stats readout, so we can tell whether the ecosystem holds steady and tune the numbers.
 
