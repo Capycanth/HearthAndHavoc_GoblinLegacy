@@ -1,5 +1,4 @@
 ﻿using HearthAndHavoc_GoblinLegacy.GameModel.Items;
-using HearthAndHavoc_GoblinLegacy;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.AI.Action;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
@@ -7,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {

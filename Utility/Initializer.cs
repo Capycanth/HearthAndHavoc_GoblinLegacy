@@ -1,11 +1,8 @@
 ﻿using HearthAndHavoc_GoblinLegacy.Defs;
-using HearthAndHavoc_GoblinLegacy.Utility;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace HearthAndHavoc_GoblinLegacy.Utility
 {

@@ -1,7 +1,5 @@
 ﻿using HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor;
-using HearthAndHavoc_GoblinLegacy;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
-using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using System;
 
 using static HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor.ProcessorThread;
