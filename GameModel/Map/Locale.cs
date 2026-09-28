@@ -44,36 +44,35 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Rectangle visibleTiles)
         {
-            foreach (MapChunk chunk in LocaleMap.Chunks.Values)
+            for (int tileY = visibleTiles.Top; tileY < visibleTiles.Bottom; tileY++)
             {
-                int originX = chunk.ChunkCoord.X * MapChunk.Size;
-                int originY = chunk.ChunkCoord.Y * MapChunk.Size;
-
-                for (int y = 0; y < MapChunk.Size; y++)
+                for (int tileX = visibleTiles.Left; tileX < visibleTiles.Right; tileX++)
                 {
-                    for (int x = 0; x < MapChunk.Size; x++)
+                    if (!LocaleMap.Chunks.TryGetValue(TileMap.ToChunkCoord(new Point(tileX, tileY)), out MapChunk chunk)) continue;
+
+                    int localX = tileX & MapChunk.LocalMask;
+                    int localY = tileY & MapChunk.LocalMask;
+
+                    string textureKey;
+                    Color tint;
+
+                    WaterDef water = chunk.Water[localY, localX];
+                    if (water != null)
                     {
-                        string textureKey;
-                        Color tint;
-
-                        WaterDef water = chunk.Water[y, x];
-                        if (water != null)
-                        {
-                            textureKey = water.TextureKey;
-                            tint = water.TintColor;
-                        }
-                        else
-                        {
-                            TerrainDef ground = chunk.Ground[y, x];
-                            textureKey = ground.TextureKey;
-                            tint = ground.TintColor;
-                        }
-
-                        Vector2 pixelPosition = new Vector2((originX + x) * 16, (originY + y) * 16);
-                        spriteBatch.Draw(ContentLoader.GetTexture(textureKey), pixelPosition, tint);
+                        textureKey = water.TextureKey;
+                        tint = water.TintColor;
                     }
+                    else
+                    {
+                        TerrainDef ground = chunk.Ground[localY, localX];
+                        textureKey = ground.TextureKey;
+                        tint = ground.TintColor;
+                    }
+
+                    Vector2 pixelPosition = new Vector2(tileX * 16, tileY * 16);
+                    spriteBatch.Draw(ContentLoader.GetTexture(textureKey), pixelPosition, tint);
                 }
             }
 

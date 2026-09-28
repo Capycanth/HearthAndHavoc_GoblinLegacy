@@ -15,6 +15,20 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             return Chunks.GetOrAdd(chunkCoord, coord => new MapChunk(coord));
         }
 
+        public void EnsureChunks(Rectangle tileArea)
+        {
+            Point firstChunk = ToChunkCoord(new Point(tileArea.Left, tileArea.Top));
+            Point lastChunk = ToChunkCoord(new Point(tileArea.Right - 1, tileArea.Bottom - 1));
+
+            for (int chunkY = firstChunk.Y; chunkY <= lastChunk.Y; chunkY++)
+            {
+                for (int chunkX = firstChunk.X; chunkX <= lastChunk.X; chunkX++)
+                {
+                    GetOrCreateChunk(new Point(chunkX, chunkY));
+                }
+            }
+        }
+
         public bool IsPassable(Point tile)
         {
             if (!Chunks.TryGetValue(ToChunkCoord(tile), out MapChunk chunk)) return false;

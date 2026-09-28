@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
@@ -25,9 +26,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Rectangle visibleTiles)
         {
-            GetCurrentLocale()?.Draw(spriteBatch);
+            GetCurrentLocale()?.Draw(spriteBatch, visibleTiles);
         }
 
         public Locale GetCurrentLocale()
