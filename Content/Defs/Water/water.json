@@ -1,0 +1,6 @@
+[
+    {"key": "water_salt", "label": "Salt Water", "drinkable": false, "quality": 10, "moveCost": 3, "tint": [60, 110, 190]},
+    {"key": "water_swamp", "label": "Swamp Water", "drinkable": true, "quality": 35, "moveCost": 4, "tint": [90, 120, 80]},
+    {"key": "water_lake", "label": "Lake Water", "drinkable": true, "quality": 85, "moveCost": 3, "tint": [90, 150, 230]},
+    {"key": "water_river", "label": "River Water", "drinkable": true, "quality": 95, "moveCost": 3, "tint": [110, 180, 240]}
+]

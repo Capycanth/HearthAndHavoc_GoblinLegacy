@@ -24,6 +24,8 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             string defsRoot = Path.Combine(AppContext.BaseDirectory, "Content", "Defs");
             LoadFolder<ItemDef>(Path.Combine(defsRoot, "Items"));
             LoadFolder<BiotaDef>(Path.Combine(defsRoot, "Biota"));
+            LoadFolder<TerrainDef>(Path.Combine(defsRoot, "Terrain"));
+            LoadFolder<WaterDef>(Path.Combine(defsRoot, "Water"));
         }
 
         public static T Get<T>(string key) where T : Def
