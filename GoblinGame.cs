@@ -19,6 +19,7 @@ namespace HearthAndHavoc_GoblinLegacy
 
         // Game Config
         private readonly int gameTickMs = 200;
+        private readonly int chunkMarginTiles = 32;
 
         // Game Settings
         private readonly float[] gameSpeeds = [1f, 2f, 5f];
@@ -29,9 +30,12 @@ namespace HearthAndHavoc_GoblinLegacy
         private double timeSinceLastTickMs = 0;
         private KeyboardState currKeyBoardState = new();
         private KeyboardState prevKeyBoardState = new();
+        private MouseState currMouseState = new();
+        private MouseState prevMouseState = new();
 
         // Game Objects
         public static World world;
+        private readonly Camera camera = new();
 
         // ActionProcessor
         public static ProcessorThread Processor { get; private set; } = null!;
@@ -90,6 +94,16 @@ namespace HearthAndHavoc_GoblinLegacy
             if (currKeyBoardState.IsKeyDown(Keys.Space) && prevKeyBoardState.IsKeyUp(Keys.Space))
                 _graphics.ToggleFullScreen();
 
+            // Camera runs every frame, before the tick check, so it stays smooth and works while paused
+            prevMouseState = currMouseState;
+            currMouseState = Mouse.GetState();
+            if (IsActive)
+                camera.Update(currMouseState, prevMouseState);
+
+            Rectangle chunkArea = camera.GetVisibleTiles(GraphicsDevice.Viewport);
+            chunkArea.Inflate(chunkMarginTiles, chunkMarginTiles);
+            world.GetCurrentLocale()?.LocaleMap.EnsureChunks(chunkArea);
+
             if (!isPaused)
                 timeSinceLastTickMs += gameTime.ElapsedGameTime.TotalMilliseconds * gameSpeeds[gameSpeedIndex];
             if (timeSinceLastTickMs < gameTickMs) return;
@@ -106,8 +120,8 @@ namespace HearthAndHavoc_GoblinLegacy
 
         protected override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Matrix.CreateScale(4f));
-            world.Draw(_spriteBatch);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: camera.GetTransform());
+            world.Draw(_spriteBatch, camera.GetVisibleTiles(GraphicsDevice.Viewport));
             _spriteBatch.End();
 
             base.Draw(gameTime);
