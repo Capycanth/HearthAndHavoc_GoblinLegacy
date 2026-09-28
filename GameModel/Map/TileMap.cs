@@ -1,4 +1,5 @@
 using HearthAndHavoc_GoblinLegacy.Defs;
+using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using Microsoft.Xna.Framework;
 using System.Collections.Concurrent;
 
@@ -38,6 +39,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             int localY = tile.Y & MapChunk.LocalMask;
 
             if (!chunk.Ground[localY, localX].Passable) return false;
+
+            Plant plant = chunk.Plants[localY, localX];
+            if (plant != null && plant.Def.BlocksMovement) return false;
 
             return chunk.Water[localY, localX] == null || chunk.WaterDepth[localY, localX] <= MaxWadeDepth;
         }

@@ -1,6 +1,6 @@
 [
-    {"key": "biota_flora_bushes", "label": "Bushes", "tags": ["flora"]},
-    {"key": "biota_flora_flowers", "label": "Flowers", "tags": ["flora"]},
-    {"key": "biota_flora_mushrooms", "label": "Mushrooms", "tags": ["flora"]},
-    {"key": "biota_flora_trees", "label": "Trees", "tags": ["flora"]}
+    {"key": "biota_flora_bushes", "label": "Bushes", "tags": ["flora"], "blocksMovement": true, "tint": [60, 120, 40]},
+    {"key": "biota_flora_flowers", "label": "Flowers", "tags": ["flora"], "blocksMovement": false, "tint": [230, 120, 200]},
+    {"key": "biota_flora_mushrooms", "label": "Mushrooms", "tags": ["flora"], "blocksMovement": false, "tint": [200, 170, 140]},
+    {"key": "biota_flora_trees", "label": "Trees", "tags": ["flora"], "blocksMovement": true, "tint": [30, 80, 30]}
 ]

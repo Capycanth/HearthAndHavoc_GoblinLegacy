@@ -113,15 +113,15 @@ A shared base for anything that acts (animals now, Kremlits later) and a plant e
 7. Grass is finite. Grazing lowers cover biomass; at zero the cover is cleared to bare dirt, and neighboring cover spreads back onto it by a spreadability value designed in Milestone 5. Grass is a starvation fallback for species that can digest it. Whether it keeps an animal alive without letting it breed, or only slows starvation, is a per-species balance number set in Milestones 4 and 6.
 8. Each tile draws only its top layer: water if present, otherwise cover if present, otherwise ground. This avoids drawing covered tiles twice.
 9. A tile holds at most one plant entity. Placing a plant destroys the cover under it, so plants always stand on bare dirt.
-10. `BiotaDef` gains `BlocksMovement`, true for trees and bushes for now. `IsPassable` checks the plant on the tile, so blocking stays a plain array read for A*.
-11. Creatures share tiles up to a size capacity of 100 per tile. Sizes: rabbit 5, wolf 30, deer 50. Occupancy is a `byte` because the capacity check keeps a tile's total at or below 100; capacity must stay at or below 255.
+10. `BiotaDef` gains `BlocksMovement`, true for trees and bushes for now, and a temporary `Tint` that colours plants and animals until they have textures. `IsPassable` checks the plant on the tile, so blocking stays a plain array read for A*.
+11. Creatures share tiles up to a size capacity of 100 per tile. Sizes: rabbit 5, wolf 30, deer 50, stored as `Size` on `BiotaDef`. Occupancy is a `byte` because the capacity check keeps a tile's total at or below 100; capacity must stay at or below 255.
 12. A* ignores occupancy and plans around static blockers only. Capacity is checked when stepping: a creature facing a full tile waits, and after 3 blocked ticks in a row it drops its path and repaths. After 3 repaths, `GoTo` gives up and ends, so the creature chooses a new action.
 13. All movement goes through `Locale.MoveCreature(creature, tile)`, which checks capacity, updates occupancy and grid cells, then sets `Position`.
 14. Creatures are indexed in a 32×32-tile grid on `Locale`, a `Dictionary<Point, List<Creature>>` keyed by cell. Plants use the chunk plant array instead. `Locale.Draw` draws only creatures in the cells the camera sees.
 15. Perception and decisions run on the main thread; only A* goes to the AI thread. This settles Milestone 7 question 8 for Phase 1.
 16. Adding and removing creatures and plants goes through pending-add and pending-remove queues on `Locale`, processed after the update loop, where the grid, occupancy, plant array and cover bookkeeping happens.
 17. `PartialUpdate` stays empty. There is only one locale, and the whole endless map belongs to it.
-18. There are no Kremlits in Phase 1. The test world spawns 30 rabbits, 10 wolves and 20 deer pointing at the category defs, plus a few bushes and trees and a small clover patch. Animals wander with `GoTo`. Animals draw the Kremlit texture tinted per species; plants draw the tile texture tinted. The 5 test Kremlits keep spawning until PR 5, so movement can be checked along the way.
+18. There are no Kremlits in Phase 1. The test world spawns 30 rabbits, 10 wolves and 20 deer pointing at the category defs, plus a few bushes and trees and a small clover patch. Animals wander with `GoTo` to a random tile within 16 tiles of where they stand. Animals draw the Kremlit texture tinted per species; plants draw the tile texture tinted. The 5 test Kremlits keep spawning until PR 5, so movement can be checked along the way.
 
 **PRs, in order**
 
