@@ -1,5 +1,5 @@
 [
-    {"key": "item_mushroom_fly_agaric", "label": "Fly Agaric", "tags": ["raw", "mushroom"]},
-    {"key": "item_mushroom_oyster", "label": "Oyster", "tags": ["raw", "mushroom"]},
-    {"key": "item_mushroom_shiitake", "label": "Shiitake", "tags": ["raw", "mushroom"]}
+    {"key": "item_mushroom_fly_agaric", "label": "Fly Agaric", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4},
+    {"key": "item_mushroom_oyster", "label": "Oyster", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4},
+    {"key": "item_mushroom_shiitake", "label": "Shiitake", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4}
 ]
