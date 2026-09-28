@@ -11,5 +11,13 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
 
         [JsonIgnore]
         public int Index { get; internal set; } = -1;
+
+        public virtual void Resolve()
+        {
+        }
+
+        public virtual void Validate()
+        {
+        }
     }
 }
