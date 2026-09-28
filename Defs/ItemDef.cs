@@ -6,9 +6,12 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
     {
         public float WeightKg { get; init; }
         public int SpoilDays { get; init; }
+        public Composition Composition { get; init; }
 
         public override void Validate()
         {
+            Composition?.Validate(Key);
+
             if (WeightKg <= 0)
             {
                 throw new InvalidDataException($"Def '{Key}' has WeightKg {WeightKg}; it must be above 0.");

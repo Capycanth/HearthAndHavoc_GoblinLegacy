@@ -9,12 +9,20 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public ushort MaxBiomass { get; init; }
         public string TextureKey { get; init; }
         public int[] Tint { get; init; }
+        public Composition Composition { get; init; }
 
         [JsonIgnore]
         public Color TintColor => new Color(Tint[0], Tint[1], Tint[2]);
 
         public override void Validate()
         {
+            if (Composition == null)
+            {
+                throw new InvalidDataException($"Def '{Key}' needs a composition, since cover is grazed.");
+            }
+
+            Composition.Validate(Key);
+
             if (MaxBiomass == 0)
             {
                 throw new InvalidDataException($"Def '{Key}' has MaxBiomass 0; it must be above 0.");

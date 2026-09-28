@@ -1,6 +1,6 @@
 [
-    {"key": "item_hide_boar", "label": "Boar", "tags": ["raw", "hide"], "weightKg": 5.0, "spoilDays": 3},
-    {"key": "item_hide_deer", "label": "Deer", "tags": ["raw", "hide"], "weightKg": 4.0, "spoilDays": 3},
-    {"key": "item_hide_rabbit", "label": "Rabbit", "tags": ["raw", "hide"], "weightKg": 0.1, "spoilDays": 3},
-    {"key": "item_hide_wolf", "label": "Wolf", "tags": ["raw", "hide"], "weightKg": 2.0, "spoilDays": 3}
+    {"key": "item_hide_boar", "label": "Boar", "tags": ["raw", "hide"], "weightKg": 5.0, "spoilDays": 3, "composition": {"water": 60, "substances": {"PROTEIN": 30, "FAT": 3, "KERATIN": 5}}},
+    {"key": "item_hide_deer", "label": "Deer", "tags": ["raw", "hide"], "weightKg": 4.0, "spoilDays": 3, "composition": {"water": 60, "substances": {"PROTEIN": 30, "FAT": 3, "KERATIN": 5}}},
+    {"key": "item_hide_rabbit", "label": "Rabbit", "tags": ["raw", "hide"], "weightKg": 0.1, "spoilDays": 3, "composition": {"water": 55, "substances": {"PROTEIN": 25, "FAT": 3, "KERATIN": 15}}},
+    {"key": "item_hide_wolf", "label": "Wolf", "tags": ["raw", "hide"], "weightKg": 2.0, "spoilDays": 3, "composition": {"water": 60, "substances": {"PROTEIN": 30, "FAT": 3, "KERATIN": 5}}}
 ]

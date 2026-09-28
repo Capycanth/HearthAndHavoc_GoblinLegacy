@@ -1,5 +1,5 @@
 [
-    {"key": "item_vegetable_carrot", "label": "Carrot", "tags": ["raw", "vegetable"], "weightKg": 0.1, "spoilDays": 21},
-    {"key": "item_vegetable_potato", "label": "Potato", "tags": ["raw", "vegetable"], "weightKg": 0.2, "spoilDays": 60},
-    {"key": "item_vegetable_tomato", "label": "Tomato", "tags": ["raw", "vegetable"], "weightKg": 0.15, "spoilDays": 7}
+    {"key": "item_vegetable_carrot", "label": "Carrot", "tags": ["raw", "vegetable"], "weightKg": 0.1, "spoilDays": 21, "composition": {"water": 88, "substances": {"SIMPLE_CARB": 7, "CELLULOSE": 3, "PROTEIN": 1, "FAT": 0.2}}},
+    {"key": "item_vegetable_potato", "label": "Potato", "tags": ["raw", "vegetable"], "weightKg": 0.2, "spoilDays": 60, "composition": {"water": 79, "substances": {"SIMPLE_CARB": 16, "CELLULOSE": 2, "PROTEIN": 2, "FAT": 0.1}}},
+    {"key": "item_vegetable_tomato", "label": "Tomato", "tags": ["raw", "vegetable"], "weightKg": 0.15, "spoilDays": 7, "composition": {"water": 95, "substances": {"SIMPLE_CARB": 2.6, "CELLULOSE": 1.2, "PROTEIN": 0.9, "FAT": 0.2}}}
 ]
