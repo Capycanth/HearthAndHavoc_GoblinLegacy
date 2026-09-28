@@ -67,14 +67,14 @@ Replace the all-grass map with random walls with real terrain: ground types, wat
 
 **Decisions**
 
-1. Phase 1 ground types: grass, dirt, sand, mud and rock (impassable). Water is not a ground type (see 5).
-2. Ground is a `TerrainDef` loaded from JSON in `Content/Defs/Terrain/`, like items and biota. It holds `Passable`, `MoveCost`, `Fertility`, `TextureKey` and a temporary `Tint` color (`[R, G, B]` in JSON).
-3. No procedural generation in this milestone; it becomes its own sub-milestone later. The starting area is grass with a few hard-coded shapes: a lake-water pond (deeper toward its centre, on a sand shore), a rock ridge and a dirt patch.
+1. Phase 1 ground types: grass, dirt, sand, mud and rock (impassable). Water is not a ground type (see 5). *Changed in Milestone 3: grass is no longer a ground type; it is a cover on dirt (Milestone 3, decision 3).*
+2. Ground is a `TerrainDef` loaded from JSON in `Content/Defs/Terrain/`, like items and biota. It holds `Passable`, `MoveCost`, `Fertility`, `TextureKey` and a temporary `Tint` color (`[R, G, B]` in JSON). *Changed in Milestone 3: `Fertility` moves off `TerrainDef` to a per-tile value (Milestone 3, decision 6).*
+3. No procedural generation in this milestone; it becomes its own sub-milestone later. The starting area is grass with a few hard-coded shapes: a lake-water pond (deeper toward its centre, on a sand shore), a rock ridge and a dirt patch. *Changed in Milestone 3: the starting area is dirt covered in grass (Milestone 3, decision 3).*
 4. Map seeding moves to the procedural sub-milestone. With hard-coded shapes there is nothing random to seed.
 5. Water is an optional layer on top of the ground, described by a `WaterDef` loaded from `Content/Defs/Water/`: salt, swamp, lake and river. A `WaterDef` holds `Drinkable`, `Quality` (a `short` from 1 to 100), `MoveCost` and a temporary `Tint`. Each water tile also has a depth in tenths of a meter (a `byte`, 0 to 25.5 m). Until the heightmap exists, all ground is level and the water surface is level with the ground. A tile is passable when its ground is passable and it is dry or no deeper than a wading limit of 0.5 m; the limit becomes per creature in Milestone 7.
 6. Terrain affects movement. `MoveCost` multiplies the A* step cost (5 orthogonal, 7 diagonal). On a water tile the water's `MoveCost` replaces the ground's. The cheapest cost is 1×, so the A* distance estimate stays correct.
-7. `Fertility` is a `short` from 1 to 100 on `TerrainDef`. The rules for which plants grow where are decided in Milestone 5.
-8. The map is endless and built from 512×512 chunks, created the first time the camera nears them and never unloaded in Phase 1. Each chunk stores a `TerrainDef[512, 512]` for ground, a `WaterDef[512, 512]` for water (`null` means dry) and a `byte[512, 512]` for water depth, so tiles become plain data and `MeterTile` is removed. The chunked map belongs to `Locale`, so the starting area is one Locale that grows. New chunks are plain grass until procedural generation exists. A* treats tiles in chunks that don't exist yet as impassable. Chunks are kept in a `ConcurrentDictionary`, because the AI thread reads the map while the main thread may be adding chunks.
+7. `Fertility` is a `short` from 1 to 100 on `TerrainDef`. The rules for which plants grow where are decided in Milestone 5. *Changed in Milestone 3: fertility is a per-tile `byte` stored in each chunk (Milestone 3, decision 6).*
+8. The map is endless and built from 512×512 chunks, created the first time the camera nears them and never unloaded in Phase 1. Each chunk stores a `TerrainDef[512, 512]` for ground, a `WaterDef[512, 512]` for water (`null` means dry) and a `byte[512, 512]` for water depth, so tiles become plain data and `MeterTile` is removed. The chunked map belongs to `Locale`, so the starting area is one Locale that grows. New chunks are plain grass until procedural generation exists. A* treats tiles in chunks that don't exist yet as impassable. Chunks are kept in a `ConcurrentDictionary`, because the AI thread reads the map while the main thread may be adding chunks. *Changed in Milestone 3: chunks gain cover, cover biomass, fertility, occupancy and plant arrays, and new chunks are dirt covered in grass (Milestone 3, decisions 3, 5 and 6).*
 9. One texture per ground and water type. Until those textures exist, each draws the grass texture tinted with its `Tint` color.
 10. Three pathfinding bugs are fixed in their own PR: `GetTraversablePoints` checking the tiles around (0,0) instead of around the current point, the `GoTo` crash when no path is found, and the unbounded A* search, which gets a search limit. The mix of pixel and tile units in `MapUtil.GetAStarPathQueue` is left for later.
 11. A basic camera: drag with the left mouse button, zoom with the mouse wheel in whole steps from 1× to 4×, and no map edges. Only tiles inside the camera view are drawn. MonoGame's `SpriteBatch` does not skip off-screen sprites itself. Zoom keeps the world point under the cursor in place. Chunks are created for the visible area plus a 32-tile margin. Mouse input is ignored while the window isn't focused.
@@ -101,6 +101,35 @@ A shared base for anything that acts (animals now, Kremlits later) and a plant e
 3. Spatial lookup: a simple grid of buckets (for example 16×16-tile chunks), or scan lists for now and optimize later?
 4. Can a plant or creature share a tile with others? Do trees block movement?
 5. What happens to `Locale.PartialUpdate` for locales the player isn't viewing: simulate fully, simulate cheaply, or pause?
+
+**Decisions**
+
+1. An abstract `Creature : GameObject` is the shared base for anything that acts. It holds an `int Id` (from a counter on `World`), a `Size`, a reference to the `Locale` it lives in, `CurrentAction` and the update loop. `Kremlit` and a new `Animal` inherit from it. No generics.
+2. `BaseAction` works on a `Creature`, and `Perform(World, Kremlit)` becomes `Perform(Creature)`, since the creature reaches the map through its `Locale`. `KremlitSnapshot` becomes `CreatureSnapshot`, and the `ProcessorThread.Enqueue` overload changes to match. Kremlit's `string Id` is replaced by the shared `int` id.
+3. Grass stops being a ground type and becomes a cover type. `terrain_grass` is removed. New chunks and the test map default to dirt ground fully covered in grass.
+4. Cover is a `CoverDef` loaded from `Content/Defs/Cover/`, holding `MaxBiomass` (a `ushort`), `TextureKey` and a temporary `Tint`. Grass and clover are the first two. A tile has at most one cover type. Spreadability and nutrition are added in later milestones.
+5. Each chunk gains a `CoverDef[512, 512]` for cover (`null` means bare dirt), a `ushort[512, 512]` for cover biomass, a `byte[512, 512]` for occupancy and a `Plant[512, 512]` for plants (`null` means no plant). Cover is stored as a reference, like ground and water, for consistency; `Def.Index` counts across all def types, so it can't serve as a small cover index.
+6. Fertility moves off `TerrainDef` (and out of `terrain.json`) to a `byte[512, 512]` per chunk, from 1 to 100, stored on every tile so mud keeps its value when it dries into dirt. Every tile gets a constant 50 until procedural generation exists.
+7. Grass is finite. Grazing lowers cover biomass; at zero the cover is cleared to bare dirt, and neighboring cover spreads back onto it by a spreadability value designed in Milestone 5. Grass is a starvation fallback for species that can digest it. Whether it keeps an animal alive without letting it breed, or only slows starvation, is a per-species balance number set in Milestones 4 and 6.
+8. Tiles draw the ground, then the cover's tint over it.
+9. A tile holds at most one plant entity. Placing a plant destroys the cover under it, so plants always stand on bare dirt.
+10. `BiotaDef` gains `BlocksMovement`, true for trees and bushes for now. `IsPassable` checks the plant on the tile, so blocking stays a plain array read for A*.
+11. Creatures share tiles up to a size capacity of 100 per tile. Sizes: rabbit 5, wolf 30, deer 50. Occupancy is a `byte` because the capacity check keeps a tile's total at or below 100; capacity must stay at or below 255.
+12. A* ignores occupancy and plans around static blockers only. Capacity is checked when stepping: a creature facing a full tile waits, and after 3 blocked ticks in a row it drops its path and repaths.
+13. All movement goes through `Locale.MoveCreature(creature, tile)`, which checks capacity, updates occupancy and grid cells, then sets `Position`.
+14. Creatures are indexed in a 32×32-tile grid on `Locale`, a `Dictionary<Point, List<Creature>>` keyed by cell. Plants use the chunk plant array instead. `Locale.Draw` draws only creatures in the cells the camera sees.
+15. Perception and decisions run on the main thread; only A* goes to the AI thread. This settles Milestone 7 question 8 for Phase 1.
+16. Adding and removing creatures and plants goes through pending-add and pending-remove queues on `Locale`, processed after the update loop, where the grid, occupancy, plant array and cover bookkeeping happens.
+17. `PartialUpdate` stays empty. There is only one locale, and the whole endless map belongs to it.
+18. There are no Kremlits in Phase 1. The test world spawns 30 rabbits, 10 wolves and 20 deer pointing at the category defs, plus a few bushes and trees and a small clover patch. Animals wander with `GoTo`. Animals draw the Kremlit texture tinted per species; plants draw the tile texture tinted. The 5 test Kremlits keep spawning until PR 5, so movement can be checked along the way.
+
+**PRs, in order**
+
+1. Record these decisions (this PR).
+2. Creature base: `Creature`, `Kremlit` moved onto it, the id counter on `World`, `BaseAction.Perform(Creature)`, `CreatureSnapshot` and the `ProcessorThread` overload. Behavior unchanged.
+3. Cover and fertility: `CoverDef` with its JSON, the cover, biomass and fertility arrays, grass removed as a ground type, `Fertility` removed from `TerrainDef`, new defaults and test map (with the clover patch), and cover drawing.
+4. Occupancy and spatial grid: the occupancy array and capacity check, the creature grid, `MoveCreature`, `GoTo` stepping through it with wait-then-repath, the pending queues and culled creature drawing.
+5. Plants and animals: the `Plant` entity, the plant array and its blocking check, `BlocksMovement` in `BiotaDef` and `flora.json`, `Animal`, and the test spawns replacing the Kremlits.
 
 ---
 
