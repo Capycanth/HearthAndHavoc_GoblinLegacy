@@ -31,7 +31,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public override void Update()
         {
-            CurrentAction ??= new GoTo(new Point(this.random.Next(1000), this.random.Next(1000)));
+            CurrentAction ??= new GoTo(new Point(this.random.Next(512), this.random.Next(512)));
 
             if (CurrentAction.Perform(GoblinGame.world, this))
             {

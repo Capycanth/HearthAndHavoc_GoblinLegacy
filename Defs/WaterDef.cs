@@ -8,6 +8,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public bool Drinkable { get; init; }
         public short Quality { get; init; }
         public int MoveCost { get; init; }
+        public string TextureKey { get; init; }
         public int[] Tint { get; init; }
 
         [JsonIgnore]

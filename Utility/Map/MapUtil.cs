@@ -11,7 +11,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
     public static class MapUtil
     {
         private static readonly Point point = new Point(16, 16);
-        public static List<Point> GetTraversablePoints(MeterTile[,] map, Point currentPoint)
+        public static List<Point> GetTraversablePoints(TileMap map, Point currentPoint)
         {
             List<Point> traversablePoints = new(8);
             for (int y = -1; y < 2; y++)
@@ -20,17 +20,13 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
                 {
                     if (x == 0 && y == 0) continue;
 
-                    int neighbourX = currentPoint.X + x;
-                    int neighbourY = currentPoint.Y + y;
-                    if (neighbourX < 0 || neighbourX >= map.GetLength(1) || neighbourY < 0 || neighbourY >= map.GetLength(0)) continue;
-
-                    if (!map[neighbourY, neighbourX].Impassible) traversablePoints.Add(new Point(x, y));
+                    if (map.IsPassable(new Point(currentPoint.X + x, currentPoint.Y + y))) traversablePoints.Add(new Point(x, y));
                 }
             }
             return traversablePoints;
         }
 
-        public static Stack<Point> GetAStarPathQueue(MeterTile[,] map, Point start, Point destination)
+        public static Stack<Point> GetAStarPathQueue(TileMap map, Point start, Point destination)
         {
             Stopwatch sw = Stopwatch.StartNew();
             Debug.WriteLine($"MapUtil.GetAStarPathQueue called for distance of {GetDistance(new Point(start.X >> 4, start.Y >> 4), destination)}");

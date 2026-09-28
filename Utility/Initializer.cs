@@ -1,4 +1,5 @@
-﻿using HearthAndHavoc_GoblinLegacy.Utility;
+﻿using HearthAndHavoc_GoblinLegacy.Defs;
+using HearthAndHavoc_GoblinLegacy.Utility;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
@@ -10,12 +11,10 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 {
     public static class Initializer
     {
-        private static readonly Random random = new();
-
         public static World CreateTestWorld(int kremlitCount)
         {
             World world = new();
-            Locale locale = new("Locale1", CreateTestKremlits(kremlitCount), CreateEmptyMap());
+            Locale locale = new("Locale1", CreateTestKremlits(kremlitCount), CreateStartingMap());
             world.CurrentLocaleId = locale.Id;
             world.LocalesById.Add(locale.Id, locale);
             return world;
@@ -33,20 +32,55 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             return kremlits;
         }
 
-        public static MeterTile[,] CreateEmptyMap()
+        public static TileMap CreateStartingMap()
         {
-            MeterTile[,] map = new MeterTile[1000, 1000];
-            for (int y = 0; y < 1000; y++)
+            TileMap map = new();
+            MapChunk chunk = map.GetOrCreateChunk(Point.Zero);
+
+            TerrainDef sand = DefRegistry.Get<TerrainDef>("terrain_sand");
+            TerrainDef rock = DefRegistry.Get<TerrainDef>("terrain_rock");
+            TerrainDef dirt = DefRegistry.Get<TerrainDef>("terrain_dirt");
+            WaterDef lakeWater = DefRegistry.Get<WaterDef>("water_lake");
+
+            // Pond: lake water over sand, 0.3 m deep at the edge to 1.5 m in the centre, with a dry sand shore
+            Vector2 pondCentre = new(10, 6);
+            const float pondRadius = 4f;
+            for (int y = 1; y <= 11; y++)
             {
-                for (int x = 0; x < 1000; x++)
+                for (int x = 5; x <= 15; x++)
                 {
-                    map[y,x] = new MeterTile(ContentLoader.GetTexture("Tile_Grass"), new Point(x * 16, y * 16));
-                    if (random.NextDouble() < 0.1)
+                    float distance = Vector2.Distance(new Vector2(x, y), pondCentre);
+                    if (distance <= pondRadius)
                     {
-                        map[y,x].Impassible = true;
+                        chunk.Ground[y, x] = sand;
+                        chunk.Water[y, x] = lakeWater;
+                        chunk.WaterDepth[y, x] = (byte)(3 + (pondRadius - distance) * 3);
+                    }
+                    else if (distance <= pondRadius + 1)
+                    {
+                        chunk.Ground[y, x] = sand;
                     }
                 }
             }
+
+            // Rock ridge: columns 16-17, rows 0-8
+            for (int y = 0; y <= 8; y++)
+            {
+                for (int x = 16; x <= 17; x++)
+                {
+                    chunk.Ground[y, x] = rock;
+                }
+            }
+
+            // Dirt patch: x 1-4, y 1-3
+            for (int y = 1; y <= 3; y++)
+            {
+                for (int x = 1; x <= 4; x++)
+                {
+                    chunk.Ground[y, x] = dirt;
+                }
+            }
+
             return map;
         }
     }
