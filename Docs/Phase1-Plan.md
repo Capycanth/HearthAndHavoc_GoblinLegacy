@@ -215,6 +215,27 @@ Plants grow, get grazed down, regrow, fruit, spread and die.
 5. Does uneaten fruit drop and rot, stay on the plant, or disappear?
 6. What does a plant look like at each growth stage? Does each stage need its own texture?
 
+**Decisions**
+
+1. `Locale` keeps a list of its plants, since the chunk plant arrays can't be looped over cheaply. Each plant updates once per game hour. Each plant has an update slot from 0 to 59, set when it is created, and updates on the tick whose minute matches its slot, so about 1/60 of the plants update each tick instead of all at once on the hour. Each update applies 1/24 of the plant's per-day rates.
+2. Plants spread by chance-based seeding. `SpreadChance` is a chance per game day. Once per game day, a mature plant (in its final growth stage) rolls `SpreadChance`. On success it picks a random tile within `SpreadRadius`. The seed takes only if that tile's chunk exists and the tile is dry, passable ground with no plant. A second roll, scaled by the tile's fertility, decides whether it sprouts. Sprouting destroys the cover under it (Milestone 3, decision 9).
+3. Growth is limited by fertility, season and crowding. Fertility scales growth, foliage and fruit regrowth and the sprouting roll. Seasons use one table shared by all species, starting at full speed in spring and summer, half in autumn and none in winter (no growth, regrowth or fruiting); the values are tuned later. Crowding comes from the one-plant-per-tile rule. Distance to water waits for the heightmap and moisture.
+4. A plant grazed to 0 g of foliage does not die; it regrows from its roots. Plants die only when they reach `LifespanDays`, leaving bare dirt that cover can spread back onto. A per-species flag for plants that die when eaten whole can be added later if needed.
+5. Fruit stays on the plant as a count, up to `FruitMaxCount`. It regrows linearly at `FruitMaxCount / FruitRegrowDays` per day, so `FruitRegrowDays` is the number of days to regrow the full crop. Dropped and rotting fruit waits until items can exist on the map.
+6. There are no per-stage textures yet. Each growth stage draws the plant at a larger scale, from small for the first stage to the full tile for the final stage, with the existing tint. Per-stage textures are added to the supplemental work list.
+7. Cover regrows and spreads without looping over every tile. Grazed tiles below `MaxBiomass` go into a regrowing set, and bare tiles next to cover go into a spreadable set. Cover regrowth and spreading only look at tiles in these sets. `CoverDef` gains `RegrowGramsPerDay` and `SpreadChance` (a chance per game day), with values in `cover.json`.
+8. `World` owns one seeded `Random` for the simulation, so a run can be repeated while tuning balance.
+9. Test plants spawn at a random age within their final growth stage, so fruiting and spreading show up right away.
+
+**PRs, in order**
+
+1. Record these decisions (this PR).
+2. Plant state (age, growth stage, foliage and fruit), the `Locale` plant list, staggered hourly updates, aging and death.
+3. Foliage and fruit regrowth, with fertility and season scaling.
+4. Plant spreading and the seeded `Random` on `World`.
+5. Cover regrowth and spreading, with the new `CoverDef` fields and JSON values.
+6. Drawing plants scaled by growth stage.
+
 ---
 
 ## Milestone 6 — Nutrition and metabolism
@@ -284,3 +305,4 @@ Tasks that aren't tied to a milestone. They can be picked up any time after the 
 - [ ] Include a SpriteFont for clock visualization (any time after Milestone 1).
 - [ ] Create a texture for each ground type (grass, dirt, sand, mud, rock) and water type (salt, swamp, lake, river) to replace the tinted grass placeholders (any time after Milestone 2, PR 3).
 - [ ] Decide how tile height is shown on the map (after the heightmap lands in the procedural sub-milestone).
+- [ ] Create a texture for each plant growth stage to replace the scaled, tinted placeholders (any time after Milestone 5, PR 6).
