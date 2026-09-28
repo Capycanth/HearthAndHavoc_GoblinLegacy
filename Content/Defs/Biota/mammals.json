@@ -1,0 +1,5 @@
+[
+    {"key": "mammals_deer", "label": "Deer", "tags": ["fauna", "mammals"]},
+    {"key": "mammals_rabbit", "label": "Rabbit", "tags": ["fauna", "mammals"]},
+    {"key": "mammals_wolf", "label": "Wolf", "tags": ["fauna", "mammals"]}
+]

@@ -1,0 +1,5 @@
+[
+    {"key": "stone_gneiss", "label": "Gneiss", "tags": ["raw", "stone"]},
+    {"key": "stone_granite", "label": "Granite", "tags": ["raw", "stone"]},
+    {"key": "stone_sandstone", "label": "Sandstone", "tags": ["raw", "stone"]}
+]

@@ -1,0 +1,5 @@
+[
+    {"key": "hide_deer", "label": "Deer", "tags": ["raw", "hide"]},
+    {"key": "hide_rabbit", "label": "Rabbit", "tags": ["raw", "hide"]},
+    {"key": "hide_wolf", "label": "Wolf", "tags": ["raw", "hide"]}
+]
