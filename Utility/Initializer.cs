@@ -1,11 +1,8 @@
 ﻿using HearthAndHavoc_GoblinLegacy.Defs;
-using HearthAndHavoc_GoblinLegacy.Utility;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace HearthAndHavoc_GoblinLegacy.Utility
 {
@@ -14,22 +11,20 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
         public static World CreateTestWorld(int kremlitCount)
         {
             World world = new();
-            Locale locale = new("Locale1", CreateTestKremlits(kremlitCount), CreateStartingMap());
+            Locale locale = new("Locale1", CreateStartingMap());
             world.CurrentLocaleId = locale.Id;
             world.LocalesById.Add(locale.Id, locale);
+            AddTestKremlits(world, locale, kremlitCount);
             return world;
         }
 
-        public static List<Kremlit> CreateTestKremlits(int count)
+        public static void AddTestKremlits(World world, Locale locale, int count)
         {
-            List<Kremlit> kremlits = new List<Kremlit>();
             for (int i = 0; i < count; i++)
             {
-                string id = $"Kremlit{i + 1}";
                 Texture2D texture = ContentLoader.GetTexture(i % 2 == 0 ? "Kremlit_Male" : "Kremlit_Female");
-                kremlits.Add(new Kremlit(id, texture));
+                locale.Creatures.Add(new Kremlit(world.NextCreatureId(), locale, texture));
             }
-            return kremlits;
         }
 
         public static TileMap CreateStartingMap()

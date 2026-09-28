@@ -1,27 +1,24 @@
 ﻿using HearthAndHavoc_GoblinLegacy.GameModel.Items;
-using HearthAndHavoc_GoblinLegacy;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.AI.Action;
+using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
-    public class Kremlit : GameObject
+    public class Kremlit : Creature
     {
-        public string Id { get; private set; }
-        [AllowNull]
-        public BaseAction CurrentAction { get; set; }
+        private const byte KremlitSize = 30;
+
         private Random random = new();
         public List<BaseItem> Inventory { get; set; }
         public Dictionary<NeedType, float> Needs { get; set; }
 
-        public Kremlit(string id, Texture2D texture) : base(texture)
+        public Kremlit(int id, Locale locale, Texture2D texture) : base(id, KremlitSize, locale, texture)
         {
-            Id = id;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -29,15 +26,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             spriteBatch.Draw(Texture, GeoPosition, Color.White);
         }
 
-        public override void Update()
+        protected override BaseAction ChooseAction()
         {
-            CurrentAction ??= new GoTo(new Point(this.random.Next(512), this.random.Next(512)));
-
-            if (CurrentAction.Perform(GoblinGame.world, this))
-            {
-                Console.WriteLine("Kremlit " + Id + " finished GoTo");
-                CurrentAction = null;
-            }
+            return new GoTo(new Point(this.random.Next(512), this.random.Next(512)));
         }
     }
 }

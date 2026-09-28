@@ -1,10 +1,7 @@
 ﻿using HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor;
-using HearthAndHavoc_GoblinLegacy;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
-using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using HearthAndHavoc_GoblinLegacy.Utility.Map;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -22,14 +19,14 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             _destination = destination;
         }
 
-        public override bool Perform(World world, Kremlit kremlit)
+        public override bool Perform(Creature creature)
         {
             if (IsActionAwaitingJobHandle()) return false;
 
             if (null == PathTraversal)
             {
-                (WorldSnapshot ws, KremlitSnapshot ks) snapshots = GenerateSnapshots(world, kremlit);
-                JobHandle = GoblinGame.Processor.Enqueue(snapshots.ws, snapshots.ks, CalculateActionChain);
+                (WorldSnapshot ws, CreatureSnapshot cs) snapshots = GenerateSnapshots(creature);
+                JobHandle = GoblinGame.Processor.Enqueue(snapshots.ws, snapshots.cs, CalculateActionChain);
                 return false;
             }
 
@@ -39,18 +36,18 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 return true;
             }
 
-            kremlit.Position = PathTraversal.Pop();
+            creature.Position = PathTraversal.Pop();
             return PathTraversal.Count == 0;
         }
 
-        protected override (WorldSnapshot ws, KremlitSnapshot ks) GenerateSnapshots(World world, Kremlit kremlit)
+        protected override (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature)
         {
-            return (new WorldSnapshot(world.GetCurrentLocale().LocaleMap), new KremlitSnapshot(kremlit.Position));
+            return (new WorldSnapshot(creature.Locale.LocaleMap), new CreatureSnapshot(creature.Position));
         }
 
-        protected override void CalculateActionChain(WorldSnapshot ws, KremlitSnapshot ks)
+        protected override void CalculateActionChain(WorldSnapshot ws, CreatureSnapshot cs)
         {
-            PathTraversal = MapUtil.GetAStarPathQueue(ws.LocaleMap, ks.Position, this._destination);
+            PathTraversal = MapUtil.GetAStarPathQueue(ws.LocaleMap, cs.Position, this._destination);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         public string CurrentLocaleId { get; set; }
         public Dictionary<string, Locale> LocalesById { get; private set; }
         public SimClock Clock { get; private set; }
+        private int lastCreatureId = 0;
 
         public World()
         {
@@ -29,6 +30,11 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         public void Draw(SpriteBatch spriteBatch, Rectangle visibleTiles)
         {
             GetCurrentLocale()?.Draw(spriteBatch, visibleTiles);
+        }
+
+        public int NextCreatureId()
+        {
+            return ++lastCreatureId;
         }
 
         public Locale GetCurrentLocale()
