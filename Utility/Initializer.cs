@@ -31,12 +31,16 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
         public static void AddTestPlants(Locale locale, HashSet<Point> usedTiles)
         {
-            BiotaDef tree = DefRegistry.Get<BiotaDef>("biota_flora_trees");
-            BiotaDef bush = DefRegistry.Get<BiotaDef>("biota_flora_bushes");
+            FloraDef tree = DefRegistry.Get<FloraDef>("flora_apple_tree");
+            FloraDef bush = DefRegistry.Get<FloraDef>("flora_berry_bush");
+            FloraDef mushroom = DefRegistry.Get<FloraDef>("flora_mushroom_patch");
+            FloraDef dandelion = DefRegistry.Get<FloraDef>("flora_dandelion");
             Texture2D texture = ContentLoader.GetTexture("Tile_Grass");
 
             Point[] treeTiles = [new(30, 4), new(33, 7), new(29, 9)];
             Point[] bushTiles = [new(40, 14), new(43, 16), new(12, 24), new(18, 28)];
+            Point[] mushroomTiles = [new(8, 20), new(9, 21), new(35, 22)];
+            Point[] dandelionTiles = [new(22, 20), new(25, 22), new(27, 18), new(38, 26), new(45, 8), new(50, 30)];
 
             foreach (Point tile in treeTiles)
             {
@@ -47,6 +51,18 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             foreach (Point tile in bushTiles)
             {
                 locale.QueueAddPlant(new Plant(bush, tile, texture));
+                usedTiles.Add(tile);
+            }
+
+            foreach (Point tile in mushroomTiles)
+            {
+                locale.QueueAddPlant(new Plant(mushroom, tile, texture));
+                usedTiles.Add(tile);
+            }
+
+            foreach (Point tile in dandelionTiles)
+            {
+                locale.QueueAddPlant(new Plant(dandelion, tile, texture));
                 usedTiles.Add(tile);
             }
         }
