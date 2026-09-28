@@ -66,7 +66,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
 
                 usedTiles.Add(tile);
-                Animal animal = new(world.NextCreatureId(), def, def.Size, locale, texture);
+                Animal animal = new(world.NextCreatureId(), def, locale, texture);
                 animal.Position = tile;
                 locale.QueueAdd(animal);
             }

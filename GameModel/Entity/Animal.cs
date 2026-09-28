@@ -14,7 +14,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         private Random random = new();
         public BiotaDef Def { get; }
 
-        public Animal(int id, BiotaDef def, byte size, Locale locale, Texture2D texture) : base(id, size, locale, texture)
+        public Animal(int id, BiotaDef def, Locale locale, Texture2D texture) : base(id, def.Size, locale, texture)
         {
             Def = def;
         }
