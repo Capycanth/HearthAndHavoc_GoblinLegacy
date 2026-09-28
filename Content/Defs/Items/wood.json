@@ -1,5 +1,5 @@
 [
-    {"key": "item_wood_maple", "label": "Maple", "tags": ["raw", "wood"]},
-    {"key": "item_wood_oak", "label": "Oak", "tags": ["raw", "wood"]},
-    {"key": "item_wood_pine", "label": "Pine", "tags": ["raw", "wood"]}
+    {"key": "item_wood_maple", "label": "Maple", "tags": ["raw", "wood"], "weightKg": 10, "spoilDays": 0},
+    {"key": "item_wood_oak", "label": "Oak", "tags": ["raw", "wood"], "weightKg": 12, "spoilDays": 0},
+    {"key": "item_wood_pine", "label": "Pine", "tags": ["raw", "wood"], "weightKg": 7, "spoilDays": 0}
 ]

@@ -1,6 +1,6 @@
 [
-    {"key": "item_clothing_hat", "label": "Hat", "tags": ["crafted", "clothing"]},
-    {"key": "item_clothing_pants", "label": "Pants", "tags": ["crafted", "clothing"]},
-    {"key": "item_clothing_shirt", "label": "Shirt", "tags": ["crafted", "clothing"]},
-    {"key": "item_clothing_shoes", "label": "Shoes", "tags": ["crafted", "clothing"]}
+    {"key": "item_clothing_hat", "label": "Hat", "tags": ["crafted", "clothing"], "weightKg": 0.2, "spoilDays": 0},
+    {"key": "item_clothing_pants", "label": "Pants", "tags": ["crafted", "clothing"], "weightKg": 0.5, "spoilDays": 0},
+    {"key": "item_clothing_shirt", "label": "Shirt", "tags": ["crafted", "clothing"], "weightKg": 0.3, "spoilDays": 0},
+    {"key": "item_clothing_shoes", "label": "Shoes", "tags": ["crafted", "clothing"], "weightKg": 0.6, "spoilDays": 0}
 ]

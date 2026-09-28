@@ -1,5 +1,5 @@
 [
-    {"key": "item_furniture_bed", "label": "Bed", "tags": ["crafted", "furniture"]},
-    {"key": "item_furniture_chair", "label": "Chair", "tags": ["crafted", "furniture"]},
-    {"key": "item_furniture_table", "label": "Table", "tags": ["crafted", "furniture"]}
+    {"key": "item_furniture_bed", "label": "Bed", "tags": ["crafted", "furniture"], "weightKg": 30, "spoilDays": 0},
+    {"key": "item_furniture_chair", "label": "Chair", "tags": ["crafted", "furniture"], "weightKg": 5, "spoilDays": 0},
+    {"key": "item_furniture_table", "label": "Table", "tags": ["crafted", "furniture"], "weightKg": 20, "spoilDays": 0}
 ]

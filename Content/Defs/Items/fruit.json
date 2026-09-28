@@ -1,5 +1,5 @@
 [
-    {"key": "item_fruit_apple", "label": "Apple", "tags": ["raw", "fruit"]},
-    {"key": "item_fruit_berry", "label": "Berry", "tags": ["raw", "fruit"]},
-    {"key": "item_fruit_melon", "label": "Melon", "tags": ["raw", "fruit"]}
+    {"key": "item_fruit_apple", "label": "Apple", "tags": ["raw", "fruit"], "weightKg": 0.15, "spoilDays": 30},
+    {"key": "item_fruit_berry", "label": "Berry", "tags": ["raw", "fruit"], "weightKg": 0.1, "spoilDays": 4},
+    {"key": "item_fruit_melon", "label": "Melon", "tags": ["raw", "fruit"], "weightKg": 2.0, "spoilDays": 10}
 ]

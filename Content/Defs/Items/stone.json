@@ -1,5 +1,5 @@
 [
-    {"key": "item_stone_gneiss", "label": "Gneiss", "tags": ["raw", "stone"]},
-    {"key": "item_stone_granite", "label": "Granite", "tags": ["raw", "stone"]},
-    {"key": "item_stone_sandstone", "label": "Sandstone", "tags": ["raw", "stone"]}
+    {"key": "item_stone_gneiss", "label": "Gneiss", "tags": ["raw", "stone"], "weightKg": 5, "spoilDays": 0},
+    {"key": "item_stone_granite", "label": "Granite", "tags": ["raw", "stone"], "weightKg": 5, "spoilDays": 0},
+    {"key": "item_stone_sandstone", "label": "Sandstone", "tags": ["raw", "stone"], "weightKg": 4, "spoilDays": 0}
 ]
