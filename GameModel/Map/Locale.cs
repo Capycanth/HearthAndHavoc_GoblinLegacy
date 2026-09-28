@@ -59,10 +59,16 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                     Color tint;
 
                     WaterDef water = chunk.Water[localY, localX];
+                    CoverDef cover = chunk.Cover[localY, localX];
                     if (water != null)
                     {
                         textureKey = water.TextureKey;
                         tint = water.TintColor;
+                    }
+                    else if (cover != null)
+                    {
+                        textureKey = cover.TextureKey;
+                        tint = cover.TintColor;
                     }
                     else
                     {

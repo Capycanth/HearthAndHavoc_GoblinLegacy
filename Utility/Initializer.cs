@@ -34,8 +34,8 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
             TerrainDef sand = DefRegistry.Get<TerrainDef>("terrain_sand");
             TerrainDef rock = DefRegistry.Get<TerrainDef>("terrain_rock");
-            TerrainDef dirt = DefRegistry.Get<TerrainDef>("terrain_dirt");
             WaterDef lakeWater = DefRegistry.Get<WaterDef>("water_lake");
+            CoverDef clover = DefRegistry.Get<CoverDef>("cover_clover");
 
             // Pond: lake water over sand, 0.3 m deep at the edge to 1.5 m in the centre, with a dry sand shore
             Vector2 pondCentre = new(10, 6);
@@ -48,12 +48,14 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                     if (distance <= pondRadius)
                     {
                         chunk.Ground[y, x] = sand;
+                        chunk.SetCover(x, y, null);
                         chunk.Water[y, x] = lakeWater;
                         chunk.WaterDepth[y, x] = (byte)(3 + (pondRadius - distance) * 3);
                     }
                     else if (distance <= pondRadius + 1)
                     {
                         chunk.Ground[y, x] = sand;
+                        chunk.SetCover(x, y, null);
                     }
                 }
             }
@@ -64,15 +66,25 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 for (int x = 16; x <= 17; x++)
                 {
                     chunk.Ground[y, x] = rock;
+                    chunk.SetCover(x, y, null);
                 }
             }
 
-            // Dirt patch: x 1-4, y 1-3
+            // Bare dirt patch: x 1-4, y 1-3
             for (int y = 1; y <= 3; y++)
             {
                 for (int x = 1; x <= 4; x++)
                 {
-                    chunk.Ground[y, x] = dirt;
+                    chunk.SetCover(x, y, null);
+                }
+            }
+
+            // Clover patch: x 20-24, y 10-13
+            for (int y = 10; y <= 13; y++)
+            {
+                for (int x = 20; x <= 24; x++)
+                {
+                    chunk.SetCover(x, y, clover);
                 }
             }
 

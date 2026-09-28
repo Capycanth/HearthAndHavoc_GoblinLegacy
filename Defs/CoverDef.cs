@@ -3,10 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace HearthAndHavoc_GoblinLegacy.Defs
 {
-    public class TerrainDef : Def
+    public class CoverDef : Def
     {
-        public bool Passable { get; init; }
-        public int MoveCost { get; init; }
+        public ushort MaxBiomass { get; init; }
         public string TextureKey { get; init; }
         public int[] Tint { get; init; }
 
