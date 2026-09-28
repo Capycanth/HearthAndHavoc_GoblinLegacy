@@ -11,6 +11,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
         private const int MAP_HEIGHT = 1000;
         private const int baseOrthogonalCost = 5;
         private const int baseDiagonalCost = 7;
+        private const int MaxSearchNodes = 20000;
         public Node? solution;
         private MeterTile[,] meterMap;
         private Point destination;
@@ -21,7 +22,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
             this.meterMap = meterMap;
             this.closedList = [];
             this.destination = destination;
-            Graph(new Node(start, new Path(-1, 0, GetDistance(start, this.destination))), new PriorityQueue<Node>(), this.closedList);
+            Graph(new Node(start, new Path(-1, 0, GetDistance(start, this.destination))), new PriorityQueue<Node>(), this.closedList, MaxSearchNodes);
             return GetCalculatedPath();
         }
 

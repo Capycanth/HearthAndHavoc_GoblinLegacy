@@ -5,10 +5,10 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
 {
     public abstract class AbstractAStar<TKey, TValue> where TValue : IComparable<TValue>
     {
-        protected void Graph(Node start, PriorityQueue<Node> openList, Dictionary<TKey, TValue> closedList)
+        protected void Graph(Node start, PriorityQueue<Node> openList, Dictionary<TKey, TValue> closedList, int maxClosedNodes)
         {
             openList.Insert(start);
-            while (openList.Count > 0)
+            while (openList.Count > 0 && closedList.Count < maxClosedNodes)
             {
                 Node node = openList.RemoveRoot();
                 if (closedList.ContainsKey(node.position)) continue;

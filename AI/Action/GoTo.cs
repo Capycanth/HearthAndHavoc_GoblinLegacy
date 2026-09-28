@@ -33,6 +33,12 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 return false;
             }
 
+            if (PathTraversal.Count == 0)
+            {
+                Debug.WriteLine($"GoTo found no path to {_destination}");
+                return true;
+            }
+
             kremlit.Position = PathTraversal.Pop();
             return PathTraversal.Count == 0;
         }
