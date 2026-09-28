@@ -12,6 +12,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public List<GrowthStage> GrowthStages { get; init; }
         public float MaxFoliageGrams { get; init; }
         public float FoliageRegrowGramsPerDay { get; init; }
+        public Composition FoliageComposition { get; init; }
         public string FruitItemKey { get; init; }
         public int FruitMaxCount { get; init; }
         public int FruitRegrowDays { get; init; }
@@ -78,6 +79,13 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             {
                 throw new InvalidDataException($"Def '{Key}' has negative foliage values; they must be 0 or more.");
             }
+
+            if (MaxFoliageGrams > 0 && FoliageComposition == null)
+            {
+                throw new InvalidDataException($"Def '{Key}' has edible foliage, so it needs a foliage composition.");
+            }
+
+            FoliageComposition?.Validate(Key);
 
             if (FruitItem != null && (FruitMaxCount <= 0 || FruitRegrowDays <= 0))
             {

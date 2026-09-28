@@ -1,5 +1,5 @@
 [
-    {"key": "item_fruit_apple", "label": "Apple", "tags": ["raw", "fruit"], "weightKg": 0.15, "spoilDays": 30},
-    {"key": "item_fruit_berry", "label": "Berry", "tags": ["raw", "fruit"], "weightKg": 0.1, "spoilDays": 4},
-    {"key": "item_fruit_melon", "label": "Melon", "tags": ["raw", "fruit"], "weightKg": 2.0, "spoilDays": 10}
+    {"key": "item_fruit_apple", "label": "Apple", "tags": ["raw", "fruit"], "weightKg": 0.15, "spoilDays": 30, "composition": {"water": 86, "substances": {"SIMPLE_CARB": 11, "CELLULOSE": 2, "PROTEIN": 0.3, "FAT": 0.2}}},
+    {"key": "item_fruit_berry", "label": "Berry", "tags": ["raw", "fruit"], "weightKg": 0.1, "spoilDays": 4, "composition": {"water": 84, "substances": {"SIMPLE_CARB": 12, "CELLULOSE": 2.5, "PROTEIN": 0.7, "FAT": 0.3}}},
+    {"key": "item_fruit_melon", "label": "Melon", "tags": ["raw", "fruit"], "weightKg": 2.0, "spoilDays": 10, "composition": {"water": 90, "substances": {"SIMPLE_CARB": 7, "CELLULOSE": 1, "PROTEIN": 1, "FAT": 0.2}}}
 ]

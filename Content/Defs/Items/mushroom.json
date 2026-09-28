@@ -1,5 +1,5 @@
 [
-    {"key": "item_mushroom_fly_agaric", "label": "Fly Agaric", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4},
-    {"key": "item_mushroom_oyster", "label": "Oyster", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4},
-    {"key": "item_mushroom_shiitake", "label": "Shiitake", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4}
+    {"key": "item_mushroom_fly_agaric", "label": "Fly Agaric", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4, "composition": {"water": 90, "substances": {"SIMPLE_CARB": 4, "CHITIN": 2, "PROTEIN": 3, "FAT": 0.4}}},
+    {"key": "item_mushroom_oyster", "label": "Oyster", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4, "composition": {"water": 89, "substances": {"SIMPLE_CARB": 3.8, "CHITIN": 2.3, "PROTEIN": 3.3, "FAT": 0.4}}},
+    {"key": "item_mushroom_shiitake", "label": "Shiitake", "tags": ["raw", "mushroom"], "weightKg": 0.1, "spoilDays": 4, "composition": {"water": 90, "substances": {"SIMPLE_CARB": 4.3, "CHITIN": 2.5, "PROTEIN": 2.2, "FAT": 0.5}}}
 ]
