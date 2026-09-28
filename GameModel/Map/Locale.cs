@@ -10,13 +10,13 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
     public class Locale
     {
         public string Id { get; private set; }
-        public List<Kremlit> Kremlits { get; private set; }
+        public List<Creature> Creatures { get; private set; }
         public TileMap LocaleMap { get; private set; }
 
-        public Locale(string id, List<Kremlit> kremlits, TileMap localeMap) 
+        public Locale(string id, TileMap localeMap) 
         {
             Id = id;
-            Kremlits = kremlits;
+            Creatures = new List<Creature>();
             LocaleMap = localeMap;
         }
 
@@ -33,9 +33,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             //{
             //    LocaleMap[kremlit.Position.Y][kremlit.Position.X].Impassible = true;
             //}
-            foreach (Kremlit kremlit in Kremlits)
+            foreach (Creature creature in Creatures)
             {
-                kremlit.Update();
+                creature.Update();
             }
         }
 
@@ -76,9 +76,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                 }
             }
 
-            foreach (Kremlit kremlit in Kremlits)
+            foreach (Creature creature in Creatures)
             {
-                kremlit.Draw(spriteBatch);
+                creature.Draw(spriteBatch);
             }
         }
     }

@@ -8,7 +8,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor
         public TileMap LocaleMap { get; private set; } = localeMap;
     }
 
-    public sealed class KremlitSnapshot(Point position)
+    public sealed class CreatureSnapshot(Point position)
     {
         public Point Position { get; private set; } = position;
     }

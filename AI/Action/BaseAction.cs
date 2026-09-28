@@ -23,8 +23,8 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             else return true;
         }
 
-        public abstract bool Perform(World world, Kremlit kremlit);
-        protected abstract void CalculateActionChain(WorldSnapshot ws, KremlitSnapshot ks);
-        protected abstract (WorldSnapshot ws, KremlitSnapshot ks) GenerateSnapshots(World world, Kremlit kremlit);
+        public abstract bool Perform(Creature creature);
+        protected abstract void CalculateActionChain(WorldSnapshot ws, CreatureSnapshot cs);
+        protected abstract (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature);
     }
 }

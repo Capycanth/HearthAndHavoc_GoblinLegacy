@@ -67,9 +67,9 @@
         }
 
         /// Convenience overload for your signature style.
-        public JobHandle Enqueue(WorldSnapshot ws, KremlitSnapshot ks, Action<WorldSnapshot, KremlitSnapshot> work)
+        public JobHandle Enqueue(WorldSnapshot ws, CreatureSnapshot cs, Action<WorldSnapshot, CreatureSnapshot> work)
         {
-            return work == null ? throw new ArgumentNullException(nameof(work)) : Enqueue(() => work(ws, ks));
+            return work == null ? throw new ArgumentNullException(nameof(work)) : Enqueue(() => work(ws, cs));
         }
 
         /// Polling API
