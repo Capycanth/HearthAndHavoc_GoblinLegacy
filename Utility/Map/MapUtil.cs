@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Timers;
 
 namespace HearthAndHavoc_GoblinLegacy.Utility.Map
 {
@@ -29,8 +28,8 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
         public static Stack<Point> GetAStarPathQueue(TileMap map, Point start, Point destination)
         {
             Stopwatch sw = Stopwatch.StartNew();
-            Debug.WriteLine($"MapUtil.GetAStarPathQueue called for distance of {GetDistance(new Point(start.X >> 4, start.Y >> 4), destination)}");
-            Stack<Point> result = new MapPathSolver().Graph(map, new Point(start.X >> 4, start.Y >> 4), destination);
+            Debug.WriteLine($"MapUtil.GetAStarPathQueue called for distance of {GetDistance(start, destination)}");
+            Stack<Point> result = new MapPathSolver().Graph(map, start, destination);
             sw.Stop();
             Debug.WriteLine($"MapUtil.GetAStarPathQueue completed in {sw.ElapsedMilliseconds} ms");
             return result;
