@@ -24,7 +24,7 @@ namespace HearthAndHavoc_GoblinLegacy
         private float gameSpeed = 1f;
 
         // Dynamic Variables
-        private int timeSinceLastTickMs = 0;
+        private double timeSinceLastTickMs = 0;
         private KeyboardState currKeyBoardState = new();
         private KeyboardState prevKeyBoardState = new();
 
@@ -83,12 +83,12 @@ namespace HearthAndHavoc_GoblinLegacy
             if (currKeyBoardState.IsKeyDown(Keys.Space) && prevKeyBoardState.IsKeyUp(Keys.Space))
                 _graphics.ToggleFullScreen();
 
-            timeSinceLastTickMs += gameTime.ElapsedGameTime.Milliseconds;
-            if ((timeSinceLastTickMs * gameSpeed) < gameTickMs) return;
+            timeSinceLastTickMs += gameTime.ElapsedGameTime.TotalMilliseconds * gameSpeed;
+            if (timeSinceLastTickMs < gameTickMs) return;
             else 
             {
                 Debug.WriteLine($"Reached world update in {timeSinceLastTickMs} ms");
-                timeSinceLastTickMs = 0;
+                timeSinceLastTickMs -= gameTickMs;
             }
             
             world.Update();
