@@ -3,6 +3,7 @@ using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -18,6 +19,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         public TileMap LocaleMap { get; private set; }
         public SimClock Clock { get; }
 
+        private readonly CoverGrowth coverGrowth;
         private readonly List<Plant>[] plantSlots = new List<Plant>[PlantUpdateSlots];
         private int nextPlantSlot = 0;
         private readonly List<Creature> creatures = new();
@@ -38,6 +40,12 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             {
                 plantSlots[i] = new List<Plant>();
             }
+
+            coverGrowth = new CoverGrowth(localeMap);
+            foreach (MapChunk chunk in localeMap.Chunks.Values)
+            {
+                coverGrowth.AddBareTiles(chunk);
+            }
         }
 
         public void Update(string id)
@@ -53,6 +61,11 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             //{
             //    LocaleMap[kremlit.Position.Y][kremlit.Position.X].Impassible = true;
             //}
+            if (Clock.Hour == 0 && Clock.Minute == 0)
+            {
+                coverGrowth.UpdateDay(Clock.Season);
+            }
+
             foreach (Plant plant in plantSlots[Clock.Minute])
             {
                 plant.Update();
@@ -103,6 +116,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                 {
                     chunk.Plants[localY, localX] = null;
                     plantSlots[plant.UpdateSlot].Remove(plant);
+                    coverGrowth.OnTileBared(plant.Position);
                 }
             }
             pendingPlantRemoves.Clear();
@@ -126,6 +140,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
                 chunk.SetCover(localX, localY, null);
                 chunk.Plants[localY, localX] = plant;
+                coverGrowth.OnPlantPlaced(plant.Position);
 
                 plant.UpdateSlot = nextPlantSlot;
                 plantSlots[nextPlantSlot].Add(plant);
@@ -155,6 +170,30 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                 AddToCell(creature, creature.Position);
             }
             pendingAdds.Clear();
+        }
+
+        public int GrazeCover(Point tile, int grams)
+        {
+            if (!LocaleMap.Chunks.TryGetValue(TileMap.ToChunkCoord(tile), out MapChunk chunk)) return 0;
+
+            int localX = tile.X & MapChunk.LocalMask;
+            int localY = tile.Y & MapChunk.LocalMask;
+            if (chunk.Cover[localY, localX] == null) return 0;
+
+            int biomass = chunk.CoverBiomass[localY, localX];
+            int eaten = Math.Min(grams, biomass);
+            if (eaten == biomass)
+            {
+                chunk.SetCover(localX, localY, null);
+                coverGrowth.OnTileBared(tile);
+            }
+            else
+            {
+                chunk.CoverBiomass[localY, localX] = (ushort)(biomass - eaten);
+                coverGrowth.OnCoverLowered(tile);
+            }
+
+            return eaten;
         }
 
         public bool MoveCreature(Creature creature, Point tile)

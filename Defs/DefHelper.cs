@@ -1,3 +1,5 @@
+using HearthAndHavoc_GoblinLegacy.Enumeration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +9,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
     public static class DefHelper
     {
         private const char NotPrefix = '!';
+        private const float MaxSeasonMultiplier = 3f;
 
         // Each inner list is an AND group; the outer list ORs the groups together.
         // A tag starting with '!' excludes defs with that tag from its group.
@@ -69,6 +72,27 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             }
 
             return matches;
+        }
+
+        public static void ValidateSeasonTable(Dictionary<Season, float> table, string tableName, string defKey)
+        {
+            if (table == null)
+            {
+                throw new InvalidDataException($"Def '{defKey}' needs a {tableName} table.");
+            }
+
+            foreach (Season season in Enum.GetValues<Season>())
+            {
+                if (!table.TryGetValue(season, out float multiplier))
+                {
+                    throw new InvalidDataException($"Def '{defKey}' {tableName} has no value for {season}.");
+                }
+
+                if (multiplier < 0 || multiplier > MaxSeasonMultiplier)
+                {
+                    throw new InvalidDataException($"Def '{defKey}' {tableName} has {multiplier} for {season}; it must be from 0 to {MaxSeasonMultiplier}.");
+                }
+            }
         }
     }
 }
