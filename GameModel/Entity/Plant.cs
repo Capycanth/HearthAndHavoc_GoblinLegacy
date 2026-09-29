@@ -27,7 +27,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public int AgeDays => (Locale.Clock.TotalTicks - BirthTick) / SimClock.MinutesPerDay;
 
-        public Plant(FloraDef def, Locale locale, Point tile, int birthTick, float weightKg, Texture2D texture) : base(texture)
+        public Plant(FloraDef def, Locale locale, Point tile, int birthTick, float weightKg) : base(null)
         {
             Def = def;
             Locale = locale;
@@ -101,7 +101,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             float sproutChance = MathF.Min(1f, chunk.Fertility[localY, localX] / MaxFertility * Def.SeasonGrowth[season]);
             if (SimRandom.Instance.NextSingle() >= sproutChance) return;
 
-            Locale.QueueAddPlant(new Plant(Def, Locale, target, Locale.Clock.TotalTicks, 0f, Texture));
+            Locale.QueueAddPlant(new Plant(Def, Locale, target, Locale.Clock.TotalTicks, 0f));
         }
 
         private bool HasHostNearby(Point tile)
@@ -123,7 +123,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, GeoPosition, Def.TintColor);
+            Texture2D texture = ContentLoader.GetTexture(Def.GrowthStages[StageIndex].TextureKey);
+            spriteBatch.Draw(texture, GeoPosition, Def.TintColor);
         }
     }
 }

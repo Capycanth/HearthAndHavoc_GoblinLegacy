@@ -15,8 +15,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
 
-        public Animal(int id, FaunaDef def, Locale locale, float weightKg, Texture2D texture)
-            : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, texture)
+        public Animal(int id, FaunaDef def, Locale locale, float weightKg)
+            : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, null)
         {
             Def = def;
             WeightKg = weightKg;
@@ -25,7 +25,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, GeoPosition, Def.TintColor);
+            Texture2D texture = ContentLoader.GetTexture(Def.GrowthStages[StageIndex].TextureKey);
+            spriteBatch.Draw(texture, GeoPosition, Def.TintColor);
         }
 
         protected override BaseAction ChooseAction()

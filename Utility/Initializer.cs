@@ -3,7 +3,6 @@ using HearthAndHavoc_GoblinLegacy.GameModel;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -45,7 +44,6 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             FloraDef bush = DefRegistry.Get<FloraDef>("flora_bush_berry");
             FloraDef mushroom = DefRegistry.Get<FloraDef>("flora_fungus_oyster");
             FloraDef dandelion = DefRegistry.Get<FloraDef>("flora_flower_dandelion");
-            Texture2D texture = ContentLoader.GetTexture("Tile_Grass");
 
             Point[] treeTiles = [new(30, 4), new(33, 7), new(29, 9)];
             Point[] bushTiles = [new(40, 14), new(43, 16), new(12, 24), new(18, 28)];
@@ -53,20 +51,20 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
             foreach (Point tile in treeTiles)
             {
-                AddTestPlant(locale, usedTiles, tree, tile, texture);
+                AddTestPlant(locale, usedTiles, tree, tile);
             }
 
             foreach (Point tile in bushTiles)
             {
-                AddTestPlant(locale, usedTiles, bush, tile, texture);
+                AddTestPlant(locale, usedTiles, bush, tile);
             }
 
             foreach (Point tile in dandelionTiles)
             {
-                AddTestPlant(locale, usedTiles, dandelion, tile, texture);
+                AddTestPlant(locale, usedTiles, dandelion, tile);
             }
 
-            List<Point> forestTreeTiles = AddTestForest(locale, usedTiles, maple, tree, texture);
+            List<Point> forestTreeTiles = AddTestForest(locale, usedTiles, maple, tree);
 
             int mushroomsPlaced = 0;
             while (mushroomsPlaced < TestMushroomCount)
@@ -75,12 +73,12 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 Point tile = new(host.X + SimRandom.Instance.Next(-1, 2), host.Y + SimRandom.Instance.Next(-1, 2));
                 if (!IsOpenGround(locale, usedTiles, tile)) continue;
 
-                AddTestPlant(locale, usedTiles, mushroom, tile, texture);
+                AddTestPlant(locale, usedTiles, mushroom, tile);
                 mushroomsPlaced++;
             }
         }
 
-        private static List<Point> AddTestForest(Locale locale, HashSet<Point> usedTiles, FloraDef maple, FloraDef apple, Texture2D texture)
+        private static List<Point> AddTestForest(Locale locale, HashSet<Point> usedTiles, FloraDef maple, FloraDef apple)
         {
             List<Point> treeTiles = new();
             for (int y = ForestCenter.Y - ForestRadius; y <= ForestCenter.Y + ForestRadius; y++)
@@ -96,7 +94,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                     if (SimRandom.Instance.NextSingle() >= ForestDensity) continue;
 
                     FloraDef def = SimRandom.Instance.NextSingle() < ForestMapleShare ? maple : apple;
-                    AddTestPlant(locale, usedTiles, def, tile, texture);
+                    AddTestPlant(locale, usedTiles, def, tile);
                     treeTiles.Add(tile);
                 }
             }
@@ -113,12 +111,12 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             return chunk.Water[tile.Y & MapChunk.LocalMask, tile.X & MapChunk.LocalMask] == null;
         }
 
-        private static void AddTestPlant(Locale locale, HashSet<Point> usedTiles, FloraDef def, Point tile, Texture2D texture)
+        private static void AddTestPlant(Locale locale, HashSet<Point> usedTiles, FloraDef def, Point tile)
         {
             int ageDays = SimRandom.Instance.Next((int)MathF.Ceiling(def.FullRateMaturityDays), def.LifespanDays);
             int birthTick = locale.Clock.TotalTicks - ageDays * SimClock.MinutesPerDay;
 
-            Plant plant = new(def, locale, tile, birthTick, def.FinalWeightKg, texture);
+            Plant plant = new(def, locale, tile, birthTick, def.FinalWeightKg);
             plant.FoliageGrams = def.MaxFoliageGrams;
             plant.FruitCount = def.FruitMaxCount;
 
@@ -129,7 +127,6 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
         public static void AddTestAnimals(World world, Locale locale, HashSet<Point> usedTiles, string defKey, int count)
         {
             FaunaDef def = DefRegistry.Get<FaunaDef>(defKey);
-            Texture2D texture = ContentLoader.GetTexture("Kremlit_Male");
 
             for (int i = 0; i < count; i++)
             {
@@ -141,7 +138,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
 
                 usedTiles.Add(tile);
-                Animal animal = new(world.NextCreatureId(), def, locale, def.FinalWeightKg, texture);
+                Animal animal = new(world.NextCreatureId(), def, locale, def.FinalWeightKg);
                 animal.Position = tile;
                 locale.QueueAdd(animal);
             }
