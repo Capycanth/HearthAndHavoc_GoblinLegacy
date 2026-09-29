@@ -294,7 +294,7 @@ Calories go in by eating and out by basal plus activity burn. Surplus is stored 
 12. `Health` is a `float` from 0 to 100. Starvation costs 100 over 3 game days and dehydration costs 100 over 1 game day, and the two add together. When the animal is neither starving nor dehydrated, health recovers 10 per game day. At 0 the animal dies and is removed with `QueueRemove`; carcasses arrive in Milestone 8.
 13. `Metabolism` exposes needs as states for Milestone 7 to read, alongside the raw values. Hunger: satisfied (stomach at least 25% full), hungry (below 25%) or starving (no fat). Thirst: satisfied (reserve at least 50%), thirsty (below 50%) or dehydrated (empty). Tiredness: rested (debt below `SleepHoursPerDay / 2`), tired, or exhausted (debt at least `SleepHoursPerDay`). The threshold values are tuned later.
 14. Entry points for Milestone 7's actions, which nothing calls in this milestone: `Ingest(Composition, grams)` puts food into the stomach and returns the grams accepted, limited by stomach room; `Drink(liters)` returns the liters accepted, limited by room in the water reserve; and read-only `StomachRoomKg` and need states. Every eating action (grazing, browsing, fruit, carcasses) goes through `Ingest`, so the enzyme rules live in one place.
-15. An `Activity` enum (sleeping, resting, walking, running) is stored on `Creature`. `GoTo` takes a movement mode, walking by default or running, sets that activity while it moves and sets resting when it ends.
+15. An `Activity` enum (sleeping, resting, walking, running) is stored on `Creature`. `GoTo` takes a movement mode, walking by default or running, sets that activity while it moves and sets resting when it ends. *Changed in PR 2: `GoTo` is abstract and takes its mode as an `Activity` through a protected constructor. `WalkTo` and `RunTo` are the subclasses that set it, and later ones such as `SwimTo` can be added the same way. A creature stays resting while it waits for its A\* path, and switches to the mode when it starts stepping.*
 16. Movement speed is in tiles per tick. `Creature` gets an abstract `GetMoveSpeed(Activity)`: `Animal` returns its def's `WalkSpeed` or `RunSpeed`, and `Kremlit` returns 1. `GoTo` keeps a movement budget: each tick it adds the creature's speed, and while the budget covers the next step and the path isn't empty, it tries `MoveCreature` and pays the step's cost. A step costs 1 orthogonally or 1.4 diagonally (the 5:7 ratio A* uses) multiplied by the entered tile's `TileMap.GetMoveCost`, so mud and shallow water slow creatures down as well as steering A*. Leftover budget carries over, so a speed of 2.5 takes 2 or 3 steps a tick. A blocked step resets the budget to 0 and counts toward wait-then-repath as before (Milestone 3, decision 12), so a waiting creature can't save up movement and jump several tiles.
 17. Test animals spawn full: a full stomach, fat at `MaxFatKg` scaled by weight, a full water reserve, no sleep debt and 100 health. What food fills the starting stomach is proposed and approved in PR 4.
 
@@ -321,6 +321,10 @@ A decision layer scores needs and threats and picks an action: Wander, Graze or 
 6. Do wolves hunt in packs or alone? Do rabbits and deer form herds?
 7. How do animals remember things (water locations, where a predator was seen), if at all?
 8. The AI thread gets the live map rather than a copy. Is that acceptable for Phase 1, or should snapshots become real copies?
+
+**Design notes**
+
+- Fleeing gets its own action that does not use the async A\* on the AI thread. It runs a short-range A\* on the main thread, so a fleeing animal (for example a deer running from a wolf) starts running the same tick it reacts, instead of standing still while a path is calculated.
 
 ---
 

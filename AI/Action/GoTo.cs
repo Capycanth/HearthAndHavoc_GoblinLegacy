@@ -1,4 +1,5 @@
 ﻿using HearthAndHavoc_GoblinLegacy.AI.AsyncProcessor;
+using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.Utility.Map;
 using Microsoft.Xna.Framework;
@@ -8,20 +9,25 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
-    public class GoTo : BaseAction
+    public abstract class GoTo : BaseAction
     {
         private const int MaxBlockedSteps = 3;
         private const int MaxRepaths = 3;
+        private const float OrthogonalStepCost = 1f;
+        private const float DiagonalStepCost = 1.4f;
 
         [AllowNull]
         private Stack<Point> PathTraversal { get; set; } = null;
         private Point _destination;
+        private readonly Activity _mode;
+        private float _budget = 0f;
         private int _blockedSteps = 0;
         private int _repaths = 0;
 
-        public GoTo(Point destination)
+        protected GoTo(Point destination, Activity mode)
         {
             _destination = destination;
+            _mode = mode;
         }
 
         public override bool Perform(Creature creature)
@@ -41,26 +47,51 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 return true;
             }
 
-            if (creature.Locale.MoveCreature(creature, PathTraversal.Peek()))
+            creature.Activity = _mode;
+            _budget += creature.GetMoveSpeed(_mode);
+
+            while (PathTraversal.Count > 0)
             {
+                Point next = PathTraversal.Peek();
+                float cost = GetStepCost(creature, next);
+                if (_budget < cost) return false;
+
+                if (!creature.Locale.MoveCreature(creature, next))
+                {
+                    _budget = 0f;
+                    _blockedSteps++;
+                    if (_blockedSteps < MaxBlockedSteps) return false;
+
+                    _blockedSteps = 0;
+                    if (_repaths == MaxRepaths)
+                    {
+                        Debug.WriteLine($"GoTo gave up on {_destination} after {MaxRepaths} repaths");
+                        creature.Activity = Activity.RESTING;
+                        return true;
+                    }
+
+                    _repaths++;
+                    PathTraversal = null;
+                    return false;
+                }
+
+                _budget -= cost;
                 PathTraversal.Pop();
                 _blockedSteps = 0;
-                return PathTraversal.Count == 0;
             }
 
-            _blockedSteps++;
-            if (_blockedSteps < MaxBlockedSteps) return false;
+            creature.Activity = Activity.RESTING;
+            return true;
+        }
 
-            _blockedSteps = 0;
-            if (_repaths == MaxRepaths)
-            {
-                Debug.WriteLine($"GoTo gave up on {_destination} after {MaxRepaths} repaths");
-                return true;
-            }
+        private static float GetStepCost(Creature creature, Point next)
+        {
+            Point current = creature.Position;
+            if (next == current) return 0f;
 
-            _repaths++;
-            PathTraversal = null;
-            return false;
+            bool diagonal = next.X != current.X && next.Y != current.Y;
+            float baseCost = diagonal ? DiagonalStepCost : OrthogonalStepCost;
+            return baseCost * creature.Locale.LocaleMap.GetMoveCost(next);
         }
 
         protected override (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature)
