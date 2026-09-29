@@ -1,4 +1,4 @@
 [
-    {"key": "cover_grass", "label": "Grass", "maxBiomass": 1000, "textureKey": "Tile_Grass", "tint": [255, 255, 255], "composition": {"water": 80, "substances": {"SIMPLE_CARB": 3, "CELLULOSE": 12, "PROTEIN": 3}}},
-    {"key": "cover_clover", "label": "Clover", "maxBiomass": 1000, "textureKey": "Tile_Grass", "tint": [150, 220, 150], "composition": {"water": 82, "substances": {"SIMPLE_CARB": 3, "CELLULOSE": 8, "PROTEIN": 5}}}
+    {"key": "cover_grass", "label": "Grass", "maxBiomass": 1000, "textureKey": "Tile_Grass", "tint": [255, 255, 255], "composition": {"water": 80, "substances": {"SIMPLE_CARB": 3, "CELLULOSE": 12, "PROTEIN": 3}}, "regrowGramsPerDay": 40, "spreadChance": 0.05, "seasonGrowth": {"SPRING": 1, "SUMMER": 1, "AUTUMN": 0.5, "WINTER": 0}, "terrainKeys": ["terrain_dirt"]},
+    {"key": "cover_clover", "label": "Clover", "maxBiomass": 1000, "textureKey": "Tile_Grass", "tint": [150, 220, 150], "composition": {"water": 82, "substances": {"SIMPLE_CARB": 3, "CELLULOSE": 8, "PROTEIN": 5}}, "regrowGramsPerDay": 30, "spreadChance": 0.03, "seasonGrowth": {"SPRING": 0.8, "SUMMER": 1, "AUTUMN": 0.5, "WINTER": 0}, "terrainKeys": ["terrain_dirt"]}
 ]

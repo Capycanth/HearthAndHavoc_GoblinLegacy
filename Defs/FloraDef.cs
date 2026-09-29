@@ -1,6 +1,5 @@
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -9,8 +8,6 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
 {
     public class FloraDef : Def
     {
-        private const float MaxSeasonMultiplier = 3f;
-
         public int[] Tint { get; init; }
         public List<FloraGrowthStage> GrowthStages { get; init; }
         public float MaxFoliageGrams { get; init; }
@@ -109,11 +106,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 throw new InvalidDataException($"Def '{Key}' reaches its final growth stage after {FullRateMaturityDays} days at full rate; LifespanDays {LifespanDays} must be later than that.");
             }
 
-            ValidateSeasonTable(SeasonGrowth, nameof(SeasonGrowth));
+            DefHelper.ValidateSeasonTable(SeasonGrowth, nameof(SeasonGrowth), Key);
 
             if (FruitItem != null)
             {
-                ValidateSeasonTable(SeasonFruiting, nameof(SeasonFruiting));
+                DefHelper.ValidateSeasonTable(SeasonFruiting, nameof(SeasonFruiting), Key);
             }
             else if (SeasonFruiting != null)
             {
@@ -128,27 +125,6 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             if (Hosts == null && HostRadius != 0)
             {
                 throw new InvalidDataException($"Def '{Key}' has HostRadius {HostRadius} but no host tags.");
-            }
-        }
-
-        private void ValidateSeasonTable(Dictionary<Season, float> table, string tableName)
-        {
-            if (table == null)
-            {
-                throw new InvalidDataException($"Def '{Key}' needs a {tableName} table.");
-            }
-
-            foreach (Season season in Enum.GetValues<Season>())
-            {
-                if (!table.TryGetValue(season, out float multiplier))
-                {
-                    throw new InvalidDataException($"Def '{Key}' {tableName} has no value for {season}.");
-                }
-
-                if (multiplier < 0 || multiplier > MaxSeasonMultiplier)
-                {
-                    throw new InvalidDataException($"Def '{Key}' {tableName} has {multiplier} for {season}; it must be from 0 to {MaxSeasonMultiplier}.");
-                }
             }
         }
     }
