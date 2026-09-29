@@ -58,6 +58,16 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             return chunk.Ground[localY, localX].MoveCost;
         }
 
+        public byte GetFertility(Point tile)
+        {
+            MapChunk chunk = Chunks[ToChunkCoord(tile)];
+
+            int localX = tile.X & MapChunk.LocalMask;
+            int localY = tile.Y & MapChunk.LocalMask;
+
+            return chunk.Fertility[localY, localX];
+        }
+
         public bool CanFit(Point tile, byte size)
         {
             if (!Chunks.TryGetValue(ToChunkCoord(tile), out MapChunk chunk)) return false;
