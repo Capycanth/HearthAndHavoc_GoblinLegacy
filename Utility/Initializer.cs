@@ -69,9 +69,8 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
         {
             int ageDays = random.Next((int)MathF.Ceiling(def.FullRateMaturityDays), def.LifespanDays);
             int birthTick = locale.Clock.TotalTicks - ageDays * SimClock.MinutesPerDay;
-            float weightKg = def.GrowthStages[^1].StageMaturityWeightKg;
 
-            Plant plant = new(def, locale, tile, birthTick, weightKg, texture);
+            Plant plant = new(def, locale, tile, birthTick, def.FinalWeightKg, texture);
             plant.FoliageGrams = def.MaxFoliageGrams;
             plant.FruitCount = def.FruitMaxCount;
 

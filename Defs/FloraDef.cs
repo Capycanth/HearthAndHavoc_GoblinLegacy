@@ -29,6 +29,9 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         [JsonIgnore]
         public float FullRateMaturityDays => GrowthStage.GetFullRateMaturityDays(GrowthStages);
 
+        [JsonIgnore]
+        public float FinalWeightKg => GrowthStages[^1].StageMaturityWeightKg;
+
         public override void Resolve()
         {
             if (FruitItemKey != null)
