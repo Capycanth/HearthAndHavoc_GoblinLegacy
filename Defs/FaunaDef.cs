@@ -42,6 +42,9 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         [JsonIgnore]
         public Color TintColor => new Color(Tint[0], Tint[1], Tint[2]);
 
+        [JsonIgnore]
+        public float FinalWeightKg => GrowthStages[^1].StageMaturityWeightKg;
+
         public override void Resolve()
         {
             Diet = new List<Def>();

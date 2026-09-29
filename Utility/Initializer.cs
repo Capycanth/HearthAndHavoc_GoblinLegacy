@@ -82,7 +82,6 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
         {
             FaunaDef def = DefRegistry.Get<FaunaDef>(defKey);
             Texture2D texture = ContentLoader.GetTexture("Kremlit_Male");
-            float weightKg = def.GrowthStages[^1].StageMaturityWeightKg;
 
             for (int i = 0; i < count; i++)
             {
@@ -94,7 +93,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
 
                 usedTiles.Add(tile);
-                Animal animal = new(world.NextCreatureId(), def, locale, weightKg, texture);
+                Animal animal = new(world.NextCreatureId(), def, locale, def.FinalWeightKg, texture);
                 animal.Position = tile;
                 locale.QueueAdd(animal);
             }
