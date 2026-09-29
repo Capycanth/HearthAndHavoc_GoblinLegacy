@@ -13,10 +13,15 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         private Random random = new();
         public FaunaDef Def { get; }
+        public float WeightKg { get; set; }
+        public int StageIndex { get; private set; }
 
-        public Animal(int id, FaunaDef def, Locale locale, Texture2D texture) : base(id, def.Size, locale, texture)
+        public Animal(int id, FaunaDef def, Locale locale, float weightKg, Texture2D texture)
+            : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, texture)
         {
             Def = def;
+            WeightKg = weightKg;
+            StageIndex = GrowthStage.GetStageIndex(Def.GrowthStages, WeightKg);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

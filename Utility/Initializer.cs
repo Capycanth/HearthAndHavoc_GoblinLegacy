@@ -67,10 +67,11 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
         private static void AddTestPlant(Locale locale, Random random, HashSet<Point> usedTiles, FloraDef def, Point tile, Texture2D texture)
         {
-            int ageDays = random.Next(def.FinalStageStartDays, def.LifespanDays);
+            int ageDays = random.Next((int)MathF.Ceiling(def.FullRateMaturityDays), def.LifespanDays);
             int birthTick = locale.Clock.TotalTicks - ageDays * SimClock.MinutesPerDay;
+            float weightKg = def.GrowthStages[^1].StageMaturityWeightKg;
 
-            Plant plant = new(def, locale, tile, birthTick, texture);
+            Plant plant = new(def, locale, tile, birthTick, weightKg, texture);
             plant.FoliageGrams = def.MaxFoliageGrams;
             plant.FruitCount = def.FruitMaxCount;
 
@@ -82,6 +83,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
         {
             FaunaDef def = DefRegistry.Get<FaunaDef>(defKey);
             Texture2D texture = ContentLoader.GetTexture("Kremlit_Male");
+            float weightKg = def.GrowthStages[^1].StageMaturityWeightKg;
 
             for (int i = 0; i < count; i++)
             {
@@ -93,7 +95,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
 
                 usedTiles.Add(tile);
-                Animal animal = new(world.NextCreatureId(), def, locale, texture);
+                Animal animal = new(world.NextCreatureId(), def, locale, weightKg, texture);
                 animal.Position = tile;
                 locale.QueueAdd(animal);
             }

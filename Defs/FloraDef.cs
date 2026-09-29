@@ -27,18 +27,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public Color TintColor => new Color(Tint[0], Tint[1], Tint[2]);
 
         [JsonIgnore]
-        public int FinalStageStartDays
-        {
-            get
-            {
-                int days = 0;
-                for (int i = 0; i < GrowthStages.Count - 1; i++)
-                {
-                    days += GrowthStages[i].DurationDays;
-                }
-                return days;
-            }
-        }
+        public float FullRateMaturityDays => GrowthStage.GetFullRateMaturityDays(GrowthStages);
 
         public override void Resolve()
         {
@@ -63,31 +52,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 }
             }
 
-            if (GrowthStages == null || GrowthStages.Count == 0)
-            {
-                throw new InvalidDataException($"Def '{Key}' needs at least one growth stage.");
-            }
-
-            int lastStage = GrowthStages.Count - 1;
-            for (int i = 0; i < GrowthStages.Count; i++)
-            {
-                GrowthStage stage = GrowthStages[i];
-
-                if (string.IsNullOrWhiteSpace(stage.Name))
-                {
-                    throw new InvalidDataException($"Def '{Key}' has a growth stage with no name.");
-                }
-
-                if (i < lastStage && stage.DurationDays <= 0)
-                {
-                    throw new InvalidDataException($"Def '{Key}' growth stage '{stage.Name}' has DurationDays {stage.DurationDays}; it must be above 0.");
-                }
-
-                if (i == lastStage && stage.DurationDays != 0)
-                {
-                    throw new InvalidDataException($"Def '{Key}' final growth stage '{stage.Name}' has DurationDays {stage.DurationDays}; it must be 0, since it lasts until death.");
-                }
-            }
+            GrowthStage.Validate(GrowthStages, Key);
 
             if (MaxFoliageGrams < 0 || FoliageRegrowGramsPerDay < 0)
             {
@@ -121,9 +86,9 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 throw new InvalidDataException($"Def '{Key}' has LifespanDays {LifespanDays}; it must be above 0.");
             }
 
-            if (FinalStageStartDays >= LifespanDays)
+            if (FullRateMaturityDays >= LifespanDays)
             {
-                throw new InvalidDataException($"Def '{Key}' reaches its final growth stage at day {FinalStageStartDays}; LifespanDays {LifespanDays} must be later than that.");
+                throw new InvalidDataException($"Def '{Key}' reaches its final growth stage after {FullRateMaturityDays} days at full rate; LifespanDays {LifespanDays} must be later than that.");
             }
         }
     }
