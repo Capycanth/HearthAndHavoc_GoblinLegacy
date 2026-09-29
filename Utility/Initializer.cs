@@ -30,10 +30,14 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             HashSet<Point> usedTiles = new();
             AddTestPlants(locale, usedTiles);
 
-            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_rabbit", 30);
-            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_wolf", 10);
-            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_deer", 20);
-            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_boar", 8);
+            Composition grass = DefRegistry.Get<CoverDef>("cover_grass").Composition;
+            Composition apple = DefRegistry.Get<ItemDef>("item_fruit_apple").Composition;
+            Composition deerMeat = DefRegistry.Get<ItemDef>("item_meat_deer").Composition;
+
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_rabbit", 30, grass);
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_wolf", 10, deerMeat);
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_deer", 20, grass);
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_boar", 8, apple);
             return world;
         }
 
@@ -124,7 +128,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             usedTiles.Add(tile);
         }
 
-        public static void AddTestAnimals(World world, Locale locale, HashSet<Point> usedTiles, string defKey, int count)
+        public static void AddTestAnimals(World world, Locale locale, HashSet<Point> usedTiles, string defKey, int count, Composition stomachFood)
         {
             FaunaDef def = DefRegistry.Get<FaunaDef>(defKey);
 
@@ -140,6 +144,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 usedTiles.Add(tile);
                 Animal animal = new(world.NextCreatureId(), def, locale, def.FinalWeightKg);
                 animal.Position = tile;
+                animal.Metabolism.FillStomach(stomachFood);
                 locale.QueueAdd(animal);
             }
         }

@@ -18,6 +18,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
         public Metabolism Metabolism { get; }
+        public int UpdateSlot => Id % SimClock.MinutesPerHour;
 
         public Animal(int id, FaunaDef def, Locale locale, float weightKg)
             : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, null)
@@ -26,6 +27,39 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             WeightKg = weightKg;
             StageIndex = GrowthStage.GetStageIndex(Def.GrowthStages, WeightKg);
             Metabolism = new Metabolism(this);
+        }
+
+        public override void Update()
+        {
+            if (Locale.Clock.Minute == UpdateSlot)
+            {
+                Metabolism.UpdateHour();
+                if (Metabolism.Health <= 0f)
+                {
+                    Locale.QueueRemove(this);
+                    return;
+                }
+            }
+
+            base.Update();
+        }
+
+        // Adds up to kg of lean weight, never past the current stage's maturity weight. On reaching it, the
+        // animal moves to the next stage only if the tile has room for the larger size; otherwise it stays at
+        // the mark and tries again on later updates. Returns the kg actually grown.
+        public float Grow(float kg)
+        {
+            float stageMaturityKg = Def.GrowthStages[StageIndex].StageMaturityWeightKg;
+            float grownKg = MathF.Max(0f, MathF.Min(kg, stageMaturityKg - WeightKg));
+            WeightKg += grownKg;
+
+            bool isFinalStage = StageIndex == Def.GrowthStages.Count - 1;
+            if (!isFinalStage && WeightKg >= stageMaturityKg && Locale.TryResizeCreature(this, Def.GrowthStages[StageIndex + 1].Size))
+            {
+                StageIndex++;
+            }
+
+            return grownKg;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

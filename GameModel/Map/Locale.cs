@@ -216,6 +216,15 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             return true;
         }
 
+        public bool TryResizeCreature(Creature creature, byte newSize)
+        {
+            if (newSize > creature.Size && !LocaleMap.CanFit(creature.Position, (byte)(newSize - creature.Size))) return false;
+
+            LocaleMap.AddOccupancy(creature.Position, newSize - creature.Size);
+            creature.Size = newSize;
+            return true;
+        }
+
         public void GetCreaturesInArea(Rectangle tiles, List<Creature> results)
         {
             Point firstCell = ToCell(new Point(tiles.Left, tiles.Top));
