@@ -59,20 +59,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 if (!creature.Locale.MoveCreature(creature, next))
                 {
                     _budget = 0f;
-                    _blockedSteps++;
-                    if (_blockedSteps < MaxBlockedSteps) return false;
-
-                    _blockedSteps = 0;
-                    if (_repaths == MaxRepaths)
-                    {
-                        Debug.WriteLine($"GoTo gave up on {_destination} after {MaxRepaths} repaths");
-                        creature.Activity = Activity.RESTING;
-                        return true;
-                    }
-
-                    _repaths++;
-                    PathTraversal = null;
-                    return false;
+                    return OnBlocked(creature);
                 }
 
                 _budget -= cost;
@@ -82,6 +69,24 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
             creature.Activity = Activity.RESTING;
             return true;
+        }
+
+        private bool OnBlocked(Creature creature)
+        {
+            _blockedSteps++;
+            if (_blockedSteps < MaxBlockedSteps) return false;
+
+            _blockedSteps = 0;
+            if (_repaths == MaxRepaths)
+            {
+                Debug.WriteLine($"GoTo gave up on {_destination} after {MaxRepaths} repaths");
+                creature.Activity = Activity.RESTING;
+                return true;
+            }
+
+            _repaths++;
+            PathTraversal = null;
+            return false;
         }
 
         private static float GetStepCost(Creature creature, Point next)
