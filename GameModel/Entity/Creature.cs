@@ -1,4 +1,5 @@
 using HearthAndHavoc_GoblinLegacy.AI.Action;
+using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,6 +14,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public Locale Locale { get; }
         [AllowNull]
         public BaseAction CurrentAction { get; set; }
+        public Activity Activity { get; set; } = Activity.RESTING;
 
         protected Creature(int id, byte size, Locale locale, Texture2D texture) : base(texture)
         {
@@ -33,5 +35,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         }
 
         protected abstract BaseAction ChooseAction();
+
+        public abstract float GetMoveSpeed(Activity activity);
     }
 }

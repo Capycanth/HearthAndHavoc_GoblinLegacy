@@ -27,7 +27,12 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         protected override BaseAction ChooseAction()
         {
-            return new GoTo(new Point(SimRandom.Instance.Next(512), SimRandom.Instance.Next(512)));
+            return new WalkTo(new Point(SimRandom.Instance.Next(512), SimRandom.Instance.Next(512)));
+        }
+
+        public override float GetMoveSpeed(Activity activity)
+        {
+            return 1f;
         }
     }
 }

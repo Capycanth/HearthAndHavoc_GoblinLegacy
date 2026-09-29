@@ -1,9 +1,11 @@
 using HearthAndHavoc_GoblinLegacy.AI.Action;
 using HearthAndHavoc_GoblinLegacy.Defs;
+using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
@@ -33,7 +35,14 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         {
             int x = Position.X + SimRandom.Instance.Next(-WanderRadius, WanderRadius + 1);
             int y = Position.Y + SimRandom.Instance.Next(-WanderRadius, WanderRadius + 1);
-            return new GoTo(new Point(x, y));
+            return new WalkTo(new Point(x, y));
         }
+
+        public override float GetMoveSpeed(Activity activity) => activity switch
+        {
+            Activity.WALKING => Def.WalkSpeed,
+            Activity.RUNNING => Def.RunSpeed,
+            _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Animal has no move speed for this activity.")
+        };
     }
 }
