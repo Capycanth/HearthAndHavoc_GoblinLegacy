@@ -11,11 +11,15 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
     public class Locale
     {
         private const int CellShift = 5;
+        private const int PlantUpdateSlots = SimClock.MinutesPerHour;
 
         public string Id { get; private set; }
         public IReadOnlyList<Creature> Creatures => creatures;
         public TileMap LocaleMap { get; private set; }
+        public SimClock Clock { get; }
 
+        private readonly List<Plant>[] plantSlots = new List<Plant>[PlantUpdateSlots];
+        private int nextPlantSlot = 0;
         private readonly List<Creature> creatures = new();
         private readonly Dictionary<Point, List<Creature>> creatureCells = new();
         private readonly List<Creature> pendingAdds = new();
@@ -24,10 +28,16 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         private readonly List<Plant> pendingPlantRemoves = new();
         private readonly List<Creature> visibleCreatures = new();
 
-        public Locale(string id, TileMap localeMap) 
+        public Locale(string id, TileMap localeMap, SimClock clock)
         {
             Id = id;
             LocaleMap = localeMap;
+            Clock = clock;
+
+            for (int i = 0; i < PlantUpdateSlots; i++)
+            {
+                plantSlots[i] = new List<Plant>();
+            }
         }
 
         public void Update(string id)
@@ -43,6 +53,11 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             //{
             //    LocaleMap[kremlit.Position.Y][kremlit.Position.X].Impassible = true;
             //}
+            foreach (Plant plant in plantSlots[Clock.Minute])
+            {
+                plant.Update();
+            }
+
             foreach (Creature creature in creatures)
             {
                 creature.Update();
@@ -84,7 +99,11 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                 int localX = plant.Position.X & MapChunk.LocalMask;
                 int localY = plant.Position.Y & MapChunk.LocalMask;
 
-                if (chunk.Plants[localY, localX] == plant) chunk.Plants[localY, localX] = null;
+                if (chunk.Plants[localY, localX] == plant)
+                {
+                    chunk.Plants[localY, localX] = null;
+                    plantSlots[plant.UpdateSlot].Remove(plant);
+                }
             }
             pendingPlantRemoves.Clear();
 
@@ -107,6 +126,10 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
                 chunk.SetCover(localX, localY, null);
                 chunk.Plants[localY, localX] = plant;
+
+                plant.UpdateSlot = nextPlantSlot;
+                plantSlots[nextPlantSlot].Add(plant);
+                nextPlantSlot = (nextPlantSlot + 1) % PlantUpdateSlots;
             }
             pendingPlantAdds.Clear();
 
