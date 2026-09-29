@@ -67,10 +67,10 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
         private static void AddTestPlant(Locale locale, Random random, HashSet<Point> usedTiles, FloraDef def, Point tile, Texture2D texture)
         {
-            int ageDays = random.Next(def.FinalStageStartDays, def.LifespanDays);
+            int ageDays = random.Next((int)MathF.Ceiling(def.FullRateMaturityDays), def.LifespanDays);
             int birthTick = locale.Clock.TotalTicks - ageDays * SimClock.MinutesPerDay;
 
-            Plant plant = new(def, locale, tile, birthTick, texture);
+            Plant plant = new(def, locale, tile, birthTick, def.FinalWeightKg, texture);
             plant.FoliageGrams = def.MaxFoliageGrams;
             plant.FruitCount = def.FruitMaxCount;
 
@@ -93,7 +93,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
 
                 usedTiles.Add(tile);
-                Animal animal = new(world.NextCreatureId(), def, locale, texture);
+                Animal animal = new(world.NextCreatureId(), def, locale, def.FinalWeightKg, texture);
                 animal.Position = tile;
                 locale.QueueAdd(animal);
             }

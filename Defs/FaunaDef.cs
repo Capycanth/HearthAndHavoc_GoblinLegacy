@@ -12,8 +12,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
 
         private readonly List<FaunaDef> predators = new();
 
-        public byte Size { get; init; }
-        public float BodyMassKg { get; init; }
+        public List<FaunaGrowthStage> GrowthStages { get; init; }
         public float BasalKcalPerHour { get; init; }
         public float SleepMultiplier { get; init; }
         public float WalkMultiplier { get; init; }
@@ -27,7 +26,6 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public ActivityCycle ActivityCycle { get; init; }
         public int SleepHoursPerDay { get; init; }
         public int LifespanDays { get; init; }
-        public int MaturityDays { get; init; }
         public int GestationDays { get; init; }
         public int LitterSize { get; init; }
         public List<string> DietKeys { get; init; }
@@ -43,6 +41,9 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
 
         [JsonIgnore]
         public Color TintColor => new Color(Tint[0], Tint[1], Tint[2]);
+
+        [JsonIgnore]
+        public float FinalWeightKg => GrowthStages[^1].StageMaturityWeightKg;
 
         public override void Resolve()
         {
@@ -77,14 +78,19 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
 
         public override void Validate()
         {
-            if (Size < 1 || Size > 100)
+            GrowthStage.Validate(GrowthStages, Key);
+
+            foreach (FaunaGrowthStage stage in GrowthStages)
             {
-                throw new InvalidDataException($"Def '{Key}' has Size {Size}; it must be from 1 to 100.");
+                if (stage.Size < 1 || stage.Size > 100)
+                {
+                    throw new InvalidDataException($"Def '{Key}' growth stage '{stage.Name}' has Size {stage.Size}; it must be from 1 to 100.");
+                }
             }
 
-            if (BodyMassKg <= 0 || BasalKcalPerHour <= 0 || StomachCapacityKg <= 0)
+            if (BasalKcalPerHour <= 0 || StomachCapacityKg <= 0)
             {
-                throw new InvalidDataException($"Def '{Key}' needs BodyMassKg, BasalKcalPerHour and StomachCapacityKg above 0.");
+                throw new InvalidDataException($"Def '{Key}' needs BasalKcalPerHour and StomachCapacityKg above 0.");
             }
 
             if (SleepMultiplier <= 0 || WalkMultiplier <= 0 || RunMultiplier <= 0)
@@ -112,9 +118,15 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 throw new InvalidDataException($"Def '{Key}' has SleepHoursPerDay {SleepHoursPerDay}; it must be from 0 to 24.");
             }
 
-            if (LifespanDays <= 0 || MaturityDays < 0 || MaturityDays >= LifespanDays)
+            if (LifespanDays <= 0)
             {
-                throw new InvalidDataException($"Def '{Key}' has LifespanDays {LifespanDays} and MaturityDays {MaturityDays}; lifespan must be above 0 and maturity below it.");
+                throw new InvalidDataException($"Def '{Key}' has LifespanDays {LifespanDays}; it must be above 0.");
+            }
+
+            float fullRateMaturityDays = GrowthStage.GetFullRateMaturityDays(GrowthStages);
+            if (fullRateMaturityDays >= LifespanDays)
+            {
+                throw new InvalidDataException($"Def '{Key}' reaches its final growth stage after {fullRateMaturityDays} days at full rate; LifespanDays {LifespanDays} must be later than that.");
             }
 
             if (GestationDays <= 0 || LitterSize < 1)

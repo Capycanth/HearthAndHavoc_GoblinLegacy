@@ -234,6 +234,7 @@ Plants grow, get grazed down, regrow, fruit, spread and die.
 15. Fauna stages use `FaunaGrowthStage : GrowthStage`, which adds `Size`, so flora never carries a field it doesn't use. `Size` moves off `FaunaDef`, and an animal's size is its current stage's size. `BodyMassKg` is replaced by the final stage's `StageMaturityWeightKg`, and `MaturityDays` by the stages. Changing an animal's size and occupancy at runtime arrives with growth in Milestone 6 (see creature pushing under supplemental work).
 16. Validation: `StageMaturityWeightKg` must be above 0 and strictly increasing, `GrowthKgPerDay` above 0, and fauna `Size` from 1 to the tile capacity of 100. A computed `FullRateMaturityDays` (days to reach the final stage at full growth rate) replaces `FinalStageStartDays` and must be below `LifespanDays`.
 17. Test plants and animals spawn at their final stage weight. Test plants get a random age from `FullRateMaturityDays` up to `LifespanDays`.
+18. `BasalKcalPerHour`, `StomachCapacityKg`, `MaxFatKg` and `CarcassYield` amounts are adult values, scaled by an animal's current weight divided by its adult maximum weight. Stomach, fat and carcass scale linearly. Basal kcal follows Kleiber's law: the weight ratio raised to the power 0.75, so smaller bodies burn more per kg. Each value is scaled in the PR that first uses it (Milestone 6 for metabolism, Milestone 8 for carcasses).
 
 **PRs, in order**
 

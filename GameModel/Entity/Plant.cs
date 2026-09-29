@@ -10,6 +10,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public FloraDef Def { get; }
         public Locale Locale { get; }
         public int BirthTick { get; }
+        public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
         public float FoliageGrams { get; set; }
         public float FruitCount { get; set; }
@@ -17,38 +18,25 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public int AgeDays => (Locale.Clock.TotalTicks - BirthTick) / SimClock.MinutesPerDay;
 
-        public Plant(FloraDef def, Locale locale, Point tile, int birthTick, Texture2D texture) : base(texture)
+        public Plant(FloraDef def, Locale locale, Point tile, int birthTick, float weightKg, Texture2D texture) : base(texture)
         {
             Def = def;
             Locale = locale;
             Position = tile;
             BirthTick = birthTick;
-            StageIndex = GetStageIndex(AgeDays);
+            WeightKg = weightKg;
+            StageIndex = GrowthStage.GetStageIndex(Def.GrowthStages, WeightKg);
         }
 
         public override void Update()
         {
-            int ageDays = AgeDays;
-            if (ageDays >= Def.LifespanDays)
+            if (AgeDays >= Def.LifespanDays)
             {
                 Locale.QueueRemovePlant(this);
                 return;
             }
 
-            StageIndex = GetStageIndex(ageDays);
-        }
-
-        private int GetStageIndex(int ageDays)
-        {
-            int lastStage = Def.GrowthStages.Count - 1;
-            int stageEndDays = 0;
-            for (int i = 0; i < lastStage; i++)
-            {
-                stageEndDays += Def.GrowthStages[i].DurationDays;
-                if (ageDays < stageEndDays) return i;
-            }
-
-            return lastStage;
+            StageIndex = GrowthStage.GetStageIndex(Def.GrowthStages, WeightKg);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
