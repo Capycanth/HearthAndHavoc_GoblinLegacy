@@ -2,9 +2,9 @@
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.AI.Action;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
@@ -13,7 +13,6 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
     {
         private const byte KremlitSize = 30;
 
-        private Random random = new();
         public List<BaseItem> Inventory { get; set; }
         public Dictionary<NeedType, float> Needs { get; set; }
 
@@ -28,7 +27,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         protected override BaseAction ChooseAction()
         {
-            return new GoTo(new Point(this.random.Next(512), this.random.Next(512)));
+            return new GoTo(new Point(SimRandom.Instance.Next(512), SimRandom.Instance.Next(512)));
         }
     }
 }
