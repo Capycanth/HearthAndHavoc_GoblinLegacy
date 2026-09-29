@@ -26,19 +26,19 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             HashSet<Point> usedTiles = new();
             AddTestPlants(locale, usedTiles);
 
-            AddTestAnimals(world, locale, usedTiles, "fauna_rabbit", 30);
-            AddTestAnimals(world, locale, usedTiles, "fauna_wolf", 10);
-            AddTestAnimals(world, locale, usedTiles, "fauna_deer", 20);
-            AddTestAnimals(world, locale, usedTiles, "fauna_boar", 8);
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_rabbit", 30);
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_wolf", 10);
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_deer", 20);
+            AddTestAnimals(world, locale, usedTiles, "fauna_mammal_boar", 8);
             return world;
         }
 
         public static void AddTestPlants(Locale locale, HashSet<Point> usedTiles)
         {
-            FloraDef tree = DefRegistry.Get<FloraDef>("flora_apple_tree");
-            FloraDef bush = DefRegistry.Get<FloraDef>("flora_berry_bush");
-            FloraDef mushroom = DefRegistry.Get<FloraDef>("flora_mushroom_patch");
-            FloraDef dandelion = DefRegistry.Get<FloraDef>("flora_dandelion");
+            FloraDef tree = DefRegistry.Get<FloraDef>("flora_tree_apple");
+            FloraDef bush = DefRegistry.Get<FloraDef>("flora_bush_berry");
+            FloraDef mushroom = DefRegistry.Get<FloraDef>("flora_fungus_oyster");
+            FloraDef dandelion = DefRegistry.Get<FloraDef>("flora_flower_dandelion");
             Texture2D texture = ContentLoader.GetTexture("Tile_Grass");
 
             Point[] treeTiles = [new(30, 4), new(33, 7), new(29, 9)];
