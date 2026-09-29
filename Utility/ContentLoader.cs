@@ -18,6 +18,11 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             };
         }
 
+        public static bool HasTexture(string name)
+        {
+            return TextureCache.ContainsKey(name);
+        }
+
         public static Texture2D GetTexture(string name)
         {
             if (TextureCache.TryGetValue(name, out var texture))

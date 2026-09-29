@@ -1,3 +1,4 @@
+using HearthAndHavoc_GoblinLegacy.Utility;
 using System.Collections.Generic;
 using System.IO;
 
@@ -8,6 +9,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public string Name { get; init; }
         public float StageMaturityWeightKg { get; init; }
         public float GrowthKgPerDay { get; init; }
+        public string TextureKey { get; init; }
 
         public static int GetStageIndex(IReadOnlyList<GrowthStage> stages, float weightKg)
         {
@@ -56,6 +58,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 if (stage.GrowthKgPerDay <= 0)
                 {
                     throw new InvalidDataException($"Def '{defKey}' growth stage '{stage.Name}' has GrowthKgPerDay {stage.GrowthKgPerDay}; it must be above 0.");
+                }
+
+                if (string.IsNullOrWhiteSpace(stage.TextureKey) || !ContentLoader.HasTexture(stage.TextureKey))
+                {
+                    throw new InvalidDataException($"Def '{defKey}' growth stage '{stage.Name}' has TextureKey '{stage.TextureKey}', which isn't a loaded texture.");
                 }
 
                 previousWeightKg = stage.StageMaturityWeightKg;
