@@ -41,7 +41,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             if (!chunk.Ground[localY, localX].Passable) return false;
 
             Plant plant = chunk.Plants[localY, localX];
-            if (plant != null && plant.Def.BlocksMovement) return false;
+            if (plant != null && plant.BlocksMovement) return false;
 
             return chunk.Water[localY, localX] == null || chunk.WaterDepth[localY, localX] <= MaxWadeDepth;
         }

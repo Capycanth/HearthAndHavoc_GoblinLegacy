@@ -1,6 +1,7 @@
 using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,6 +11,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
     public class Plant : GameObject
     {
         private const float AverageFertility = 50f;
+        private const float MaxFertility = 100f;
 
         public FloraDef Def { get; }
         public Locale Locale { get; }
@@ -19,6 +21,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public float FoliageGrams { get; set; }
         public float FruitCount { get; set; }
         public int UpdateSlot { get; set; }
+
+        public bool BlocksMovement => Def.GrowthStages[StageIndex].BlocksMovement;
 
         public int AgeDays => (Locale.Clock.TotalTicks - BirthTick) / SimClock.MinutesPerDay;
 
@@ -62,6 +66,35 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
                 float fruitPerHour = (float)Def.FruitMaxCount / Def.FruitRegrowDays / SimClock.HoursPerDay;
                 FruitCount = MathF.Min(FruitCount + fruitPerHour * fruitingMultiplier, Def.FruitMaxCount);
             }
+
+            if (isMature && Locale.Clock.Hour == 0)
+            {
+                TrySpread(season);
+            }
+        }
+
+        private void TrySpread(Season season)
+        {
+            if (SimRandom.Instance.NextSingle() >= Def.SpreadChance) return;
+
+            int radius = Def.SpreadRadius;
+            Point target = new(
+                Position.X + SimRandom.Instance.Next(-radius, radius + 1),
+                Position.Y + SimRandom.Instance.Next(-radius, radius + 1));
+
+            if (!Locale.LocaleMap.Chunks.TryGetValue(TileMap.ToChunkCoord(target), out MapChunk chunk)) return;
+
+            int localX = target.X & MapChunk.LocalMask;
+            int localY = target.Y & MapChunk.LocalMask;
+
+            if (chunk.Water[localY, localX] != null) return;
+            if (!chunk.Ground[localY, localX].Passable) return;
+            if (chunk.Plants[localY, localX] != null) return;
+
+            float sproutChance = MathF.Min(1f, chunk.Fertility[localY, localX] / MaxFertility * Def.SeasonGrowth[season]);
+            if (SimRandom.Instance.NextSingle() >= sproutChance) return;
+
+            Locale.QueueAddPlant(new Plant(Def, Locale, target, Locale.Clock.TotalTicks, 0f, Texture));
         }
 
         public override void Draw(SpriteBatch spriteBatch)

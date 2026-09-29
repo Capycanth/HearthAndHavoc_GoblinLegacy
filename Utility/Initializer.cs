@@ -12,26 +12,28 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
     public static class Initializer
     {
         private const int AnimalSpawnAreaSize = 64;
+        private const int TestWorldSeed = 1234;
 
         public static World CreateTestWorld()
         {
+            SimRandom.Initialize(TestWorldSeed);
+
             World world = new();
             Locale locale = new("Locale1", CreateStartingMap(), world.Clock);
             world.CurrentLocaleId = locale.Id;
             world.LocalesById.Add(locale.Id, locale);
 
-            Random random = new();
             HashSet<Point> usedTiles = new();
-            AddTestPlants(locale, random, usedTiles);
+            AddTestPlants(locale, usedTiles);
 
-            AddTestAnimals(world, locale, random, usedTiles, "fauna_rabbit", 30);
-            AddTestAnimals(world, locale, random, usedTiles, "fauna_wolf", 10);
-            AddTestAnimals(world, locale, random, usedTiles, "fauna_deer", 20);
-            AddTestAnimals(world, locale, random, usedTiles, "fauna_boar", 8);
+            AddTestAnimals(world, locale, usedTiles, "fauna_rabbit", 30);
+            AddTestAnimals(world, locale, usedTiles, "fauna_wolf", 10);
+            AddTestAnimals(world, locale, usedTiles, "fauna_deer", 20);
+            AddTestAnimals(world, locale, usedTiles, "fauna_boar", 8);
             return world;
         }
 
-        public static void AddTestPlants(Locale locale, Random random, HashSet<Point> usedTiles)
+        public static void AddTestPlants(Locale locale, HashSet<Point> usedTiles)
         {
             FloraDef tree = DefRegistry.Get<FloraDef>("flora_apple_tree");
             FloraDef bush = DefRegistry.Get<FloraDef>("flora_berry_bush");
@@ -46,28 +48,28 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
             foreach (Point tile in treeTiles)
             {
-                AddTestPlant(locale, random, usedTiles, tree, tile, texture);
+                AddTestPlant(locale, usedTiles, tree, tile, texture);
             }
 
             foreach (Point tile in bushTiles)
             {
-                AddTestPlant(locale, random, usedTiles, bush, tile, texture);
+                AddTestPlant(locale, usedTiles, bush, tile, texture);
             }
 
             foreach (Point tile in mushroomTiles)
             {
-                AddTestPlant(locale, random, usedTiles, mushroom, tile, texture);
+                AddTestPlant(locale, usedTiles, mushroom, tile, texture);
             }
 
             foreach (Point tile in dandelionTiles)
             {
-                AddTestPlant(locale, random, usedTiles, dandelion, tile, texture);
+                AddTestPlant(locale, usedTiles, dandelion, tile, texture);
             }
         }
 
-        private static void AddTestPlant(Locale locale, Random random, HashSet<Point> usedTiles, FloraDef def, Point tile, Texture2D texture)
+        private static void AddTestPlant(Locale locale, HashSet<Point> usedTiles, FloraDef def, Point tile, Texture2D texture)
         {
-            int ageDays = random.Next((int)MathF.Ceiling(def.FullRateMaturityDays), def.LifespanDays);
+            int ageDays = SimRandom.Instance.Next((int)MathF.Ceiling(def.FullRateMaturityDays), def.LifespanDays);
             int birthTick = locale.Clock.TotalTicks - ageDays * SimClock.MinutesPerDay;
 
             Plant plant = new(def, locale, tile, birthTick, def.FinalWeightKg, texture);
@@ -78,7 +80,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
             usedTiles.Add(tile);
         }
 
-        public static void AddTestAnimals(World world, Locale locale, Random random, HashSet<Point> usedTiles, string defKey, int count)
+        public static void AddTestAnimals(World world, Locale locale, HashSet<Point> usedTiles, string defKey, int count)
         {
             FaunaDef def = DefRegistry.Get<FaunaDef>(defKey);
             Texture2D texture = ContentLoader.GetTexture("Kremlit_Male");
@@ -88,7 +90,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
                 Point tile;
                 do
                 {
-                    tile = new Point(random.Next(AnimalSpawnAreaSize), random.Next(AnimalSpawnAreaSize));
+                    tile = new Point(SimRandom.Instance.Next(AnimalSpawnAreaSize), SimRandom.Instance.Next(AnimalSpawnAreaSize));
                 }
                 while (usedTiles.Contains(tile) || !locale.LocaleMap.IsPassable(tile));
 

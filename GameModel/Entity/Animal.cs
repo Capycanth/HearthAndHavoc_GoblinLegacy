@@ -1,9 +1,9 @@
 using HearthAndHavoc_GoblinLegacy.AI.Action;
 using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
@@ -11,7 +11,6 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
     {
         private const int WanderRadius = 16;
 
-        private Random random = new();
         public FaunaDef Def { get; }
         public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
@@ -31,8 +30,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         protected override BaseAction ChooseAction()
         {
-            int x = Position.X + random.Next(-WanderRadius, WanderRadius + 1);
-            int y = Position.Y + random.Next(-WanderRadius, WanderRadius + 1);
+            int x = Position.X + SimRandom.Instance.Next(-WanderRadius, WanderRadius + 1);
+            int y = Position.Y + SimRandom.Instance.Next(-WanderRadius, WanderRadius + 1);
             return new GoTo(new Point(x, y));
         }
     }

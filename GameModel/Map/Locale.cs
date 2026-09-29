@@ -161,6 +161,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         {
             Point oldTile = creature.Position;
             if (tile == oldTile) return true;
+            if (!LocaleMap.IsPassable(tile)) return false;
             if (!LocaleMap.CanFit(tile, creature.Size)) return false;
 
             LocaleMap.AddOccupancy(oldTile, -creature.Size);
