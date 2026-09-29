@@ -43,7 +43,7 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
 
             Point[] treeTiles = [new(30, 4), new(33, 7), new(29, 9)];
             Point[] bushTiles = [new(40, 14), new(43, 16), new(12, 24), new(18, 28)];
-            Point[] mushroomTiles = [new(8, 20), new(9, 21), new(35, 22)];
+            Point[] mushroomTiles = [new(31, 4), new(34, 7), new(30, 9)];
             Point[] dandelionTiles = [new(22, 20), new(25, 22), new(27, 18), new(38, 26), new(45, 8), new(50, 30)];
 
             foreach (Point tile in treeTiles)
