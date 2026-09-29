@@ -14,6 +14,7 @@ These rules govern how Claude works in this repository. They apply to every sess
 4. **Nothing is modified without explicit approval.** This includes existing code, generated files, project/config files, assets, and this file. Reading the repo is always fine; changing it is not, until approved.
 5. **Teach as you go.** For every change, explain what the code does and why it's written that way, including the reasoning behind any C#, MonoGame or algorithm choices. The developer should be able to explain every line in the codebase.
 6. **No hidden changes.** Every change is described plainly. Nothing is slipped into a commit that wasn't discussed.
+7. **Suggest helpers, don't add them silently.** When Claude sees code that could be deduplicated into a shared helper, or a helper method that would make code easier to read, it recommends it to the developer, who approves or declines it before it is written.
 
 ## Git workflow
 
