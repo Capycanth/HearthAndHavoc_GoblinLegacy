@@ -1,0 +1,46 @@
+Textures still needed. Each entry below is drawn with a placeholder texture and tint today.
+When a texture is made, add it to Content, load it in ContentLoader, set the matching textureKey in the def, and remove its line here.
+
+# Flora growth stages (placeholder: Tile_Grass)
+flora_tree_apple_seedling.png
+flora_tree_apple_sapling.png
+flora_tree_apple_mature.png
+flora_tree_maple_seedling.png
+flora_tree_maple_sapling.png
+flora_tree_maple_mature.png
+flora_bush_berry_seedling.png
+flora_bush_berry_young.png
+flora_bush_berry_mature.png
+flora_flower_dandelion_seedling.png
+flora_flower_dandelion_flowering.png
+flora_fungus_oyster_mycelium.png
+flora_fungus_oyster_fruiting.png
+
+# Fauna growth stages (placeholder: Kremlit_Male)
+fauna_mammal_boar_newborn.png
+fauna_mammal_boar_juvenile.png
+fauna_mammal_boar_adult.png
+fauna_mammal_deer_newborn.png
+fauna_mammal_deer_juvenile.png
+fauna_mammal_deer_adult.png
+fauna_mammal_rabbit_newborn.png
+fauna_mammal_rabbit_juvenile.png
+fauna_mammal_rabbit_adult.png
+fauna_mammal_wolf_newborn.png
+fauna_mammal_wolf_juvenile.png
+fauna_mammal_wolf_adult.png
+
+# Cover (placeholder: Tile_Grass)
+cover_clover.png
+
+# Terrain (placeholder: Tile_Grass)
+terrain_dirt.png
+terrain_sand.png
+terrain_mud.png
+terrain_rock.png
+
+# Water (placeholder: Tile_Grass)
+water_salt.png
+water_swamp.png
+water_lake.png
+water_river.png
