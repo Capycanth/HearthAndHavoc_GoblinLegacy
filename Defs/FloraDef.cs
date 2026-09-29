@@ -1,4 +1,6 @@
+using HearthAndHavoc_GoblinLegacy.Enumeration;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -7,6 +9,8 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
 {
     public class FloraDef : Def
     {
+        private const float MaxSeasonMultiplier = 3f;
+
         public bool BlocksMovement { get; init; }
         public int[] Tint { get; init; }
         public List<GrowthStage> GrowthStages { get; init; }
@@ -19,6 +23,8 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public float SpreadChance { get; init; }
         public int SpreadRadius { get; init; }
         public int LifespanDays { get; init; }
+        public Dictionary<Season, float> SeasonGrowth { get; init; }
+        public Dictionary<Season, float> SeasonFruiting { get; init; }
 
         [JsonIgnore]
         public ItemDef FruitItem { get; private set; }
@@ -92,6 +98,38 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             if (FullRateMaturityDays >= LifespanDays)
             {
                 throw new InvalidDataException($"Def '{Key}' reaches its final growth stage after {FullRateMaturityDays} days at full rate; LifespanDays {LifespanDays} must be later than that.");
+            }
+
+            ValidateSeasonTable(SeasonGrowth, nameof(SeasonGrowth));
+
+            if (FruitItem != null)
+            {
+                ValidateSeasonTable(SeasonFruiting, nameof(SeasonFruiting));
+            }
+            else if (SeasonFruiting != null)
+            {
+                throw new InvalidDataException($"Def '{Key}' has SeasonFruiting but no fruit item.");
+            }
+        }
+
+        private void ValidateSeasonTable(Dictionary<Season, float> table, string tableName)
+        {
+            if (table == null)
+            {
+                throw new InvalidDataException($"Def '{Key}' needs a {tableName} table.");
+            }
+
+            foreach (Season season in Enum.GetValues<Season>())
+            {
+                if (!table.TryGetValue(season, out float multiplier))
+                {
+                    throw new InvalidDataException($"Def '{Key}' {tableName} has no value for {season}.");
+                }
+
+                if (multiplier < 0 || multiplier > MaxSeasonMultiplier)
+                {
+                    throw new InvalidDataException($"Def '{Key}' {tableName} has {multiplier} for {season}; it must be from 0 to {MaxSeasonMultiplier}.");
+                }
             }
         }
     }

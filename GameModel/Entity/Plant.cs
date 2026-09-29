@@ -1,4 +1,5 @@
 using HearthAndHavoc_GoblinLegacy.Defs;
+using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -39,24 +40,27 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
                 return;
             }
 
-            float multiplier = Locale.LocaleMap.GetFertility(Position) / AverageFertility * SeasonGrowth.Multiplier(Locale.Clock.Season);
+            Season season = Locale.Clock.Season;
+            float fertility = Locale.LocaleMap.GetFertility(Position) / AverageFertility;
+            float growthMultiplier = fertility * Def.SeasonGrowth[season];
 
             float growthKgPerHour = Def.GrowthStages[StageIndex].GrowthKgPerDay / SimClock.HoursPerDay;
-            WeightKg = MathF.Min(WeightKg + growthKgPerHour * multiplier, Def.FinalWeightKg);
+            WeightKg = MathF.Min(WeightKg + growthKgPerHour * growthMultiplier, Def.FinalWeightKg);
             StageIndex = GrowthStage.GetStageIndex(Def.GrowthStages, WeightKg);
 
             if (Def.MaxFoliageGrams > 0)
             {
                 float maxFoliageGrams = Def.MaxFoliageGrams * WeightKg / Def.FinalWeightKg;
                 float foliageGramsPerHour = Def.FoliageRegrowGramsPerDay / SimClock.HoursPerDay;
-                FoliageGrams = MathF.Min(FoliageGrams + foliageGramsPerHour * multiplier, maxFoliageGrams);
+                FoliageGrams = MathF.Min(FoliageGrams + foliageGramsPerHour * growthMultiplier, maxFoliageGrams);
             }
 
             bool isMature = StageIndex == Def.GrowthStages.Count - 1;
             if (isMature && Def.FruitItem != null)
             {
+                float fruitingMultiplier = fertility * Def.SeasonFruiting[season];
                 float fruitPerHour = (float)Def.FruitMaxCount / Def.FruitRegrowDays / SimClock.HoursPerDay;
-                FruitCount = MathF.Min(FruitCount + fruitPerHour * multiplier, Def.FruitMaxCount);
+                FruitCount = MathF.Min(FruitCount + fruitPerHour * fruitingMultiplier, Def.FruitMaxCount);
             }
         }
 
