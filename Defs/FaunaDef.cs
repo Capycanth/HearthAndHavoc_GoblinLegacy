@@ -18,6 +18,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public float WalkMultiplier { get; init; }
         public float RunMultiplier { get; init; }
         public float StomachCapacityKg { get; init; }
+        public float EatGramsPerMinute { get; init; }
         public float MaxFatKg { get; init; }
         public float WaterLitersPerDay { get; init; }
         public float WalkSpeed { get; init; }
@@ -93,6 +94,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 throw new InvalidDataException($"Def '{Key}' needs BasalKcalPerHour and StomachCapacityKg above 0.");
             }
 
+            if (EatGramsPerMinute <= 0)
+            {
+                throw new InvalidDataException($"Def '{Key}' has EatGramsPerMinute {EatGramsPerMinute}; it must be above 0.");
+            }
+
             if (SleepMultiplier <= 0 || WalkMultiplier <= 0 || RunMultiplier <= 0)
             {
                 throw new InvalidDataException($"Def '{Key}' needs sleep, walk and run multipliers above 0.");
@@ -113,9 +119,9 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 throw new InvalidDataException($"Def '{Key}' has PerceptionRange {PerceptionRange}; it must be above 0.");
             }
 
-            if (SleepHoursPerDay < 0 || SleepHoursPerDay > 24)
+            if (SleepHoursPerDay < 1 || SleepHoursPerDay > 24)
             {
-                throw new InvalidDataException($"Def '{Key}' has SleepHoursPerDay {SleepHoursPerDay}; it must be from 0 to 24.");
+                throw new InvalidDataException($"Def '{Key}' has SleepHoursPerDay {SleepHoursPerDay}; it must be from 1 to 24.");
             }
 
             if (LifespanDays <= 0)

@@ -2,6 +2,7 @@ using HearthAndHavoc_GoblinLegacy.AI.Action;
 using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.GameModel.Nutrition;
 using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,6 +17,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public FaunaDef Def { get; }
         public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
+        public Metabolism Metabolism { get; }
 
         public Animal(int id, FaunaDef def, Locale locale, float weightKg)
             : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, null)
@@ -23,6 +25,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             Def = def;
             WeightKg = weightKg;
             StageIndex = GrowthStage.GetStageIndex(Def.GrowthStages, WeightKg);
+            Metabolism = new Metabolism(this);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
