@@ -114,7 +114,7 @@ A shared base for anything that acts (animals now, Kremlits later) and a plant e
 8. Each tile draws only its top layer: water if present, otherwise cover if present, otherwise ground. This avoids drawing covered tiles twice.
 9. A tile holds at most one plant entity. Placing a plant destroys the cover under it, so plants always stand on bare dirt.
 10. `BiotaDef` gains `BlocksMovement`, true for trees and bushes for now, and a temporary `Tint` that colours plants and animals until they have textures. `IsPassable` checks the plant on the tile, so blocking stays a plain array read for A*.
-11. Creatures share tiles up to a size capacity of 100 per tile. Sizes: rabbit 5, wolf 30, deer 50, stored as `Size` on `BiotaDef`. Occupancy is a `byte` because the capacity check keeps a tile's total at or below 100; capacity must stay at or below 255.
+11. Creatures share tiles up to a size capacity of 100 per tile. Sizes: rabbit 5, wolf 30, deer 50, stored as `Size` on `BiotaDef`. Occupancy is a `byte` because the capacity check keeps a tile's total at or below 100; capacity must stay at or below 255. *Changed in Milestone 5: `Size` is set per growth stage on `FaunaDef` (Milestone 5, decision 15).*
 12. A* ignores occupancy and plans around static blockers only. Capacity is checked when stepping: a creature facing a full tile waits, and after 3 blocked ticks in a row it drops its path and repaths. After 3 repaths, `GoTo` gives up and ends, so the creature chooses a new action.
 13. All movement goes through `Locale.MoveCreature(creature, tile)`, which checks capacity, updates occupancy and grid cells, then sets `Position`.
 14. Creatures are indexed in a 32×32-tile grid on `Locale`, a `Dictionary<Point, List<Creature>>` keyed by cell. Plants use the chunk plant array instead. `Locale.Draw` draws only creatures in the cells the camera sees.
@@ -163,10 +163,10 @@ Species-level defs with every attribute the simulation needs.
 5. Each def type has a `Validate()` that runs after the resolve pass and throws an `InvalidDataException` naming the def on bad values.
 6. All values are fixed per species; nothing varies per individual in Phase 1.
 7. Slow rates (growth, regrowth) are per game day. Fast rates (calorie burn, digestion) are per game hour. Rates are `float`; counts and durations are `int`. Enums are read from JSON as strings with `JsonStringEnumConverter`.
-8. **FaunaDef:** `Size` (volume, for occupancy), `BodyMassKg` (weight), `BasalKcalPerHour`, sleep, walk and run activity multipliers, `StomachCapacityKg`, `MaxFatKg`, `WaterLitersPerDay`, walk and run speed, `PerceptionRange`, `ActivityCycle` (diurnal, nocturnal or crepuscular, an enum), `SleepHoursPerDay`, `LifespanDays`, `MaturityDays`, `GestationDays`, `LitterSize`, `Diet` (a list of flora, fauna or cover keys), `CarcassYield` (item key and amount) and `Tint`.
+8. **FaunaDef:** `Size` (volume, for occupancy), `BodyMassKg` (weight), `BasalKcalPerHour`, sleep, walk and run activity multipliers, `StomachCapacityKg`, `MaxFatKg`, `WaterLitersPerDay`, walk and run speed, `PerceptionRange`, `ActivityCycle` (diurnal, nocturnal or crepuscular, an enum), `SleepHoursPerDay`, `LifespanDays`, `MaturityDays`, `GestationDays`, `LitterSize`, `Diet` (a list of flora, fauna or cover keys), `CarcassYield` (item key and amount) and `Tint`. *Changed in Milestone 5: `Size`, `BodyMassKg` and `MaturityDays` are replaced by weight-based growth stages (Milestone 5, decisions 10 and 15).*
 9. The diet decides what an animal will try to eat; enzymes (Milestone 4b) decide how much energy it gets from it. A carnivore ignores meat it has never learned to hunt, which is why invasive species with no natural predators thrive.
 10. Predators are not written in JSON. The resolve pass gives each fauna def a generated list of the fauna whose diet includes it, which drives fleeing. An explicit list can be added later for fear that isn't about being eaten.
-11. **FloraDef:** `BlocksMovement`, `Tint`, `GrowthStages` (a list of `{name, durationDays}`), `MaxFoliageGrams`, `FoliageRegrowGramsPerDay`, `FruitItem`, `FruitMaxCount`, `FruitRegrowDays`, `SpreadChance`, `SpreadRadius` and `LifespanDays`. Foliage is edible when `MaxFoliageGrams` is above 0, and fruit when `FruitItem` is set. Mushroom patches have no foliage and yield mushroom items as fruit. Per-stage textures are decided in Milestone 5.
+11. **FloraDef:** `BlocksMovement`, `Tint`, `GrowthStages` (a list of `{name, durationDays}`), `MaxFoliageGrams`, `FoliageRegrowGramsPerDay`, `FruitItem`, `FruitMaxCount`, `FruitRegrowDays`, `SpreadChance`, `SpreadRadius` and `LifespanDays`. Foliage is edible when `MaxFoliageGrams` is above 0, and fruit when `FruitItem` is set. Mushroom patches have no foliage and yield mushroom items as fruit. Per-stage textures are decided in Milestone 5. *Changed in Milestone 5: growth stages are `{name, stageMaturityWeightKg, growthKgPerDay}` and are reached by weight (Milestone 5, decision 10).*
 12. **ItemDef:** `WeightKg` per unit and `SpoilDays` (0 means it never spoils). No def stores kcal directly; energy comes from compositions (Milestone 4b).
 13. Phase 1 species: berry bush, apple tree, mushroom patch and dandelion (edible foliage, does not block movement), plus rabbit, deer, wolf and boar. The test spawns add dandelions and boars.
 14. Real durations are scaled into game days by one rule: game days = real days × 112 / 365, so a real year becomes one game year and every species keeps its real proportions. Sleep hours are not scaled, since a game day still has 24 hours.
@@ -225,16 +225,26 @@ Plants grow, get grazed down, regrow, fruit, spread and die.
 6. There are no per-stage textures yet. Each growth stage draws the plant at a larger scale, from small for the first stage to the full tile for the final stage, with the existing tint. Per-stage textures are added to the supplemental work list.
 7. Cover regrows and spreads without looping over every tile. Grazed tiles below `MaxBiomass` go into a regrowing set, and bare tiles next to cover go into a spreadable set. Cover regrowth and spreading only look at tiles in these sets. `CoverDef` gains `RegrowGramsPerDay` and `SpreadChance` (a chance per game day), with values in `cover.json`.
 8. `World` owns one seeded `Random` for the simulation, so a run can be repeated while tuning balance.
-9. Test plants spawn at a random age within their final growth stage, so fruiting and spreading show up right away.
+9. Test plants spawn at a random age within their final growth stage, so fruiting and spreading show up right away. *Changed by decision 17: test plants spawn at their final stage weight.*
+10. Growth stages are reached by weight, not age. Each `GrowthStage` holds `Name`, `StageMaturityWeightKg` (the weight at which the plant or animal leaves the stage) and `GrowthKgPerDay` (its gain per day at full rate). `DurationDays` is removed. Each plant and animal stores its current `WeightKg` and moves to the next stage when it reaches the current stage's `StageMaturityWeightKg`. The final stage's `StageMaturityWeightKg` is the adult maximum, and growth stops once it is reached. Age is still derived from the birth tick and only decides death by `LifespanDays`.
+11. Plant growth per hourly update is `GrowthKgPerDay / 24 × fertility / 50 × season`. The same fertility and season multiplier scales foliage and fruit regrowth. Dividing by 50 makes the JSON rates the rates on average soil, so fertility 100 doubles them. Season values: spring 1, summer 1, autumn 0.5, winter 0. Tile fertility is read with `TileMap.GetFertility`, and the season table lives in a static `SeasonGrowth` class, kept out of `SimClock` since the clock only tells time.
+12. Animal growth is driven by calorie intake. Its formula is designed with metabolism in Milestone 6; this milestone adds only the data.
+13. Weights are in kg for flora and fauna. New plants start at 0 kg.
+14. The foliage cap grows with the plant: `MaxFoliageGrams × WeightKg / final StageMaturityWeightKg`, so a seedling can't hold a full tree's leaves. Grazing removes foliage only, never weight.
+15. Fauna stages use `FaunaGrowthStage : GrowthStage`, which adds `Size`, so flora never carries a field it doesn't use. `Size` moves off `FaunaDef`, and an animal's size is its current stage's size. `BodyMassKg` is replaced by the final stage's `StageMaturityWeightKg`, and `MaturityDays` by the stages. Changing an animal's size and occupancy at runtime arrives with growth in Milestone 6 (see creature pushing under supplemental work).
+16. Validation: `StageMaturityWeightKg` must be above 0 and strictly increasing, `GrowthKgPerDay` above 0, and fauna `Size` from 1 to the tile capacity of 100. A computed `FullRateMaturityDays` (days to reach the final stage at full growth rate) replaces `FinalStageStartDays` and must be below `LifespanDays`.
+17. Test plants and animals spawn at their final stage weight. Test plants get a random age from `FullRateMaturityDays` up to `LifespanDays`.
 
 **PRs, in order**
 
-1. Record these decisions (this PR).
-2. Plant state (age, growth stage, foliage and fruit), the `Locale` plant list, staggered hourly updates, aging and death.
-3. Foliage and fruit regrowth, with fertility and season scaling.
-4. Plant spreading and the seeded `Random` on `World`.
-5. Cover regrowth and spreading, with the new `CoverDef` fields and JSON values.
-6. Drawing plants scaled by growth stage.
+1. Record decisions 1–9 (PR #26).
+2. Plant state (age, growth stage, foliage and fruit), the `Locale` plant list, staggered hourly updates, aging and death (PR #27).
+3. Record the growth redesign, decisions 10–17 (this PR).
+4. Growth schema: `GrowthStage` and `FaunaGrowthStage` with validation, weight, growth and size values in the flora and fauna JSON (numbers approved before they are written), `BodyMassKg`, `MaturityDays` and fauna `Size` removed, plant weight and weight-based stages, and test spawns at final stage weight.
+5. Growth and regrowth: the fertility and season multiplier on weight, foliage and fruit, `TileMap.GetFertility`, `SeasonGrowth` and the scaled foliage cap.
+6. Plant spreading and the seeded `Random` on `World`.
+7. Cover regrowth and spreading, with the new `CoverDef` fields and JSON values.
+8. Drawing plants scaled by growth stage.
 
 ---
 
@@ -305,4 +315,5 @@ Tasks that aren't tied to a milestone. They can be picked up any time after the 
 - [ ] Include a SpriteFont for clock visualization (any time after Milestone 1).
 - [ ] Create a texture for each ground type (grass, dirt, sand, mud, rock) and water type (salt, swamp, lake, river) to replace the tinted grass placeholders (any time after Milestone 2, PR 3).
 - [ ] Decide how tile height is shown on the map (after the heightmap lands in the procedural sub-milestone).
-- [ ] Create a texture for each plant growth stage to replace the scaled, tinted placeholders (any time after Milestone 5, PR 6).
+- [ ] Create a texture for each plant growth stage to replace the scaled, tinted placeholders (any time after Milestone 5, PR 8).
+- [ ] Design creature pushing (after Milestone 6, alongside Milestone 7). When a creature grows and its tile goes over capacity, the smallest creatures are pushed to nearby tiles until the tile fits. A creature moving into a full tile that is larger than every creature on it pushes them out to nearby tiles; this would replace wait-then-repath (Milestone 3, decision 12) for that case. Open questions: what happens to a pushed creature's path and action, whether pushed creatures can push others in turn, what happens when no nearby tile has room, and how ties between equal sizes are settled.
