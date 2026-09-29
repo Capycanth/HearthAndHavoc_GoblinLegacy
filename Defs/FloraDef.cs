@@ -11,9 +11,8 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
     {
         private const float MaxSeasonMultiplier = 3f;
 
-        public bool BlocksMovement { get; init; }
         public int[] Tint { get; init; }
-        public List<GrowthStage> GrowthStages { get; init; }
+        public List<FloraGrowthStage> GrowthStages { get; init; }
         public float MaxFoliageGrams { get; init; }
         public float FoliageRegrowGramsPerDay { get; init; }
         public Composition FoliageComposition { get; init; }

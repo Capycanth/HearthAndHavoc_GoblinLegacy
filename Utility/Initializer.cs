@@ -12,15 +12,18 @@ namespace HearthAndHavoc_GoblinLegacy.Utility
     public static class Initializer
     {
         private const int AnimalSpawnAreaSize = 64;
+        private const int TestWorldSeed = 1234;
 
         public static World CreateTestWorld()
         {
+            SimRandom.Initialize(TestWorldSeed);
+
             World world = new();
             Locale locale = new("Locale1", CreateStartingMap(), world.Clock);
             world.CurrentLocaleId = locale.Id;
             world.LocalesById.Add(locale.Id, locale);
 
-            Random random = new();
+            Random random = SimRandom.Instance;
             HashSet<Point> usedTiles = new();
             AddTestPlants(locale, random, usedTiles);
 
