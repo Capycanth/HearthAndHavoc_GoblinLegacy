@@ -23,6 +23,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public int UpdateSlot { get; set; }
 
         public bool BlocksMovement => Def.GrowthStages[StageIndex].BlocksMovement;
+        public bool IsMature => StageIndex == Def.GrowthStages.Count - 1;
 
         public int AgeDays => (Locale.Clock.TotalTicks - BirthTick) / SimClock.MinutesPerDay;
 
@@ -44,6 +45,12 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
                 return;
             }
 
+            if (Def.Hosts != null && Locale.Clock.Hour == 0 && !HasHostNearby(Position))
+            {
+                Locale.QueueRemovePlant(this);
+                return;
+            }
+
             Season season = Locale.Clock.Season;
             float fertility = Locale.LocaleMap.GetFertility(Position) / AverageFertility;
             float growthMultiplier = fertility * Def.SeasonGrowth[season];
@@ -59,15 +66,14 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
                 FoliageGrams = MathF.Min(FoliageGrams + foliageGramsPerHour * growthMultiplier, maxFoliageGrams);
             }
 
-            bool isMature = StageIndex == Def.GrowthStages.Count - 1;
-            if (isMature && Def.FruitItem != null)
+            if (IsMature && Def.FruitItem != null)
             {
                 float fruitingMultiplier = fertility * Def.SeasonFruiting[season];
                 float fruitPerHour = (float)Def.FruitMaxCount / Def.FruitRegrowDays / SimClock.HoursPerDay;
                 FruitCount = MathF.Min(FruitCount + fruitPerHour * fruitingMultiplier, Def.FruitMaxCount);
             }
 
-            if (isMature && Locale.Clock.Hour == 0)
+            if (IsMature && Locale.Clock.Hour == 0)
             {
                 TrySpread(season);
             }
@@ -90,11 +96,29 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             if (chunk.Water[localY, localX] != null) return;
             if (!chunk.Ground[localY, localX].Passable) return;
             if (chunk.Plants[localY, localX] != null) return;
+            if (Def.Hosts != null && !HasHostNearby(target)) return;
 
             float sproutChance = MathF.Min(1f, chunk.Fertility[localY, localX] / MaxFertility * Def.SeasonGrowth[season]);
             if (SimRandom.Instance.NextSingle() >= sproutChance) return;
 
             Locale.QueueAddPlant(new Plant(Def, Locale, target, Locale.Clock.TotalTicks, 0f, Texture));
+        }
+
+        private bool HasHostNearby(Point tile)
+        {
+            int radius = Def.HostRadius;
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                for (int dx = -radius; dx <= radius; dx++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+
+                    Plant neighbor = Locale.LocaleMap.GetPlant(new Point(tile.X + dx, tile.Y + dy));
+                    if (neighbor != null && neighbor.IsMature && Def.Hosts.Contains(neighbor.Def)) return true;
+                }
+            }
+
+            return false;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
