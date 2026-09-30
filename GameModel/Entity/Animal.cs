@@ -18,7 +18,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
         public Metabolism Metabolism { get; }
-        public int UpdateSlot => Id % SimClock.MinutesPerHour;
+        public int UpdateSlot { get; }
 
         public Animal(int id, FaunaDef def, Locale locale, float weightKg)
             : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, null)
@@ -27,6 +27,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             WeightKg = weightKg;
             StageIndex = GrowthStage.GetStageIndex(Def.GrowthStages, WeightKg);
             Metabolism = new Metabolism(this);
+            UpdateSlot = Id % SimClock.MinutesPerHour;
         }
 
         public override void Update()
