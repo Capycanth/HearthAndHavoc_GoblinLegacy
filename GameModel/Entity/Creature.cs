@@ -10,7 +10,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
     public abstract class Creature : GameObject
     {
         public int Id { get; }
-        public byte Size { get; }
+        public byte Size { get; set; }
         public Locale Locale { get; }
         [AllowNull]
         public BaseAction CurrentAction { get; set; }
