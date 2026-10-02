@@ -18,7 +18,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         private const int MaxMissedChecks = 3;
 
         private readonly Creature _target;
-        private readonly Activity _mode;
+        private readonly CreatureActivity _mode;
         private readonly int _reach;
         private readonly int _range;
 
@@ -31,7 +31,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         private int _ticksUntilRecheck = 0;
         private int _missedChecks = 0;
 
-        protected Follow(Creature target, Activity mode, int reach, int range)
+        protected Follow(Creature target, CreatureActivity mode, int reach, int range)
         {
             _target = target;
             _mode = mode;
@@ -119,7 +119,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
         private static ActionOutcome Finish(Creature creature, ActionOutcome outcome)
         {
-            creature.Activity = Activity.RESTING;
+            creature.Activity = CreatureActivity.RESTING;
             return outcome;
         }
 

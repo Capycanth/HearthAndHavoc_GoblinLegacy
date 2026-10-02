@@ -69,7 +69,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
         private static ActionOutcome Finish(Creature creature, ActionOutcome outcome)
         {
-            creature.Activity = Activity.RESTING;
+            creature.Activity = CreatureActivity.RESTING;
             return outcome;
         }
     }

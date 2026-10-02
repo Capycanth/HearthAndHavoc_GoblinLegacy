@@ -35,7 +35,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             {
                 _walk = null;
                 _restTicksLeft = SimRandom.Instance.Next(MinRestTicks, MaxRestTicks + 1);
-                creature.Activity = Activity.RESTING;
+                creature.Activity = CreatureActivity.RESTING;
             }
 
             return ActionOutcome.RUNNING;

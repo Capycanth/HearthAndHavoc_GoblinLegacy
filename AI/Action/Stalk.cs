@@ -8,7 +8,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
     {
         private const int StrikeDistance = 5;
 
-        public Stalk(Creature target, int range) : base(target, Activity.CROUCHING, StrikeDistance, range)
+        public Stalk(Creature target, int range) : base(target, CreatureActivity.CROUCHING, StrikeDistance, range)
         {
         }
     }

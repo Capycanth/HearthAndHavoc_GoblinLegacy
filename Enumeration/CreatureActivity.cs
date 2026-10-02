@@ -1,6 +1,6 @@
 namespace HearthAndHavoc_GoblinLegacy.Enumeration
 {
-    public enum Activity
+    public enum CreatureActivity
     {
         SLEEPING,
         RESTING,

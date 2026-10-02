@@ -17,12 +17,12 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         [AllowNull]
         private Stack<Point> PathTraversal { get; set; } = null;
         private Point _destination;
-        private readonly Activity _mode;
+        private readonly CreatureActivity _mode;
         private float _budget = 0f;
         private int _blockedSteps = 0;
         private int _repaths = 0;
 
-        protected GoTo(Point destination, Activity mode)
+        protected GoTo(Point destination, CreatureActivity mode)
         {
             _destination = destination;
             _mode = mode;
@@ -65,7 +65,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 _blockedSteps = 0;
             }
 
-            creature.Activity = Activity.RESTING;
+            creature.Activity = CreatureActivity.RESTING;
             return ActionOutcome.ARRIVED;
         }
 
@@ -78,7 +78,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             if (_repaths == MaxRepaths)
             {
                 Debug.WriteLine($"GoTo gave up on {_destination} after {MaxRepaths} repaths");
-                creature.Activity = Activity.RESTING;
+                creature.Activity = CreatureActivity.RESTING;
                 return ActionOutcome.NO_PATH;
             }
 

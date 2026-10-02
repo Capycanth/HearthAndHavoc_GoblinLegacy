@@ -5,7 +5,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
     public class WalkTo : GoTo
     {
-        public WalkTo(Point destination) : base(destination, Activity.WALKING)
+        public WalkTo(Point destination) : base(destination, CreatureActivity.WALKING)
         {
         }
     }
