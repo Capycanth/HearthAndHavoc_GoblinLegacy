@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
-    public abstract class GoTo : BaseAction
+    public abstract class GoTo : PathingAction
     {
         private const int MaxBlockedSteps = 3;
         private const int MaxRepaths = 3;
@@ -30,21 +30,21 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             _mode = mode;
         }
 
-        public override bool Perform(Creature creature)
+        public override ActionOutcome Perform(Creature creature)
         {
-            if (IsActionAwaitingJobHandle()) return false;
+            if (IsActionAwaitingJobHandle()) return ActionOutcome.RUNNING;
 
             if (null == PathTraversal)
             {
                 (WorldSnapshot ws, CreatureSnapshot cs) snapshots = GenerateSnapshots(creature);
-                JobHandle = GoblinGame.Processor.Enqueue(snapshots.ws, snapshots.cs, CalculateActionChain);
-                return false;
+                JobHandle = GoblinGame.Processor.Enqueue(snapshots.ws, snapshots.cs, CalculatePath);
+                return ActionOutcome.RUNNING;
             }
 
             if (PathTraversal.Count == 0)
             {
                 Debug.WriteLine($"GoTo found no path to {_destination}");
-                return true;
+                return ActionOutcome.NO_PATH;
             }
 
             creature.Activity = _mode;
@@ -54,7 +54,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             {
                 Point next = PathTraversal.Peek();
                 float cost = GetStepCost(creature, next);
-                if (_budget < cost) return false;
+                if (_budget < cost) return ActionOutcome.RUNNING;
 
                 if (!creature.Locale.MoveCreature(creature, next))
                 {
@@ -68,25 +68,25 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             }
 
             creature.Activity = Activity.RESTING;
-            return true;
+            return ActionOutcome.ARRIVED;
         }
 
-        private bool OnBlocked(Creature creature)
+        private ActionOutcome OnBlocked(Creature creature)
         {
             _blockedSteps++;
-            if (_blockedSteps < MaxBlockedSteps) return false;
+            if (_blockedSteps < MaxBlockedSteps) return ActionOutcome.RUNNING;
 
             _blockedSteps = 0;
             if (_repaths == MaxRepaths)
             {
                 Debug.WriteLine($"GoTo gave up on {_destination} after {MaxRepaths} repaths");
                 creature.Activity = Activity.RESTING;
-                return true;
+                return ActionOutcome.NO_PATH;
             }
 
             _repaths++;
             PathTraversal = null;
-            return false;
+            return ActionOutcome.RUNNING;
         }
 
         private static float GetStepCost(Creature creature, Point next)
@@ -104,7 +104,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             return (new WorldSnapshot(creature.Locale.LocaleMap), new CreatureSnapshot(creature.Position));
         }
 
-        protected override void CalculateActionChain(WorldSnapshot ws, CreatureSnapshot cs)
+        protected override void CalculatePath(WorldSnapshot ws, CreatureSnapshot cs)
         {
             PathTraversal = MapUtil.GetAStarPathQueue(ws.LocaleMap, cs.Position, this._destination);
         }

@@ -1,8 +1,7 @@
 ﻿using HearthAndHavoc_GoblinLegacy.GameModel.Items;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
-using HearthAndHavoc_GoblinLegacy.AI.Action;
+using HearthAndHavoc_GoblinLegacy.AI.Chain;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
-using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -25,9 +24,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             spriteBatch.Draw(Texture, GeoPosition, Color.White);
         }
 
-        protected override BaseAction ChooseAction()
+        protected override ActionChain ChooseChain()
         {
-            return new WalkTo(new Point(SimRandom.Instance.Next(512), SimRandom.Instance.Next(512)));
+            return new IdleChain();
         }
 
         public override float GetMoveSpeed(Activity activity)

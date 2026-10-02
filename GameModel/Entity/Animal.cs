@@ -1,10 +1,9 @@
-using HearthAndHavoc_GoblinLegacy.AI.Action;
+using HearthAndHavoc_GoblinLegacy.AI.Chain;
 using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using HearthAndHavoc_GoblinLegacy.GameModel.Nutrition;
 using HearthAndHavoc_GoblinLegacy.Utility;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -12,8 +11,6 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
     public class Animal : Creature
     {
-        private const int WanderRadius = 16;
-
         public FaunaDef Def { get; }
         public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
@@ -69,11 +66,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             spriteBatch.Draw(texture, GeoPosition, Def.TintColor);
         }
 
-        protected override BaseAction ChooseAction()
+        protected override ActionChain ChooseChain()
         {
-            int x = Position.X + SimRandom.Instance.Next(-WanderRadius, WanderRadius + 1);
-            int y = Position.Y + SimRandom.Instance.Next(-WanderRadius, WanderRadius + 1);
-            return new WalkTo(new Point(x, y));
+            return new IdleChain();
         }
 
         public override float GetMoveSpeed(Activity activity) => activity switch

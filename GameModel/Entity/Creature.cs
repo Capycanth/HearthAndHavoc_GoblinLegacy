@@ -1,4 +1,4 @@
-using HearthAndHavoc_GoblinLegacy.AI.Action;
+using HearthAndHavoc_GoblinLegacy.AI.Chain;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +13,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public byte Size { get; set; }
         public Locale Locale { get; }
         [AllowNull]
-        public BaseAction CurrentAction { get; set; }
+        public ActionChain CurrentChain { get; set; }
         public Activity Activity { get; set; } = Activity.RESTING;
 
         protected Creature(int id, byte size, Locale locale, Texture2D texture) : base(texture)
@@ -25,16 +25,17 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public override void Update()
         {
-            CurrentAction ??= ChooseAction();
+            CurrentChain ??= ChooseChain();
 
-            if (CurrentAction.Perform(this))
+            ChainStatus status = CurrentChain.Perform(this);
+            if (status != ChainStatus.RUNNING)
             {
-                Console.WriteLine($"Creature {Id} finished {CurrentAction.GetType().Name}");
-                CurrentAction = null;
+                Console.WriteLine($"Creature {Id} finished {CurrentChain.GetType().Name}: {status}");
+                CurrentChain = null;
             }
         }
 
-        protected abstract BaseAction ChooseAction();
+        protected abstract ActionChain ChooseChain();
 
         public abstract float GetMoveSpeed(Activity activity);
     }
