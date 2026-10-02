@@ -1,7 +1,7 @@
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.Utility;
-using Microsoft.Xna.Framework;
+using HearthAndHavoc_GoblinLegacy.Utility.Map;
 using System.Diagnostics.CodeAnalysis;
 
 namespace HearthAndHavoc_GoblinLegacy.AI.Action
@@ -28,7 +28,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                     return ActionOutcome.RUNNING;
                 }
 
-                _walk = new WalkTo(PickDestination(creature));
+                _walk = new WalkTo(MapUtil.GetRandomPointNear(creature.Position, Radius));
             }
 
             if (_walk.Perform(creature) != ActionOutcome.RUNNING)
@@ -39,13 +39,6 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             }
 
             return ActionOutcome.RUNNING;
-        }
-
-        private static Point PickDestination(Creature creature)
-        {
-            int x = creature.Position.X + SimRandom.Instance.Next(-Radius, Radius + 1);
-            int y = creature.Position.Y + SimRandom.Instance.Next(-Radius, Radius + 1);
-            return new Point(x, y);
         }
     }
 }
