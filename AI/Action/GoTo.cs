@@ -87,11 +87,6 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             return ActionOutcome.RUNNING;
         }
 
-        protected override (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature)
-        {
-            return (new WorldSnapshot(creature.Locale.LocaleMap), new CreatureSnapshot(creature.Position));
-        }
-
         protected override void CalculatePath(WorldSnapshot ws, CreatureSnapshot cs)
         {
             PathTraversal = MapUtil.GetAStarPathQueue(ws.LocaleMap, cs.Position, this._destination);

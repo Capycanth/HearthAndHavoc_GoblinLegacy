@@ -39,6 +39,12 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         }
 
         protected abstract void CalculatePath(WorldSnapshot ws, CreatureSnapshot cs);
-        protected abstract (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature);
+
+        // The snapshots handed to the AI thread for a path job: the locale map and where the creature stands now.
+        // Virtual so a future pathing action that needs more in its snapshot can override it.
+        protected virtual (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature)
+        {
+            return (new WorldSnapshot(creature.Locale.LocaleMap), new CreatureSnapshot(creature.Position));
+        }
     }
 }
