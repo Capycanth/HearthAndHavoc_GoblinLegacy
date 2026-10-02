@@ -25,6 +25,15 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
             return traversablePoints;
         }
 
+        // A random tile within radius of center on each axis (a square around it), using the shared SimRandom so
+        // runs stay reproducible from their seed.
+        public static Point GetRandomPointNear(Point center, int radius)
+        {
+            int x = center.X + SimRandom.Instance.Next(-radius, radius + 1);
+            int y = center.Y + SimRandom.Instance.Next(-radius, radius + 1);
+            return new Point(x, y);
+        }
+
         // The tile to stand on to reach target: the target itself if it is passable, otherwise its passable
         // neighbour closest to from. Returns false when neither the target nor any neighbour can be stood on.
         public static bool TryGetStandTile(TileMap map, Point target, Point from, out Point standTile)
