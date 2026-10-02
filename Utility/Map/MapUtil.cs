@@ -25,6 +25,12 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
             return traversablePoints;
         }
 
+        // How many square rings apart two tiles are (Chebyshev distance): diagonal steps count as one.
+        public static int GetRingDistance(Point a, Point b)
+        {
+            return Math.Max(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
+        }
+
         // A random tile within radius of center on each axis (a square around it), using the shared SimRandom so
         // runs stay reproducible from their seed.
         public static Point GetRandomPointNear(Point center, int radius)

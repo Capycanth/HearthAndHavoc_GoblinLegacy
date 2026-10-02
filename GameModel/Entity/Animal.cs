@@ -75,6 +75,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         {
             Activity.WALKING => Def.WalkSpeed,
             Activity.RUNNING => Def.RunSpeed,
+            Activity.CROUCHING => Def.WalkSpeed,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Animal has no move speed for this activity.")
         };
     }

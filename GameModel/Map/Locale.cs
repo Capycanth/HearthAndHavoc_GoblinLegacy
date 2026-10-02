@@ -117,6 +117,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                     chunk.Plants[localY, localX] = null;
                     plantSlots[plant.UpdateSlot].Remove(plant);
                     coverGrowth.OnTileBared(plant.Position);
+                    plant.Position = GameObject.RemovedPosition;
                 }
             }
             pendingPlantRemoves.Clear();
@@ -154,6 +155,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
                 LocaleMap.AddOccupancy(creature.Position, -creature.Size);
                 RemoveFromCell(creature, creature.Position);
+                creature.Position = GameObject.RemovedPosition;
             }
             pendingRemoves.Clear();
 

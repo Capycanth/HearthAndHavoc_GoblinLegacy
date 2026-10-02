@@ -2,8 +2,6 @@ using HearthAndHavoc_GoblinLegacy.AI.Scan;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.Utility.Map;
-using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -49,16 +47,15 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
         private bool Scan(Creature creature)
         {
-            Point position = creature.Position;
             Target nearest = null;
             int nearestDistance = int.MaxValue;
 
             foreach (Scanner scanner in _scanners)
             {
-                Target match = scanner.FindNearest(creature.Locale.LocaleMap, position, _range);
+                Target match = scanner.FindNearest(creature, _range);
                 if (match == null) continue;
 
-                int distance = Math.Max(Math.Abs(match.Tile.X - position.X), Math.Abs(match.Tile.Y - position.Y));
+                int distance = MapUtil.GetRingDistance(match.Tile, creature.Position);
                 if (distance < nearestDistance)
                 {
                     nearestDistance = distance;

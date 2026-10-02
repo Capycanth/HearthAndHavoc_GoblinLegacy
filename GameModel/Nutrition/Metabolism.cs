@@ -227,6 +227,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             Activity.RESTING => 1f,
             Activity.WALKING => owner.Def.WalkMultiplier,
             Activity.RUNNING => owner.Def.RunMultiplier,
+            Activity.CROUCHING => owner.Def.WalkMultiplier,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Activity has no burn multiplier.")
         };
     }

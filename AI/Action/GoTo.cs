@@ -13,8 +13,6 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
     {
         private const int MaxBlockedSteps = 3;
         private const int MaxRepaths = 3;
-        private const float OrthogonalStepCost = 1f;
-        private const float DiagonalStepCost = 1.4f;
 
         [AllowNull]
         private Stack<Point> PathTraversal { get; set; } = null;
@@ -87,21 +85,6 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             _repaths++;
             PathTraversal = null;
             return ActionOutcome.RUNNING;
-        }
-
-        private static float GetStepCost(Creature creature, Point next)
-        {
-            Point current = creature.Position;
-            if (next == current) return 0f;
-
-            bool diagonal = next.X != current.X && next.Y != current.Y;
-            float baseCost = diagonal ? DiagonalStepCost : OrthogonalStepCost;
-            return baseCost * creature.Locale.LocaleMap.GetMoveCost(next);
-        }
-
-        protected override (WorldSnapshot ws, CreatureSnapshot cs) GenerateSnapshots(Creature creature)
-        {
-            return (new WorldSnapshot(creature.Locale.LocaleMap), new CreatureSnapshot(creature.Position));
         }
 
         protected override void CalculatePath(WorldSnapshot ws, CreatureSnapshot cs)
