@@ -25,6 +25,30 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
             return traversablePoints;
         }
 
+        // The tile to stand on to reach target: the target itself if it is passable, otherwise its passable
+        // neighbour closest to from. Returns false when neither the target nor any neighbour can be stood on.
+        public static bool TryGetStandTile(TileMap map, Point target, Point from, out Point standTile)
+        {
+            standTile = target;
+            if (map.IsPassable(target)) return true;
+
+            bool found = false;
+            int bestDistance = int.MaxValue;
+            foreach (Point offset in GetTraversablePoints(map, target))
+            {
+                Point neighbour = new Point(target.X + offset.X, target.Y + offset.Y);
+                int distance = GetDistance(from, neighbour);
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    standTile = neighbour;
+                    found = true;
+                }
+            }
+
+            return found;
+        }
+
         public static Stack<Point> GetAStarPathQueue(TileMap map, Point start, Point destination)
         {
             Stopwatch sw = Stopwatch.StartNew();
