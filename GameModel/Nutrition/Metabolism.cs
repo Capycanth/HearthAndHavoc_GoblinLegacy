@@ -201,7 +201,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
 
         private void UpdateSleep()
         {
-            if (owner.Activity != Activity.SLEEPING)
+            if (owner.Activity != CreatureActivity.SLEEPING)
             {
                 SleepDebtHours += 1f;
                 return;
@@ -221,13 +221,13 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             Health = MathF.Max(Health, 0f);
         }
 
-        private float GetActivityMultiplier(Activity activity) => activity switch
+        private float GetActivityMultiplier(CreatureActivity activity) => activity switch
         {
-            Activity.SLEEPING => owner.Def.SleepMultiplier,
-            Activity.RESTING => 1f,
-            Activity.WALKING => owner.Def.WalkMultiplier,
-            Activity.RUNNING => owner.Def.RunMultiplier,
-            Activity.CROUCHING => owner.Def.WalkMultiplier,
+            CreatureActivity.SLEEPING => owner.Def.SleepMultiplier,
+            CreatureActivity.RESTING => 1f,
+            CreatureActivity.WALKING => owner.Def.WalkMultiplier,
+            CreatureActivity.RUNNING => owner.Def.RunMultiplier,
+            CreatureActivity.CROUCHING => owner.Def.WalkMultiplier,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Activity has no burn multiplier.")
         };
     }

@@ -71,11 +71,11 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             return new IdleChain();
         }
 
-        public override float GetMoveSpeed(Activity activity) => activity switch
+        public override float GetMoveSpeed(CreatureActivity activity) => activity switch
         {
-            Activity.WALKING => Def.WalkSpeed,
-            Activity.RUNNING => Def.RunSpeed,
-            Activity.CROUCHING => Def.WalkSpeed,
+            CreatureActivity.WALKING => Def.WalkSpeed,
+            CreatureActivity.RUNNING => Def.RunSpeed,
+            CreatureActivity.CROUCHING => Def.WalkSpeed,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Animal has no move speed for this activity.")
         };
     }

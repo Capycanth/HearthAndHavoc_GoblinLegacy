@@ -8,7 +8,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
     {
         private const int Reach = 1;
 
-        public Chase(Creature target, int range) : base(target, Activity.RUNNING, Reach, range)
+        public Chase(Creature target, int range) : base(target, CreatureActivity.RUNNING, Reach, range)
         {
         }
     }

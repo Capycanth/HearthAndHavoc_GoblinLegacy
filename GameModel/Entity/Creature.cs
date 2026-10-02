@@ -14,7 +14,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public Locale Locale { get; }
         [AllowNull]
         public ActionChain CurrentChain { get; set; }
-        public Activity Activity { get; set; } = Activity.RESTING;
+        public CreatureActivity Activity { get; set; } = CreatureActivity.RESTING;
 
         protected Creature(int id, byte size, Locale locale, Texture2D texture) : base(texture)
         {
@@ -37,6 +37,6 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         protected abstract ActionChain ChooseChain();
 
-        public abstract float GetMoveSpeed(Activity activity);
+        public abstract float GetMoveSpeed(CreatureActivity activity);
     }
 }

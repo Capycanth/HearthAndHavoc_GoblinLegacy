@@ -5,7 +5,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
     public class RunTo : GoTo
     {
-        public RunTo(Point destination) : base(destination, Activity.RUNNING)
+        public RunTo(Point destination) : base(destination, CreatureActivity.RUNNING)
         {
         }
     }

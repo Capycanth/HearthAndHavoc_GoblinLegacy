@@ -29,7 +29,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             return new IdleChain();
         }
 
-        public override float GetMoveSpeed(Activity activity)
+        public override float GetMoveSpeed(CreatureActivity activity)
         {
             return 1f;
         }
