@@ -6,5 +6,6 @@ namespace HearthAndHavoc_GoblinLegacy.Enumeration
         RESTING,
         WALKING,
         RUNNING,
+        CROUCHING,
     }
 }

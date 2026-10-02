@@ -1,3 +1,4 @@
+using HearthAndHavoc_GoblinLegacy.GameModel.Entity;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using HearthAndHavoc_GoblinLegacy.Utility.Map;
 using Microsoft.Xna.Framework;
@@ -10,8 +11,11 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Scan
     // one, measured in ring (Chebyshev) distance. Subclasses only decide whether one tile matches.
     public abstract class TileGridScanner : Scanner
     {
-        public override Target FindNearest(TileMap map, Point center, int range)
+        public override Target FindNearest(Creature seeker, int range)
         {
+            TileMap map = seeker.Locale.LocaleMap;
+            Point center = seeker.Position;
+
             for (int ring = 0; ring <= range; ring++)
             {
                 for (int dy = -ring; dy <= ring; dy++)
