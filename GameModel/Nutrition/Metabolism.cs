@@ -23,7 +23,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         private const float WalkStaminaPerMinute = 0.1f;
         private const float RestStaminaPerMinute = 0.25f;
         private const float SleepStaminaPerMinute = 0.25f;
-        private const int ExhaustionMinutes = 60;
+        private const float ExhaustionRestMinutes = 60f;
 
         private readonly Animal owner;
 
@@ -36,11 +36,13 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         public float Health { get; private set; }
         public float StaminaMinutes { get; private set; }
 
-        private int exhaustedMinutesLeft = 0;
+        // Exhaustion left, in minutes of rest. Resting or sleeping clears one per minute; walking or crouching clears
+        // less, at the same ratio as their stamina recovery.
+        private float exhaustionLeft = 0f;
 
         // While exhausted the animal can't run; stamina refills only when the exhaustion has passed
         // (Milestone 7, decision 18).
-        public bool IsExhausted => exhaustedMinutesLeft > 0;
+        public bool IsExhausted => exhaustionLeft > 0f;
 
         public float StomachCapacityKg => owner.Def.StomachCapacityKg * WeightRatio;
         public float StomachRoomKg => StomachCapacityKg - StomachKg;
@@ -92,12 +94,13 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
 
         // Runs once per tick (one game minute), after the animal has acted, so it reads the activity of this tick.
         // Running spends one minute of stamina; reaching 0 starts the exhaustion, after which stamina refills in
-        // one go. Any other activity recovers stamina at its own rate.
+        // one go. Any other activity recovers stamina at its own rate, and wears exhaustion off at that rate
+        // relative to resting. An exhausted animal can't run, so running never reaches the exhaustion countdown.
         public void UpdateStamina()
         {
             if (IsExhausted)
             {
-                exhaustedMinutesLeft--;
+                exhaustionLeft -= GetStaminaRecovery(owner.Activity) / RestStaminaPerMinute;
                 if (!IsExhausted) StaminaMinutes = owner.Def.MaxRunningMinutes;
                 return;
             }
@@ -105,7 +108,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             if (owner.Activity == CreatureActivity.RUNNING)
             {
                 StaminaMinutes = MathF.Max(0f, StaminaMinutes - 1f);
-                if (StaminaMinutes <= 0f) exhaustedMinutesLeft = ExhaustionMinutes;
+                if (StaminaMinutes <= 0f) exhaustionLeft = ExhaustionRestMinutes;
                 return;
             }
 
