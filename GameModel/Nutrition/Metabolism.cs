@@ -20,6 +20,10 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         private const float StarvationDays = 3f;
         private const float DehydrationDays = 1f;
         private const float RecoveryPerDay = 10f;
+        private const float WalkStaminaPerMinute = 0.1f;
+        private const float RestStaminaPerMinute = 0.25f;
+        private const float SleepStaminaPerMinute = 0.25f;
+        private const int ExhaustionMinutes = 60;
 
         private readonly Animal owner;
 
@@ -30,6 +34,13 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         public float WaterLiters { get; private set; }
         public float SleepDebtHours { get; private set; }
         public float Health { get; private set; }
+        public float StaminaMinutes { get; private set; }
+
+        private int exhaustedMinutesLeft = 0;
+
+        // While exhausted the animal can't run; stamina refills only when the exhaustion has passed
+        // (Milestone 7, decision 18).
+        public bool IsExhausted => exhaustedMinutesLeft > 0;
 
         public float StomachCapacityKg => owner.Def.StomachCapacityKg * WeightRatio;
         public float StomachRoomKg => StomachCapacityKg - StomachKg;
@@ -76,6 +87,29 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             WaterLiters = WaterCapacityLiters;
             SleepDebtHours = 0f;
             Health = MaxHealth;
+            StaminaMinutes = owner.Def.MaxRunningMinutes;
+        }
+
+        // Runs once per tick (one game minute), after the animal has acted, so it reads the activity of this tick.
+        // Running spends one minute of stamina; reaching 0 starts the exhaustion, after which stamina refills in
+        // one go. Any other activity recovers stamina at its own rate.
+        public void UpdateStamina()
+        {
+            if (IsExhausted)
+            {
+                exhaustedMinutesLeft--;
+                if (!IsExhausted) StaminaMinutes = owner.Def.MaxRunningMinutes;
+                return;
+            }
+
+            if (owner.Activity == CreatureActivity.RUNNING)
+            {
+                StaminaMinutes = MathF.Max(0f, StaminaMinutes - 1f);
+                if (StaminaMinutes <= 0f) exhaustedMinutesLeft = ExhaustionMinutes;
+                return;
+            }
+
+            StaminaMinutes = MathF.Min(StaminaMinutes + GetStaminaRecovery(owner.Activity), owner.Def.MaxRunningMinutes);
         }
 
         // Takes one tick's bite of food. The bite is limited by the species' bite rate and the room left
@@ -229,6 +263,15 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             CreatureActivity.RUNNING => owner.Def.RunMultiplier,
             CreatureActivity.CROUCHING => owner.Def.WalkMultiplier,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Activity has no burn multiplier.")
+        };
+
+        private static float GetStaminaRecovery(CreatureActivity activity) => activity switch
+        {
+            CreatureActivity.SLEEPING => SleepStaminaPerMinute,
+            CreatureActivity.RESTING => RestStaminaPerMinute,
+            CreatureActivity.WALKING => WalkStaminaPerMinute,
+            CreatureActivity.CROUCHING => WalkStaminaPerMinute,
+            _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Activity has no stamina recovery.")
         };
     }
 }

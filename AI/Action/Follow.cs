@@ -43,6 +43,9 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         {
             if (IsReached(creature)) return Finish(creature, ActionOutcome.TARGET_REACHED);
 
+            // A chase can't continue once the chaser is too exhausted to run (Milestone 7, decision 18).
+            if (_mode == CreatureActivity.RUNNING && !creature.CanRun) return Finish(creature, ActionOutcome.TARGET_LOST);
+
             // A path requested earlier has come back from the AI thread.
             if (JobHandle.HasValue && !IsActionAwaitingJobHandle())
             {

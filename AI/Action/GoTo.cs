@@ -45,8 +45,10 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 return ActionOutcome.NO_PATH;
             }
 
-            creature.Activity = _mode;
-            _budget += creature.GetMoveSpeed(_mode);
+            // A creature that can't run (exhausted) walks the rest of the way instead.
+            CreatureActivity mode = _mode == CreatureActivity.RUNNING && !creature.CanRun ? CreatureActivity.WALKING : _mode;
+            creature.Activity = mode;
+            _budget += creature.GetMoveSpeed(mode);
 
             while (PathTraversal.Count > 0)
             {

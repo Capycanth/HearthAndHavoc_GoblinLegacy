@@ -23,6 +23,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public float WaterLitersPerDay { get; init; }
         public float WalkSpeed { get; init; }
         public float RunSpeed { get; init; }
+        public int MaxRunningMinutes { get; init; }
         public int PerceptionRange { get; init; }
         public ActivityCycle ActivityCycle { get; init; }
         public int SleepHoursPerDay { get; init; }
@@ -112,6 +113,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             if (WalkSpeed <= 0 || RunSpeed < WalkSpeed)
             {
                 throw new InvalidDataException($"Def '{Key}' has WalkSpeed {WalkSpeed} and RunSpeed {RunSpeed}; walk must be above 0 and run at least walk.");
+            }
+
+            if (MaxRunningMinutes <= 0)
+            {
+                throw new InvalidDataException($"Def '{Key}' has MaxRunningMinutes {MaxRunningMinutes}; it must be above 0.");
             }
 
             if (PerceptionRange <= 0)
