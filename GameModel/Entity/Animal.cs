@@ -17,6 +17,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public Metabolism Metabolism { get; }
         public int UpdateSlot { get; }
 
+        public override bool CanRun => !Metabolism.IsExhausted;
+
         public Animal(int id, FaunaDef def, Locale locale, float weightKg)
             : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, null)
         {
@@ -40,6 +42,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             }
 
             base.Update();
+            Metabolism.UpdateStamina();
         }
 
         // Adds up to kg of lean weight, never past the current stage's maturity weight. On reaching it, the

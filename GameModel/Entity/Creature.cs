@@ -16,6 +16,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public ActionChain CurrentChain { get; set; }
         public CreatureActivity Activity { get; set; } = CreatureActivity.RESTING;
 
+        // Whether the creature may run right now. Creatures with no body model can always run.
+        public virtual bool CanRun => true;
+
         protected Creature(int id, byte size, Locale locale, Texture2D texture) : base(texture)
         {
             Id = id;
