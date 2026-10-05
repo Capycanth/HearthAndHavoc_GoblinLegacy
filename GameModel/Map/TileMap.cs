@@ -68,6 +68,16 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             return chunk.Plants[localY, localX];
         }
 
+        public CoverDef GetCover(Point tile)
+        {
+            if (!Chunks.TryGetValue(ToChunkCoord(tile), out MapChunk chunk)) return null;
+
+            int localX = tile.X & MapChunk.LocalMask;
+            int localY = tile.Y & MapChunk.LocalMask;
+
+            return chunk.Cover[localY, localX];
+        }
+
         public byte GetFertility(Point tile)
         {
             MapChunk chunk = Chunks[ToChunkCoord(tile)];
