@@ -44,3 +44,7 @@ water_salt.png
 water_swamp.png
 water_lake.png
 water_river.png
+
+# Carcasses (placeholder: the dead animal's stage texture, rotated and darkened)
+carcass_fresh.png
+carcass_rotten.png

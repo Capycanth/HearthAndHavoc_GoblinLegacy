@@ -19,6 +19,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public override bool CanRun => !Metabolism.IsExhausted;
 
+        private bool isDead = false;
+
         public Animal(int id, FaunaDef def, Locale locale, float weightKg)
             : base(id, def.GrowthStages[GrowthStage.GetStageIndex(def.GrowthStages, weightKg)].Size, locale, null)
         {
@@ -36,13 +38,25 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
                 Metabolism.UpdateHour();
                 if (Metabolism.Health <= 0f)
                 {
-                    Locale.QueueRemove(this);
+                    Die();
                     return;
                 }
             }
 
             base.Update();
             Metabolism.UpdateStamina();
+        }
+
+        // Removes the animal from the map and leaves its carcass where it fell. Safe to call more than once in a
+        // tick (for example killed and starved together): only the first call does anything. The carcass is built
+        // now, while Position is still the real tile; QueueRemove only moves it later, in ProcessPending.
+        public void Die()
+        {
+            if (isDead) return;
+            isDead = true;
+
+            Locale.QueueRemove(this);
+            Locale.QueueAddCarcass(new Carcass(this));
         }
 
         // Adds up to kg of lean weight, never past the current stage's maturity weight. On reaching it, the

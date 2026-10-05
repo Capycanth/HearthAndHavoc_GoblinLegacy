@@ -29,6 +29,11 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         private readonly List<Plant> pendingPlantAdds = new();
         private readonly List<Plant> pendingPlantRemoves = new();
         private readonly List<Creature> visibleCreatures = new();
+        private readonly List<Carcass> carcasses = new();
+        private readonly Dictionary<Point, List<Carcass>> carcassCells = new();
+        private readonly List<Carcass> pendingCarcassAdds = new();
+        private readonly List<Carcass> pendingCarcassRemoves = new();
+        private readonly List<Carcass> visibleCarcasses = new();
 
         public Locale(string id, TileMap localeMap, SimClock clock)
         {
@@ -76,6 +81,15 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                 creature.Update();
             }
 
+            // Carcasses only change state with time, so once an hour is enough to clear the decomposed ones.
+            if (Clock.Minute == 0)
+            {
+                foreach (Carcass carcass in carcasses)
+                {
+                    if (carcass.IsDecomposed) QueueRemoveCarcass(carcass);
+                }
+            }
+
             ProcessPending();
         }
 
@@ -92,6 +106,16 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
         public void QueueRemove(Creature creature)
         {
             pendingRemoves.Add(creature);
+        }
+
+        public void QueueAddCarcass(Carcass carcass)
+        {
+            pendingCarcassAdds.Add(carcass);
+        }
+
+        public void QueueRemoveCarcass(Carcass carcass)
+        {
+            pendingCarcassRemoves.Add(carcass);
         }
 
         public void QueueAddPlant(Plant plant)
@@ -154,7 +178,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
                 if (!creatures.Remove(creature)) continue;
 
                 LocaleMap.AddOccupancy(creature.Position, -creature.Size);
-                RemoveFromCell(creature, creature.Position);
+                RemoveFromCell(creatureCells, creature, creature.Position);
                 creature.Position = GameObject.RemovedPosition;
             }
             pendingRemoves.Clear();
@@ -169,9 +193,26 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
                 creatures.Add(creature);
                 LocaleMap.AddOccupancy(creature.Position, creature.Size);
-                AddToCell(creature, creature.Position);
+                AddToCell(creatureCells, creature, creature.Position);
             }
             pendingAdds.Clear();
+
+            foreach (Carcass carcass in pendingCarcassRemoves)
+            {
+                if (!carcasses.Remove(carcass)) continue;
+
+                RemoveFromCell(carcassCells, carcass, carcass.Position);
+                carcass.Position = GameObject.RemovedPosition;
+            }
+            pendingCarcassRemoves.Clear();
+
+            // Carcasses take no tile capacity and don't block movement, so any tile can hold one.
+            foreach (Carcass carcass in pendingCarcassAdds)
+            {
+                carcasses.Add(carcass);
+                AddToCell(carcassCells, carcass, carcass.Position);
+            }
+            pendingCarcassAdds.Clear();
         }
 
         public int GrazeCover(Point tile, int grams)
@@ -210,8 +251,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
             if (ToCell(oldTile) != ToCell(tile))
             {
-                RemoveFromCell(creature, oldTile);
-                AddToCell(creature, tile);
+                RemoveFromCell(creatureCells, creature, oldTile);
+                AddToCell(creatureCells, creature, tile);
             }
 
             creature.Position = tile;
@@ -229,6 +270,18 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
         public void GetCreaturesInArea(Rectangle tiles, List<Creature> results)
         {
+            GetInArea(creatureCells, tiles, results);
+        }
+
+        public void GetCarcassesInArea(Rectangle tiles, List<Carcass> results)
+        {
+            GetInArea(carcassCells, tiles, results);
+        }
+
+        // The cell helpers are shared by every kind of object indexed in 32x32-tile cells (creatures, carcasses).
+        // T is constrained to GameObject so the area query can read each object's Position.
+        private static void GetInArea<T>(Dictionary<Point, List<T>> cells, Rectangle tiles, List<T> results) where T : GameObject
+        {
             Point firstCell = ToCell(new Point(tiles.Left, tiles.Top));
             Point lastCell = ToCell(new Point(tiles.Right - 1, tiles.Bottom - 1));
 
@@ -236,33 +289,33 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
             {
                 for (int cellX = firstCell.X; cellX <= lastCell.X; cellX++)
                 {
-                    if (!creatureCells.TryGetValue(new Point(cellX, cellY), out List<Creature> cellCreatures)) continue;
+                    if (!cells.TryGetValue(new Point(cellX, cellY), out List<T> cellItems)) continue;
 
-                    foreach (Creature creature in cellCreatures)
+                    foreach (T item in cellItems)
                     {
-                        if (tiles.Contains(creature.Position)) results.Add(creature);
+                        if (tiles.Contains(item.Position)) results.Add(item);
                     }
                 }
             }
         }
 
-        private void AddToCell(Creature creature, Point tile)
+        private static void AddToCell<T>(Dictionary<Point, List<T>> cells, T item, Point tile)
         {
             Point cell = ToCell(tile);
-            if (!creatureCells.TryGetValue(cell, out List<Creature> cellCreatures))
+            if (!cells.TryGetValue(cell, out List<T> cellItems))
             {
-                cellCreatures = new List<Creature>();
-                creatureCells.Add(cell, cellCreatures);
+                cellItems = new List<T>();
+                cells.Add(cell, cellItems);
             }
-            cellCreatures.Add(creature);
+            cellItems.Add(item);
         }
 
-        private void RemoveFromCell(Creature creature, Point tile)
+        private static void RemoveFromCell<T>(Dictionary<Point, List<T>> cells, T item, Point tile)
         {
             Point cell = ToCell(tile);
-            List<Creature> cellCreatures = creatureCells[cell];
-            cellCreatures.Remove(creature);
-            if (cellCreatures.Count == 0) creatureCells.Remove(cell);
+            List<T> cellItems = cells[cell];
+            cellItems.Remove(item);
+            if (cellItems.Count == 0) cells.Remove(cell);
         }
 
         private static Point ToCell(Point tile)
@@ -308,6 +361,14 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Map
 
                     chunk.Plants[localY, localX]?.Draw(spriteBatch);
                 }
+            }
+
+            // Carcasses are drawn under the creatures.
+            visibleCarcasses.Clear();
+            GetCarcassesInArea(visibleTiles, visibleCarcasses);
+            foreach (Carcass carcass in visibleCarcasses)
+            {
+                carcass.Draw(spriteBatch);
             }
 
             visibleCreatures.Clear();

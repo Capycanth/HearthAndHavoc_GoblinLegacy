@@ -48,7 +48,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         public float StomachRoomKg => StomachCapacityKg - StomachKg;
         public float MaxFatKg => owner.Def.MaxFatKg * WeightRatio;
         public float WaterCapacityLiters => owner.Def.WaterLitersPerDay * WaterReserveDays * WeightRatio;
-        public float BiteGrams => owner.Def.EatGramsPerMinute * WeightRatio;
+        // Rounded up to whole grams so a bite can always be taken from whole-gram food such as cover.
+        public float BiteGrams => MathF.Max(1f, MathF.Ceiling(owner.Def.EatGramsPerMinute * WeightRatio));
 
         public HungerState HungerState
         {
