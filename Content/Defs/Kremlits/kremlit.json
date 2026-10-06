@@ -1,0 +1,3 @@
+[
+    {"key": "kremlit_common", "label": "Kremlit", "tags": ["kremlit"], "growthStages": [{"name": "Child", "stageMaturityWeightKg": 10, "growthKgPerDay": 0.08, "textureKey": "Kremlit_Male", "size": 10}, {"name": "Juvenile", "stageMaturityWeightKg": 22, "growthKgPerDay": 0.05, "textureKey": "Kremlit_Male", "size": 20}, {"name": "Adult", "stageMaturityWeightKg": 30, "growthKgPerDay": 0.01, "textureKey": "Kremlit_Male", "size": 30}], "basalKcalPerHour": 37.0, "sleepMultiplier": 0.9, "walkMultiplier": 2.0, "runMultiplier": 6.0, "stomachCapacityKg": 1.5, "eatGramsPerMinute": 50, "maxFatKg": 4, "waterLitersPerDay": 1.5, "walkSpeed": 1.0, "runSpeed": 2.0, "maxRunningMinutes": 15, "sleepHoursPerDay": 8, "enzymes": ["amylase", "protease", "lipase"], "tint": [255, 255, 255]}
+]
