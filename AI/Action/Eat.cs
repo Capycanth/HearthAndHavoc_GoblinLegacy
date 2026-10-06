@@ -27,17 +27,12 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
         public override ActionOutcome Perform(Creature creature)
         {
-            if (creature is not Animal animal)
-            {
-                throw new InvalidOperationException($"Creature {creature.Id} has no metabolism to eat with.");
-            }
-
             // An object target is read where it is now; a removed one sits at RemovedPosition and is out of reach.
             Point targetTile = _target.Object != null ? _target.Object.Position : _target.Tile;
             if (MapUtil.GetRingDistance(creature.Position, targetTile) > Reach) return ActionOutcome.TARGET_LOST;
 
             // Bites are whole grams, so less than one gram of room counts as a full stomach.
-            Metabolism metabolism = animal.Metabolism;
+            Metabolism metabolism = creature.Metabolism;
             float grams = MathF.Min(metabolism.BiteGrams, metabolism.StomachRoomKg * GramsPerKg);
             if (grams < MinBiteGrams) return ActionOutcome.COMPLETE;
 

@@ -36,7 +36,8 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Scan
             int nearestDistance = int.MaxValue;
             foreach (Carcass candidate in _candidates)
             {
-                if (!_faunas.Contains(candidate.SourceDef) || candidate.MeatKg <= 0f || candidate.IsRotten) continue;
+                if (candidate.SourceDef is not FaunaDef fauna || !_faunas.Contains(fauna)) continue;
+                if (candidate.MeatKg <= 0f || candidate.IsRotten) continue;
                 if (_condition != null && !_condition(candidate)) continue;
                 if (!MapUtil.TryGetStandTile(seeker.Locale.LocaleMap, candidate.Position, center, out _)) continue;
 
