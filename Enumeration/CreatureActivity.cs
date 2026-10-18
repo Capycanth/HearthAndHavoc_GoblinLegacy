@@ -7,5 +7,6 @@ namespace HearthAndHavoc_GoblinLegacy.Enumeration
         WALKING,
         RUNNING,
         CROUCHING,
+        ATTACKING,
     }
 }

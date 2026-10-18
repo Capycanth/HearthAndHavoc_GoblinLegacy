@@ -14,8 +14,6 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
     // growth stages and a Metabolism, and dies into a carcass.
     public abstract class Creature : GameObject
     {
-        private bool isDead = false;
-
         public int Id { get; }
         public byte Size { get; set; }
         public Locale Locale { get; }
@@ -27,6 +25,14 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         [AllowNull]
         public ActionChain CurrentChain { get; set; }
         public CreatureActivity Activity { get; set; } = CreatureActivity.RESTING;
+        public bool IsDead { get; private set; } = false;
+        // The carcass this creature left, set when it dies; null while alive.
+        [AllowNull]
+        public Carcass Remains { get; private set; } = null;
+
+        // What the creature attacks with, or null if it can't attack (Milestone 7, decision 23).
+        [AllowNull]
+        public virtual WeaponDef Weapon => null;
 
         // Whether the creature may run right now: not while exhausted (Milestone 7, decision 18).
         public bool CanRun => !Metabolism.IsExhausted;
@@ -46,6 +52,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 
         public override void Update()
         {
+            // A creature killed earlier this tick stays in the Locale's list until ProcessPending; it does nothing.
+            if (IsDead) return;
+
             if (Locale.Clock.Minute == UpdateSlot)
             {
                 Metabolism.UpdateHour();
@@ -73,11 +82,22 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         // now, while Position is still the real tile; QueueRemove only moves it later, in ProcessPending.
         public void Die()
         {
-            if (isDead) return;
-            isDead = true;
+            if (IsDead) return;
+            IsDead = true;
 
+            Remains = new Carcass(this);
             Locale.QueueRemove(this);
-            Locale.QueueAddCarcass(new Carcass(this));
+            Locale.QueueAddCarcass(Remains);
+        }
+
+        // Takes an injury and dies straight away if it ends the creature's health, rather than waiting for the
+        // hourly check, so an attacker sees the kill on the same tick (Milestone 7, decision 24).
+        public void TakeDamage(float amount)
+        {
+            if (IsDead) return;
+
+            Metabolism.TakeDamage(amount);
+            if (Metabolism.Health <= 0f) Die();
         }
 
         // Adds up to kg of lean weight, never past the current stage's maturity weight. On reaching it, the

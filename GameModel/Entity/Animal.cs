@@ -10,6 +10,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
     {
         public FaunaDef Def { get; }
 
+        public override WeaponDef Weapon => Def.NaturalWeapon;
+
         public Animal(int id, FaunaDef def, Locale locale, float weightKg)
             : base(id, def, locale, weightKg)
         {
