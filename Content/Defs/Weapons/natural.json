@@ -1,0 +1,4 @@
+[
+    {"key": "weapon_natural_teeth_wolf", "label": "Wolf Teeth", "tags": ["weapon", "natural"], "damage": 10, "attacksPerMinute": 6},
+    {"key": "weapon_natural_tusks_boar", "label": "Boar Tusks", "tags": ["weapon", "natural"], "damage": 8, "attacksPerMinute": 4}
+]

@@ -24,6 +24,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         {
             string defsRoot = Path.Combine(AppContext.BaseDirectory, "Content", "Defs");
             LoadFolder<ItemDef>(Path.Combine(defsRoot, "Items"));
+            LoadFolder<WeaponDef>(Path.Combine(defsRoot, "Weapons"));
             LoadFolder<FloraDef>(Path.Combine(defsRoot, "Flora"));
             LoadFolder<FaunaDef>(Path.Combine(defsRoot, "Fauna"));
             LoadFolder<KremlitDef>(Path.Combine(defsRoot, "Kremlits"));

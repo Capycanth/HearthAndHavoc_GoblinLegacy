@@ -259,6 +259,12 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             Health = MathF.Max(Health, 0f);
         }
 
+        // Lowers health by an injury, never below 0 (Milestone 7, decision 24). The death check is done by Creature.
+        public void TakeDamage(float amount)
+        {
+            Health = MathF.Max(Health - amount, 0f);
+        }
+
         private float GetActivityMultiplier(CreatureActivity activity) => activity switch
         {
             CreatureActivity.SLEEPING => owner.Body.SleepMultiplier,
@@ -266,6 +272,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             CreatureActivity.WALKING => owner.Body.WalkMultiplier,
             CreatureActivity.RUNNING => owner.Body.RunMultiplier,
             CreatureActivity.CROUCHING => owner.Body.WalkMultiplier,
+            CreatureActivity.ATTACKING => owner.Body.RunMultiplier,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Activity has no burn multiplier.")
         };
 
@@ -275,6 +282,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             CreatureActivity.RESTING => RestStaminaPerMinute,
             CreatureActivity.WALKING => WalkStaminaPerMinute,
             CreatureActivity.CROUCHING => WalkStaminaPerMinute,
+            // A fight neither spends nor recovers stamina, and exhaustion doesn't wear off during one.
+            CreatureActivity.ATTACKING => 0f,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Activity has no stamina recovery.")
         };
     }

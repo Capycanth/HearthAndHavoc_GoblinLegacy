@@ -18,6 +18,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public int GestationDays { get; init; }
         public int LitterSize { get; init; }
         public List<string> DietKeys { get; init; }
+        // Optional: species that never attack (deer, rabbits) leave it out.
+        public string NaturalWeaponKey { get; init; }
+
+        [JsonIgnore]
+        public WeaponDef NaturalWeapon { get; private set; }
 
         [JsonIgnore]
         public List<Def> Diet { get; private set; }
@@ -28,6 +33,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public override void Resolve()
         {
             base.Resolve();
+
+            if (NaturalWeaponKey != null)
+            {
+                NaturalWeapon = DefRegistry.Get<WeaponDef>(NaturalWeaponKey);
+            }
 
             Diet = new List<Def>();
             if (DietKeys != null)
