@@ -9,8 +9,8 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 {
     // Strikes a creature standing next to the attacker with the attacker's weapon (Milestone 7, decision 24).
     // Each strike deals the weapon's Damage scaled by attacker weight over target weight. Ends with TARGET_DEAD
-    // when the target dies, keeping its carcass in Carcass for the chain to eat, or TARGET_ESCAPED when the target
-    // gets out of reach.
+    // when the target is dead, whether this attack killed it or not, keeping its carcass in Carcass for the chain
+    // to eat, or TARGET_ESCAPED when the target gets out of reach.
     public class Attack : BaseAction
     {
         private const int Reach = 1;
@@ -18,7 +18,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         private readonly Creature _target;
         private float _attackBudget = 0f;
 
-        // The carcass of a target this attack killed; null if it died some other way.
+        // The target's carcass once it is dead, whatever killed it; null while it is alive.
         [AllowNull]
         public Carcass Carcass { get; private set; } = null;
 
@@ -35,7 +35,12 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
                 throw new InvalidOperationException($"Creature {creature.Id} has no weapon to attack with.");
             }
 
-            if (_target.IsDead) return Finish(creature, ActionOutcome.TARGET_DEAD);
+            // Dead before this strike (another attacker, starvation): its carcass is still there to eat.
+            if (_target.IsDead)
+            {
+                Carcass = _target.Remains;
+                return Finish(creature, ActionOutcome.TARGET_DEAD);
+            }
             if (MapUtil.GetRingDistance(creature.Position, _target.Position) > Reach) return Finish(creature, ActionOutcome.TARGET_ESCAPED);
 
             creature.Activity = CreatureActivity.ATTACKING;
