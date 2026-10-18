@@ -25,7 +25,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         private const float SleepStaminaPerMinute = 0.25f;
         private const float ExhaustionRestMinutes = 60f;
 
-        private readonly Animal owner;
+        private readonly Creature owner;
 
         public float StomachKg { get; private set; }
         public float StomachKcal { get; private set; }
@@ -44,12 +44,12 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         // (Milestone 7, decision 18).
         public bool IsExhausted => exhaustionLeft > 0f;
 
-        public float StomachCapacityKg => owner.Def.StomachCapacityKg * WeightRatio;
+        public float StomachCapacityKg => owner.Body.StomachCapacityKg * WeightRatio;
         public float StomachRoomKg => StomachCapacityKg - StomachKg;
-        public float MaxFatKg => owner.Def.MaxFatKg * WeightRatio;
-        public float WaterCapacityLiters => owner.Def.WaterLitersPerDay * WaterReserveDays * WeightRatio;
+        public float MaxFatKg => owner.Body.MaxFatKg * WeightRatio;
+        public float WaterCapacityLiters => owner.Body.WaterLitersPerDay * WaterReserveDays * WeightRatio;
         // Rounded up to whole grams so a bite can always be taken from whole-gram food such as cover.
-        public float BiteGrams => MathF.Max(1f, MathF.Ceiling(owner.Def.EatGramsPerMinute * WeightRatio));
+        public float BiteGrams => MathF.Max(1f, MathF.Ceiling(owner.Body.EatGramsPerMinute * WeightRatio));
 
         public HungerState HungerState
         {
@@ -74,23 +74,23 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         {
             get
             {
-                int sleepHours = owner.Def.SleepHoursPerDay;
+                int sleepHours = owner.Body.SleepHoursPerDay;
                 if (SleepDebtHours >= sleepHours) return TirednessState.EXHAUSTED;
                 if (SleepDebtHours >= sleepHours / 2f) return TirednessState.TIRED;
                 return TirednessState.RESTED;
             }
         }
 
-        private float WeightRatio => owner.WeightKg / owner.Def.FinalWeightKg;
+        private float WeightRatio => owner.WeightKg / owner.Body.FinalWeightKg;
 
-        public Metabolism(Animal owner)
+        public Metabolism(Creature owner)
         {
             this.owner = owner;
             FatKg = MaxFatKg;
             WaterLiters = WaterCapacityLiters;
             SleepDebtHours = 0f;
             Health = MaxHealth;
-            StaminaMinutes = owner.Def.MaxRunningMinutes;
+            StaminaMinutes = owner.Body.MaxRunningMinutes;
         }
 
         // Runs once per tick (one game minute), after the animal has acted, so it reads the activity of this tick.
@@ -102,7 +102,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             if (IsExhausted)
             {
                 exhaustionLeft -= GetStaminaRecovery(owner.Activity) / RestStaminaPerMinute;
-                if (!IsExhausted) StaminaMinutes = owner.Def.MaxRunningMinutes;
+                if (!IsExhausted) StaminaMinutes = owner.Body.MaxRunningMinutes;
                 return;
             }
 
@@ -113,7 +113,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
                 return;
             }
 
-            StaminaMinutes = MathF.Min(StaminaMinutes + GetStaminaRecovery(owner.Activity), owner.Def.MaxRunningMinutes);
+            StaminaMinutes = MathF.Min(StaminaMinutes + GetStaminaRecovery(owner.Activity), owner.Body.MaxRunningMinutes);
         }
 
         // Takes one tick's bite of food. The bite is limited by the species' bite rate and the room left
@@ -144,7 +144,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             {
                 foreach (KeyValuePair<Substance, float> entry in food.Substances)
                 {
-                    if (!owner.Def.Enzymes.Contains(SubstanceTable.GetEnzyme(entry.Key))) continue;
+                    if (!owner.Body.Enzymes.Contains(SubstanceTable.GetEnzyme(entry.Key))) continue;
 
                     float substanceGrams = grams * entry.Value / 100f;
                     StomachKcal += substanceGrams * SubstanceTable.GetKcalPerGram(entry.Key);
@@ -166,7 +166,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             return accepted;
         }
 
-        // Runs once per game hour, in the order of Milestone 6, decision 3. The death check is done by Animal.
+        // Runs once per game hour, in the order of Milestone 6, decision 3. The death check is done by Creature.
         public void UpdateHour()
         {
             float releasedKcal = Digest();
@@ -197,7 +197,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
 
         private float BurnKcal()
         {
-            return owner.Def.BasalKcalPerHour * MathF.Pow(WeightRatio, KleiberExponent) * GetActivityMultiplier(owner.Activity);
+            return owner.Body.BasalKcalPerHour * MathF.Pow(WeightRatio, KleiberExponent) * GetActivityMultiplier(owner.Activity);
         }
 
         // A surplus goes to growth first, then fat. A deficit is paid from fat. Returns true when fat ran out.
@@ -205,7 +205,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         {
             if (netKcal >= 0f)
             {
-                float maxGrowthKg = owner.Def.GrowthStages[owner.StageIndex].GrowthKgPerDay / SimClock.HoursPerDay;
+                float maxGrowthKg = owner.Body.GrowthStages[owner.StageIndex].GrowthKgPerDay / SimClock.HoursPerDay;
                 float grownKg = owner.Grow(MathF.Min(netKcal / GrowthKcalPerKg, maxGrowthKg));
                 float leftoverKcal = netKcal - grownKg * GrowthKcalPerKg;
                 FatKg = MathF.Min(FatKg + leftoverKcal / FatKcalPerKg, MaxFatKg);
@@ -226,7 +226,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         // Drains one hour of the daily water need. Returns true when the reserve ran out.
         private bool DrainWater()
         {
-            float drainLiters = owner.Def.WaterLitersPerDay * WeightRatio / SimClock.HoursPerDay;
+            float drainLiters = owner.Body.WaterLitersPerDay * WeightRatio / SimClock.HoursPerDay;
             if (WaterLiters > drainLiters)
             {
                 WaterLiters -= drainLiters;
@@ -245,7 +245,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
                 return;
             }
 
-            float sleepHours = owner.Def.SleepHoursPerDay;
+            float sleepHours = owner.Body.SleepHoursPerDay;
             float repaidHours = (SimClock.HoursPerDay - sleepHours) / sleepHours;
             SleepDebtHours = MathF.Max(0f, SleepDebtHours - repaidHours);
         }
@@ -261,11 +261,11 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
 
         private float GetActivityMultiplier(CreatureActivity activity) => activity switch
         {
-            CreatureActivity.SLEEPING => owner.Def.SleepMultiplier,
+            CreatureActivity.SLEEPING => owner.Body.SleepMultiplier,
             CreatureActivity.RESTING => 1f,
-            CreatureActivity.WALKING => owner.Def.WalkMultiplier,
-            CreatureActivity.RUNNING => owner.Def.RunMultiplier,
-            CreatureActivity.CROUCHING => owner.Def.WalkMultiplier,
+            CreatureActivity.WALKING => owner.Body.WalkMultiplier,
+            CreatureActivity.RUNNING => owner.Body.RunMultiplier,
+            CreatureActivity.CROUCHING => owner.Body.WalkMultiplier,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Activity has no burn multiplier.")
         };
 

@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
-    // What an animal leaves when it dies (Milestone 7, decision 25). It holds the meat from its CarcassYield,
+    // What a creature leaves when it dies (Milestone 7, decision 25). It holds the meat from its CarcassYield,
     // rots once that meat spoils, and decomposes and leaves the map some days later. It stays until then even
     // when the meat is gone, so its other materials (hide and so on) can be harvested later.
     public class Carcass : GameObject
@@ -24,9 +24,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         private readonly int rotTick;
         private readonly int decomposeTick;
 
-        public FaunaDef SourceDef { get; }
+        public BodyDef SourceDef { get; }
         public Locale Locale { get; }
-        // The dead animal's weight over its species' final weight, kept for scaling harvest yields later.
+        // The dead creature's weight over its body's final weight, kept for scaling harvest yields later.
         public float WeightRatio { get; }
         [AllowNull]
         public ItemDef MeatItem { get; }
@@ -36,16 +36,16 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public bool IsRotten => Locale.Clock.TotalTicks >= rotTick;
         public bool IsDecomposed => Locale.Clock.TotalTicks >= decomposeTick;
 
-        public Carcass(Animal animal) : base(null)
+        public Carcass(Creature creature) : base(null)
         {
-            SourceDef = animal.Def;
-            Locale = animal.Locale;
-            Position = animal.Position;
-            WeightRatio = animal.WeightKg / animal.Def.FinalWeightKg;
+            SourceDef = creature.Body;
+            Locale = creature.Locale;
+            Position = creature.Position;
+            WeightRatio = creature.WeightKg / creature.Body.FinalWeightKg;
             DeathTick = Locale.Clock.TotalTicks;
-            textureKey = animal.Def.GrowthStages[animal.StageIndex].TextureKey;
+            textureKey = creature.Body.GrowthStages[creature.StageIndex].TextureKey;
 
-            CarcassYield meat = FindMeatYield(animal.Def);
+            CarcassYield meat = FindMeatYield(creature.Body);
             if (meat != null)
             {
                 MeatItem = meat.Item;
@@ -72,7 +72,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         {
         }
 
-        // Drawn as the dead animal turned belly up: its stage texture rotated half a turn around its centre, then
+        // Drawn as the dead creature turned belly up: its stage texture rotated half a turn around its centre, then
         // darkened while fresh or tinted green-brown once rotten. Drawing at GeoPosition + origin keeps the
         // rotated sprite on its own tile.
         public override void Draw(SpriteBatch spriteBatch)
@@ -83,7 +83,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             spriteBatch.Draw(texture, GeoPosition + origin, null, tint, MathHelper.Pi, origin, 1f, SpriteEffects.None, 0f);
         }
 
-        private static CarcassYield FindMeatYield(FaunaDef def)
+        private static CarcassYield FindMeatYield(BodyDef def)
         {
             if (def.CarcassYield == null) return null;
 
