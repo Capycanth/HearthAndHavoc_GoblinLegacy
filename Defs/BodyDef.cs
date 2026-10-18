@@ -19,6 +19,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public float EatGramsPerMinute { get; init; }
         public float MaxFatKg { get; init; }
         public float WaterLitersPerDay { get; init; }
+        public float DrinkLitersPerMinute { get; init; }
         public float WalkSpeed { get; init; }
         public float RunSpeed { get; init; }
         public int MaxRunningMinutes { get; init; }
@@ -79,6 +80,11 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             if (WalkSpeed <= 0 || RunSpeed < WalkSpeed)
             {
                 throw new InvalidDataException($"Def '{Key}' has WalkSpeed {WalkSpeed} and RunSpeed {RunSpeed}; walk must be above 0 and run at least walk.");
+            }
+
+            if (DrinkLitersPerMinute <= 0)
+            {
+                throw new InvalidDataException($"Def '{Key}' has DrinkLitersPerMinute {DrinkLitersPerMinute}; it must be above 0.");
             }
 
             if (MaxRunningMinutes <= 0)

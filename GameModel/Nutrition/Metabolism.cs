@@ -50,6 +50,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         public float WaterCapacityLiters => owner.Body.WaterLitersPerDay * WaterReserveDays * WeightRatio;
         // Rounded up to whole grams so a bite can always be taken from whole-gram food such as cover.
         public float BiteGrams => MathF.Max(1f, MathF.Ceiling(owner.Body.EatGramsPerMinute * WeightRatio));
+        // One tick's drink, scaled by weight like the reserve, so every age fills it in the same time.
+        public float SipLiters => owner.Body.DrinkLitersPerMinute * WeightRatio;
 
         public HungerState HungerState
         {
