@@ -11,8 +11,6 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
     {
         private static readonly string[] DietTags = ["herbivore", "omnivore", "carnivore"];
 
-        private readonly List<FaunaDef> predators = new();
-
         public int PerceptionRange { get; init; }
         public ActivityCycle ActivityCycle { get; init; }
         public int LifespanDays { get; init; }
@@ -39,8 +37,10 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         [JsonIgnore]
         public HashSet<FaunaDef> DietFauna { get; } = new();
 
+        // The fauna whose diet includes this species, filled in by their Resolve (Milestone 4, decision 10). A set,
+        // so it can be handed straight to a CreatureScanner.
         [JsonIgnore]
-        public IReadOnlyList<FaunaDef> Predators => predators;
+        public HashSet<FaunaDef> Predators { get; } = new();
 
         public override void Resolve()
         {
@@ -70,7 +70,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                             break;
                         case FaunaDef prey:
                             DietFauna.Add(prey);
-                            prey.predators.Add(this);
+                            prey.Predators.Add(this);
                             break;
                         default:
                             throw new InvalidDataException($"Def '{Key}' has '{key}' in its diet; diet entries must be cover, flora (its foliage), a fruit item or fauna.");

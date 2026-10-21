@@ -64,11 +64,11 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.Map
             return found;
         }
 
-        public static Stack<Point> GetAStarPathQueue(TileMap map, Point start, Point destination)
+        public static Stack<Point> GetAStarPathQueue(TileMap map, Point start, Point destination, int maxSearchNodes = MapPathSolver.MaxSearchNodes)
         {
             Stopwatch sw = Stopwatch.StartNew();
             Debug.WriteLine($"MapUtil.GetAStarPathQueue called for distance of {GetDistance(start, destination)}");
-            Stack<Point> result = new MapPathSolver().Graph(map, start, destination);
+            Stack<Point> result = new MapPathSolver().Graph(map, start, destination, maxSearchNodes);
             sw.Stop();
             Debug.WriteLine($"MapUtil.GetAStarPathQueue completed in {sw.ElapsedMilliseconds} ms");
             return result;

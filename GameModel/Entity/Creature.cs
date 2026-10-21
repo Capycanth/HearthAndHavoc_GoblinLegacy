@@ -65,6 +65,9 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
                 }
             }
 
+            // Before the chain runs, so a creature reacting to what it notices acts on this same tick.
+            Perceive();
+
             CurrentChain ??= ChooseChain();
 
             ChainStatus status = CurrentChain.Perform(this);
@@ -131,6 +134,12 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             CreatureActivity.CROUCHING => Body.WalkSpeed,
             _ => throw new ArgumentOutOfRangeException(nameof(activity), activity, "Creature has no move speed for this activity.")
         };
+
+        // Lets the creature notice its surroundings and change its chain in response, such as a prey animal
+        // spotting a predator (Milestone 7, decision 21). Does nothing by default.
+        protected virtual void Perceive()
+        {
+        }
 
         protected abstract ActionChain ChooseChain();
     }

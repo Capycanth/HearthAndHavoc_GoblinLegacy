@@ -103,7 +103,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             return true;
         }
 
-        private static ActionOutcome Finish(Creature creature, ActionOutcome outcome)
+        protected static ActionOutcome Finish(Creature creature, ActionOutcome outcome)
         {
             creature.Activity = CreatureActivity.RESTING;
             return outcome;
