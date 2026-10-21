@@ -360,7 +360,7 @@ A decision layer scores needs and picks an action chain. A chain runs small, int
 
 *Diet and chains*
 
-26. A diet entry is a cover key (that cover), a flora key (that plant's foliage), a fruit item key (that fruit, on any plant that grows it) or a fauna key (that animal's meat). Validation: an item key must be some flora's `FruitItem`, and a flora key needs `MaxFoliageGrams` above 0. The four species' diets are split into foliage and fruit entries, with the values approved in their PR.
+26. A diet entry is a cover key (that cover), a flora key (that plant's foliage), a fruit item key (that fruit, on any plant that grows it) or a fauna key (that animal's meat). Validation: an item key must be some flora's `FruitItem`, and a flora key needs `MaxFoliageGrams` above 0. The four species' diets are split into foliage and fruit entries, with the values approved in their PR. *Settled in PR 9: rabbits add `item_fruit_berry`; deer add `item_fruit_berry`, `item_fruit_apple` and `item_mushroom_oyster` in place of `flora_fungus_oyster`; boars eat berry, apple and oyster fruit instead of berry-bush and apple-tree foliage, plus dandelion and rabbit; wolves are unchanged. `FaunaDef` also sorts the diet into `DietCovers`, `DietFoliage`, `DietFruits` and `DietFauna` for the scanners, and `DefRegistry.GetAll<T>()` lists every def of a type for the fruit check.*
 27. The Phase 1 chains:
 
     | Chain | Steps and transitions | Who |
