@@ -17,7 +17,8 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         private const int RecheckTicks = 10;
         private const int MaxMissedChecks = 3;
 
-        private readonly Creature _target;
+        // The creature being followed. Protected so subclasses can check on it, as Stalk does.
+        protected Creature Target { get; }
         private readonly CreatureActivity _mode;
         private readonly int _reach;
         private readonly int _range;
@@ -32,7 +33,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
         protected Follow(Creature target, CreatureActivity mode, int reach, int range)
         {
-            _target = target;
+            Target = target;
             _mode = mode;
             _reach = reach;
             _range = range;
@@ -57,7 +58,7 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
             if (_ticksUntilRecheck == 0)
             {
                 _ticksUntilRecheck = RecheckTicks;
-                if (MapUtil.GetRingDistance(creature.Position, _target.Position) > _range)
+                if (MapUtil.GetRingDistance(creature.Position, Target.Position) > _range)
                 {
                     _missedChecks++;
                     if (_missedChecks >= MaxMissedChecks) return Finish(creature, ActionOutcome.TARGET_LOST);
@@ -82,13 +83,13 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
         private bool IsReached(Creature creature)
         {
-            return MapUtil.GetRingDistance(creature.Position, _target.Position) <= _reach;
+            return MapUtil.GetRingDistance(creature.Position, Target.Position) <= _reach;
         }
 
         private void RequestPath(Creature creature)
         {
             // Read the target's position here, on the main thread; the AI thread only reads this copy.
-            _pathDestination = _target.Position;
+            _pathDestination = Target.Position;
             (WorldSnapshot ws, CreatureSnapshot cs) snapshots = GenerateSnapshots(creature);
             JobHandle = GoblinGame.Processor.Enqueue(snapshots.ws, snapshots.cs, CalculatePath);
         }

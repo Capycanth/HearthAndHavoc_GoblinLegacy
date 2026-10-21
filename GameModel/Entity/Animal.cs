@@ -4,6 +4,7 @@ using HearthAndHavoc_GoblinLegacy.AI.Scan;
 using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
 using HearthAndHavoc_GoblinLegacy.Utility;
+using System;
 
 namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
 {
@@ -45,8 +46,15 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             if (noticed == null) return;
 
             Creature predator = (Creature)noticed.Object;
-            if (flee != null) flee.AddThreat(predator);
-            else CurrentChain = new FleeChain(predator, Def.PerceptionRange);
+            if (flee != null)
+            {
+                flee.AddThreat(predator);
+            }
+            else
+            {
+                Console.WriteLine($"Creature {Id} noticed creature {predator.Id} and flees");
+                CurrentChain = new FleeChain(predator, Def.PerceptionRange);
+            }
         }
 
         // The scanner's condition: a predator the animal is already fleeing from needs no roll; any other is
