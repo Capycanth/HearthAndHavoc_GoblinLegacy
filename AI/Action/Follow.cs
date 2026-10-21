@@ -27,7 +27,6 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         [AllowNull]
         private Stack<Point> _newPath = null;
         private Point _pathDestination;
-        private float _budget = 0f;
         private int _ticksUntilRecheck = 0;
         private int _missedChecks = 0;
 
@@ -73,26 +72,10 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
             if (_path == null || _path.Count == 0) return ActionOutcome.RUNNING;
 
-            creature.Activity = _mode;
-            _budget += creature.GetMoveSpeed(_mode);
-
-            while (_path.Count > 0)
-            {
-                Point next = _path.Peek();
-                float cost = GetStepCost(creature, next);
-                if (_budget < cost) return ActionOutcome.RUNNING;
-
-                // A blocked step waits; the next recheck brings a fresh path anyway.
-                if (!creature.Locale.MoveCreature(creature, next))
-                {
-                    _budget = 0f;
-                    return ActionOutcome.RUNNING;
-                }
-
-                _budget -= cost;
-                _path.Pop();
-                if (IsReached(creature)) return Finish(creature, ActionOutcome.TARGET_REACHED);
-            }
+            // Stop the moment a step brings the target within reach. A blocked step just waits; the next recheck
+            // brings a fresh path anyway.
+            StepResult result = StepAlong(creature, _path, _mode, IsReached);
+            if (result == StepResult.STOPPED) return Finish(creature, ActionOutcome.TARGET_REACHED);
 
             return ActionOutcome.RUNNING;
         }
