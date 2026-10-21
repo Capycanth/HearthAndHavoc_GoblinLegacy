@@ -1,6 +1,7 @@
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace HearthAndHavoc_GoblinLegacy.Defs
@@ -27,6 +28,17 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         [JsonIgnore]
         public List<Def> Diet { get; private set; }
 
+        // The diet sorted by what each entry means (Milestone 7, decision 26), ready to hand to the scanners:
+        // covers, plants whose foliage is eaten, fruit items, and animals whose meat is eaten.
+        [JsonIgnore]
+        public HashSet<CoverDef> DietCovers { get; } = new();
+        [JsonIgnore]
+        public HashSet<FloraDef> DietFoliage { get; } = new();
+        [JsonIgnore]
+        public HashSet<ItemDef> DietFruits { get; } = new();
+        [JsonIgnore]
+        public HashSet<FaunaDef> DietFauna { get; } = new();
+
         [JsonIgnore]
         public IReadOnlyList<FaunaDef> Predators => predators;
 
@@ -45,17 +57,26 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 foreach (string key in DietKeys)
                 {
                     Def food = DefRegistry.Get<Def>(key);
-                    if (food is not (FloraDef or FaunaDef or CoverDef))
+                    switch (food)
                     {
-                        throw new InvalidDataException($"Def '{Key}' has '{key}' in its diet; diet entries must be flora, fauna or cover.");
+                        case CoverDef cover:
+                            DietCovers.Add(cover);
+                            break;
+                        case FloraDef flora:
+                            DietFoliage.Add(flora);
+                            break;
+                        case ItemDef fruit:
+                            DietFruits.Add(fruit);
+                            break;
+                        case FaunaDef prey:
+                            DietFauna.Add(prey);
+                            prey.predators.Add(this);
+                            break;
+                        default:
+                            throw new InvalidDataException($"Def '{Key}' has '{key}' in its diet; diet entries must be cover, flora (its foliage), a fruit item or fauna.");
                     }
 
                     Diet.Add(food);
-
-                    if (food is FaunaDef prey)
-                    {
-                        prey.predators.Add(this);
-                    }
                 }
             }
         }
@@ -88,6 +109,25 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             if (Diet.Count == 0)
             {
                 throw new InvalidDataException($"Def '{Key}' has an empty diet.");
+            }
+
+            // A flora entry means its foliage, so the plant must have some.
+            foreach (FloraDef flora in DietFoliage)
+            {
+                if (flora.MaxFoliageGrams <= 0)
+                {
+                    throw new InvalidDataException($"Def '{Key}' eats the foliage of '{flora.Key}', which has none; list its fruit item instead.");
+                }
+            }
+
+            // An item entry means a fruit, so some plant must grow it, or it could never be found.
+            IReadOnlyList<FloraDef> floras = DefRegistry.GetAll<FloraDef>();
+            foreach (ItemDef fruit in DietFruits)
+            {
+                if (!floras.Any(flora => flora.FruitItem == fruit))
+                {
+                    throw new InvalidDataException($"Def '{Key}' has '{fruit.Key}' in its diet, but no flora grows it as fruit.");
+                }
             }
 
             int dietTagCount = 0;

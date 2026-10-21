@@ -70,6 +70,12 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
             return DefsByIndex[index];
         }
 
+        // Every loaded def of type T, in load order.
+        public static IReadOnlyList<T> GetAll<T>() where T : Def
+        {
+            return DefsByIndex.OfType<T>().ToList();
+        }
+
         public static IReadOnlyList<Def> GetAllWithTag(string tag)
         {
             if (DefsByTag.TryGetValue(tag, out List<Def> defs))
