@@ -18,7 +18,6 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
         private Stack<Point> PathTraversal { get; set; } = null;
         private Point _destination;
         private readonly CreatureActivity _mode;
-        private float _budget = 0f;
         private int _blockedSteps = 0;
         private int _repaths = 0;
 
@@ -47,28 +46,23 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Action
 
             // A creature that can't run (exhausted) walks the rest of the way instead.
             CreatureActivity mode = _mode == CreatureActivity.RUNNING && !creature.CanRun ? CreatureActivity.WALKING : _mode;
-            creature.Activity = mode;
-            _budget += creature.GetMoveSpeed(mode);
+            int stepsLeft = PathTraversal.Count;
+            StepResult result = StepAlong(creature, PathTraversal, mode);
 
-            while (PathTraversal.Count > 0)
+            // Only a step actually taken clears the blocked count. A tick spent saving up budget for the next step
+            // doesn't, or a slow creature facing a full tile would never reach MaxBlockedSteps and repath.
+            if (PathTraversal.Count < stepsLeft) _blockedSteps = 0;
+
+            switch (result)
             {
-                Point next = PathTraversal.Peek();
-                float cost = GetStepCost(creature, next);
-                if (_budget < cost) return ActionOutcome.RUNNING;
-
-                if (!creature.Locale.MoveCreature(creature, next))
-                {
-                    _budget = 0f;
+                case StepResult.BLOCKED:
                     return OnBlocked(creature);
-                }
-
-                _budget -= cost;
-                PathTraversal.Pop();
-                _blockedSteps = 0;
+                case StepResult.PATH_DONE:
+                    creature.Activity = CreatureActivity.RESTING;
+                    return ActionOutcome.ARRIVED;
+                default:
+                    return ActionOutcome.RUNNING;
             }
-
-            creature.Activity = CreatureActivity.RESTING;
-            return ActionOutcome.ARRIVED;
         }
 
         private ActionOutcome OnBlocked(Creature creature)
