@@ -8,6 +8,10 @@ namespace HearthAndHavoc_GoblinLegacy.AI.Chain
     // every time it is chosen, and writes its transitions as a switch over its own step enum.
     public abstract class ActionChain
     {
+        // Whether the step running now may be cut off by another chain (Milestone 7, decision 5). Most steps can;
+        // Flee and Attack can't.
+        public virtual bool IsInterruptible => true;
+
         public abstract ChainStatus Perform(Creature creature);
     }
 }

@@ -9,18 +9,20 @@ namespace HearthAndHavoc_GoblinLegacy.Utility.AStar
     {
         private const int baseOrthogonalCost = 5;
         private const int baseDiagonalCost = 7;
-        private const int MaxSearchNodes = 20000;
+        public const int MaxSearchNodes = 20000;
         public Node? solution;
         private TileMap tileMap;
         private Point destination;
         private Dictionary<Point, Path> closedList;
 
-        public Stack<Point> Graph(TileMap tileMap, Point start, Point destination)
+        // maxSearchNodes caps how many tiles the search may close before giving up with an empty path. Flee keeps
+        // it small because it runs on the main thread (Milestone 7, decision 22).
+        public Stack<Point> Graph(TileMap tileMap, Point start, Point destination, int maxSearchNodes = MaxSearchNodes)
         {
             this.tileMap = tileMap;
             this.closedList = [];
             this.destination = destination;
-            Graph(new Node(start, new Path(null, 0, GetDistance(start, this.destination))), new PriorityQueue<Node>(), this.closedList, MaxSearchNodes);
+            Graph(new Node(start, new Path(null, 0, GetDistance(start, this.destination))), new PriorityQueue<Node>(), this.closedList, maxSearchNodes);
             return GetCalculatedPath();
         }
 
