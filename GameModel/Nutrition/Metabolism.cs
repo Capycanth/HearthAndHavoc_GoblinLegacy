@@ -24,6 +24,8 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
         private const float RestStaminaPerMinute = 0.25f;
         private const float SleepStaminaPerMinute = 0.25f;
         private const float ExhaustionRestMinutes = 60f;
+        // How many times faster sleep debt builds while awake during the rest window (tuned in Milestone 9).
+        private const float RestWindowDebtFactor = 2f;
 
         private readonly Creature owner;
 
@@ -239,17 +241,26 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Nutrition
             return true;
         }
 
+        // Sleep debt is in hours of sleep owed (Milestone 7, PR 11a). A normal waking stretch builds exactly
+        // SleepHoursPerDay of debt, and the rest period that follows pays it all back. Crepuscular species split the
+        // day into two waking stretches and two rest periods, each half as long, so both rates double for them.
         private void UpdateSleep()
         {
-            if (owner.Activity != CreatureActivity.SLEEPING)
+            int restPeriods = owner.Body.RestPeriodsPerDay;
+
+            if (owner.Activity == CreatureActivity.SLEEPING)
             {
-                SleepDebtHours += 1f;
+                SleepDebtHours = MathF.Max(0f, SleepDebtHours - restPeriods);
                 return;
             }
 
             float sleepHours = owner.Body.SleepHoursPerDay;
-            float repaidHours = (SimClock.HoursPerDay - sleepHours) / sleepHours;
-            SleepDebtHours = MathF.Max(0f, SleepDebtHours - repaidHours);
+            float awakeDebtHours = sleepHours / (SimClock.HoursPerDay - sleepHours) * restPeriods;
+
+            int minuteOfDay = owner.Locale.Clock.TotalTicks % SimClock.MinutesPerDay;
+            if (owner.Body.IsRestTime(minuteOfDay)) awakeDebtHours *= RestWindowDebtFactor;
+
+            SleepDebtHours += awakeDebtHours;
         }
 
         private void UpdateHealth(bool starving, bool dehydrated)

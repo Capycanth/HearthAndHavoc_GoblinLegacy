@@ -1,4 +1,3 @@
-using HearthAndHavoc_GoblinLegacy.Enumeration;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +11,6 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         private static readonly string[] DietTags = ["herbivore", "omnivore", "carnivore"];
 
         public int PerceptionRange { get; init; }
-        public ActivityCycle ActivityCycle { get; init; }
         public int LifespanDays { get; init; }
         public int GestationDays { get; init; }
         public int LitterSize { get; init; }
