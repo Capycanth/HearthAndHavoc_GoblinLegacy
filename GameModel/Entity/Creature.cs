@@ -2,6 +2,7 @@ using HearthAndHavoc_GoblinLegacy.AI.Chain;
 using HearthAndHavoc_GoblinLegacy.Defs;
 using HearthAndHavoc_GoblinLegacy.Enumeration;
 using HearthAndHavoc_GoblinLegacy.GameModel.Map;
+using HearthAndHavoc_GoblinLegacy.GameModel.Motivation;
 using HearthAndHavoc_GoblinLegacy.GameModel.Nutrition;
 using HearthAndHavoc_GoblinLegacy.Utility;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
         public float WeightKg { get; set; }
         public int StageIndex { get; private set; }
         public Metabolism Metabolism { get; }
+        public Needs Needs { get; }
         public int UpdateSlot { get; }
         [AllowNull]
         public ActionChain CurrentChain { get; set; }
@@ -47,6 +49,7 @@ namespace HearthAndHavoc_GoblinLegacy.GameModel.Entity
             StageIndex = GrowthStage.GetStageIndex(body.GrowthStages, weightKg);
             Size = body.GrowthStages[StageIndex].Size;
             Metabolism = new Metabolism(this);
+            Needs = new Needs(new HungerNeed(this), new ThirstNeed(this), new SleepNeed(this));
             UpdateSlot = Id % SimClock.MinutesPerHour;
         }
 
