@@ -1,5 +1,7 @@
 using HearthAndHavoc_GoblinLegacy.Enumeration;
+using HearthAndHavoc_GoblinLegacy.GameModel;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -24,6 +26,7 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
         public float RunSpeed { get; init; }
         public int MaxRunningMinutes { get; init; }
         public int SleepHoursPerDay { get; init; }
+        public ActivityCycle ActivityCycle { get; init; }
         public List<Enzyme> Enzymes { get; init; }
         public List<CarcassYield> CarcassYield { get; init; }
         public int[] Tint { get; init; }
@@ -33,6 +36,29 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
 
         [JsonIgnore]
         public float FinalWeightKg => GrowthStages[^1].StageMaturityWeightKg;
+
+        // How many separate sleeps the day's rest is split into: two halves for crepuscular species, one for the rest.
+        [JsonIgnore]
+        public int RestPeriodsPerDay => ActivityCycle == ActivityCycle.CREPUSCULAR ? 2 : 1;
+
+        // Whether a minute of the day falls in the species' rest window (Milestone 7, decision 10). The window is
+        // SleepHoursPerDay long, centred on midnight for diurnal species and on noon for nocturnal ones; crepuscular
+        // species get two halves, centred on noon and midnight. A minute is rest time when it is strictly closer
+        // than half a rest period to the nearest centre.
+        public bool IsRestTime(int minuteOfDay)
+        {
+            // Crepuscular centres repeat every 12 hours, the others every 24.
+            int cycleMinutes = SimClock.MinutesPerDay / RestPeriodsPerDay;
+            // Shifting nocturnal time by 12 hours puts their noon centre at 0, like everyone else's midnight.
+            int shiftMinutes = ActivityCycle == ActivityCycle.NOCTURNAL ? SimClock.MinutesPerDay / 2 : 0;
+
+            // Minutes since the last centre, then the distance to whichever centre is nearer, before or after.
+            int minutesPastCentre = (minuteOfDay + shiftMinutes) % cycleMinutes;
+            int minutesFromCentre = Math.Min(minutesPastCentre, cycleMinutes - minutesPastCentre);
+
+            float halfPeriodMinutes = SleepHoursPerDay * SimClock.MinutesPerHour / RestPeriodsPerDay / 2f;
+            return minutesFromCentre < halfPeriodMinutes;
+        }
 
         public override void Resolve()
         {
@@ -72,9 +98,9 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 throw new InvalidDataException($"Def '{Key}' needs sleep, walk and run multipliers above 0.");
             }
 
-            if (MaxFatKg < 0 || WaterLitersPerDay < 0)
+            if (MaxFatKg <= 0 || WaterLitersPerDay <= 0)
             {
-                throw new InvalidDataException($"Def '{Key}' needs MaxFatKg and WaterLitersPerDay of 0 or more.");
+                throw new InvalidDataException($"Def '{Key}' needs MaxFatKg and WaterLitersPerDay above 0.");
             }
 
             if (WalkSpeed <= 0 || RunSpeed < WalkSpeed)
@@ -92,9 +118,9 @@ namespace HearthAndHavoc_GoblinLegacy.Defs
                 throw new InvalidDataException($"Def '{Key}' has MaxRunningMinutes {MaxRunningMinutes}; it must be above 0.");
             }
 
-            if (SleepHoursPerDay < 1 || SleepHoursPerDay > 24)
+            if (SleepHoursPerDay < 1 || SleepHoursPerDay > 23)
             {
-                throw new InvalidDataException($"Def '{Key}' has SleepHoursPerDay {SleepHoursPerDay}; it must be from 1 to 24.");
+                throw new InvalidDataException($"Def '{Key}' has SleepHoursPerDay {SleepHoursPerDay}; it must be from 1 to 23.");
             }
 
             if (Enzymes == null || Enzymes.Count == 0)
