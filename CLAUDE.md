@@ -28,6 +28,11 @@ These rules govern how Claude works in this repository. They apply to every sess
 - PR descriptions list every file touched and summarize what changed and why.
 - Claude does not merge PRs. The developer reviews and merges.
 
+## Building and verifying
+
+- Don't try to build the project. It contains dependencies Claude does not have access to, so a build will fail for reasons unrelated to the change.
+- Instead, verify each change by reading the file back after editing it.
+
 ## When in doubt
 
 Ask. A question costs less than code the developer didn't want or doesn't understand.
